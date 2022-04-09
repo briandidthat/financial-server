@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: notification-api
+
+binance:
+  baseUrls: https://api1.binance.com/api/v3, https://api2.binance.com/api/v3, https://api3.binance.com/api/v3
+  paths:
+    ping: /ping
+    ticker: /ticker/price?symbol=
+
+debank:
+  baseUrl: https://openapi.debank.com/v1/user
+  paths:
+    totalBalance: /total_balance?id=
