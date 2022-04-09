@@ -1,7 +1,5 @@
 package com.elshipper.notificationapi.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +12,6 @@ import java.util.concurrent.Executor;
 @Configuration
 @EnableAsync
 public class AsyncConfig {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AsyncConfig.class);
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
@@ -23,12 +20,11 @@ public class AsyncConfig {
 
     @Bean(name="taskExecutor")
     public Executor taskExecutor() {
-        LOGGER.debug("Initializing task executor");
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(8);
+        executor.setCorePoolSize(5);
         executor.setMaxPoolSize(10);
         executor.setQueueCapacity(100);
-        executor.setThreadNamePrefix("PriceThread-");
+        executor.setThreadNamePrefix("RequestThread-");
         executor.initialize();
         return executor;
     }

@@ -10,14 +10,14 @@ public class RequestUtilities {
     public static boolean validateAssets(List<String> tickers) {
         int count = 0;
         for (String ticker : tickers) {
-            if (validateTicker(ticker)) {
+            if (validateAsset(ticker)) {
                 count++;
             }
         }
         return count != tickers.size();
     }
 
-    public static boolean validateTicker(String ticker) {
+    public static boolean validateAsset(String ticker) {
         for (Asset asset : Asset.values()) {
             if (asset.getPair().equalsIgnoreCase(ticker)) {
                 return true;

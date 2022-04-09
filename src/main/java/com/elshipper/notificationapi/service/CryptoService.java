@@ -1,18 +1,15 @@
 package com.elshipper.notificationapi.service;
 
-import com.elshipper.notificationapi.domain.Asset;
 import com.elshipper.notificationapi.domain.rest.BinanceTickerResponse;
 import com.elshipper.notificationapi.domain.rest.DebankBalanceResponse;
-import com.elshipper.notificationapi.util.RequestUtilities;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
@@ -56,10 +53,6 @@ public class CryptoService {
     }
 
     public List<BinanceTickerResponse> getTickerPricesSync(List<String> tickers) {
-        if (RequestUtilities.validateAssets(tickers)) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid ticker");
-        }
-
         final Instant start = Instant.now();
         final List<BinanceTickerResponse> responses = new ArrayList<>();
         logger.info("Fetching prices synchronously {}", Arrays.toString(tickers.toArray()));
@@ -76,10 +69,6 @@ public class CryptoService {
     }
 
     public List<BinanceTickerResponse> getTickerPricesAsync(List<String> tickers) {
-        if (tickers.size() == 0 || RequestUtilities.validateAssets(tickers)) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid ticker");
-        }
-
         final List<BinanceTickerResponse> responses;
         final List<CompletableFuture<BinanceTickerResponse>> requests;
 
