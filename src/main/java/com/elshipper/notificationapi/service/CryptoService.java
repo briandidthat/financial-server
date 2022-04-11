@@ -53,15 +53,17 @@ public class CryptoService {
     }
 
     public List<BinanceTickerResponse> getTickerPricesSync(List<String> tickers) {
-        final Instant start = Instant.now();
         final List<BinanceTickerResponse> responses = new ArrayList<>();
         logger.info("Fetching prices synchronously {}", Arrays.toString(tickers.toArray()));
+
+        final Instant start = Instant.now();
         for (String ticker : tickers) {
             ResponseEntity<BinanceTickerResponse> response = restTemplate.getForEntity(binanceUrls[0] +
                     tickerPath + ticker, BinanceTickerResponse.class);
             responses.add(response.getBody());
         }
         final Instant end = Instant.now();
+
         logger.info("Fetched prices for {}", Arrays.toString(tickers.toArray()));
         logger.info("Completed synchronous ticker request in {}ms", end.minusMillis(start.toEpochMilli()).toEpochMilli());
 

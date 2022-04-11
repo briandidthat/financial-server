@@ -1,6 +1,14 @@
 spring:
   application:
     name: notification-api
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+  datasource:
+      url: jdbc:h2:mem:testdb
+      driverClassName: org.h2.Driver
+      username: sa
+      password: password
 
 binance:
   baseUrls: https://api1.binance.com/api/v3, https://api2.binance.com/api/v3, https://api3.binance.com/api/v3
