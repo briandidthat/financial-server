@@ -11,8 +11,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -20,16 +22,13 @@ class NotificationServiceTest {
     private final Notification TO_SAVE = new Notification(Asset.AVAX.getPair(), "54.00", "down", "everytime", false);
     private final Notification AVAX_NOTIFICATION = new Notification(1, Asset.AVAX.getPair(), "54.00", "down", "everytime", false);
     private final Notification BTC_NOTIFICATION = new Notification(2, Asset.BTC.getPair(), "40000.00", "down", "everytime", false);
-    private final Notification BNB_NOTIFICATION = new Notification(3, Asset.BTC.getPair(), "380.00", "down", "everytime", true);
+    private final Notification BNB_NOTIFICATION = new Notification(3, Asset.BNB.getPair(), "380.00", "down", "everytime", true);
+    private final Notification BNB_UPDATED = new Notification(3, Asset.BNB.getPair(), "380.00", "down", "once", true);
 
     @MockBean
     private NotificationRepository repository;
     @Autowired
     private NotificationService service;
-
-    @BeforeEach
-    void setUp() {
-    }
 
     @Test
     void saveNotification() {
@@ -42,10 +41,25 @@ class NotificationServiceTest {
 
     @Test
     void updateNotification() {
+        Notification notification = BNB_NOTIFICATION;
+        notification.setFrequency("once");
+
+        when(repository.findById(BNB_NOTIFICATION.getId())).thenReturn(Optional.of(BNB_NOTIFICATION));
+        when(repository.save(notification)).thenReturn(BNB_UPDATED);
+
+        Notification updated = service.updateNotification(notification);
+
+        assertEquals(BNB_UPDATED, updated);
     }
 
     @Test
     void deleteNotification() {
+        when(repository.findById(BTC_NOTIFICATION.getId())).thenReturn(Optional.of(BTC_NOTIFICATION));
+        doNothing().when(repository).deleteById(BTC_NOTIFICATION.getId());
+
+        boolean deleted = service.deleteNotification(BTC_NOTIFICATION.getId());
+
+        assertTrue(deleted);
     }
 
     @Test

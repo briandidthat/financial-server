@@ -43,6 +43,7 @@ public class NotificationService {
     }
 
     public List<Notification> findAllNotifications() {
+        logger.info("Fetching all notifications");
         return repository.findAll();
     }
 
