@@ -52,7 +52,4 @@ public class ControllerExceptionHandler {
 
         return new ResponseEntity(errors, HttpStatus.UNPROCESSABLE_ENTITY);
     }
-
-
-
 }

@@ -11,7 +11,7 @@ public class DebankBalanceResponse {
     @JsonProperty("chain_list")
     private List<Chain> chainList;
 
-    private static class Chain {
+    public static class Chain {
         private String id;
         @JsonProperty("community_id")
         private Long communityId;
@@ -24,6 +24,13 @@ public class DebankBalanceResponse {
         private String wrappedTokenAddress;
         @JsonProperty("usd_value")
         private BigDecimal usdValue;
+    }
+
+    public DebankBalanceResponse() {}
+
+    public DebankBalanceResponse(String totalUsdValue, List<Chain> chainList) {
+        this.totalUsdValue = totalUsdValue;
+        this.chainList = chainList;
     }
 
     public String getTotalUsdValue() {
