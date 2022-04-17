@@ -4,6 +4,15 @@ public class BinanceTickerResponse {
     private String symbol;
     private String price;
 
+    public BinanceTickerResponse() {
+
+    }
+
+    public BinanceTickerResponse(String symbol, String price) {
+        this.symbol = symbol;
+        this.price = price;
+    }
+
     public String getSymbol() {
         return symbol;
     }
@@ -22,9 +31,6 @@ public class BinanceTickerResponse {
 
     @Override
     public String toString() {
-        return "BinanceTickerResponse{" +
-                "symbol='" + symbol + '\'' +
-                ", price='" + price + '\'' +
-                '}';
+        return "BinanceTickerResponse{" + "symbol='" + symbol + '\'' + ", price='" + price + '\'' + '}';
     }
 }

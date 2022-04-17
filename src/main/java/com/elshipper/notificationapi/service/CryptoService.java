@@ -2,7 +2,6 @@ package com.elshipper.notificationapi.service;
 
 import com.elshipper.notificationapi.domain.rest.BinanceTickerResponse;
 import com.elshipper.notificationapi.domain.rest.DebankBalanceResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,21 +34,21 @@ public class CryptoService {
     private String balancePath;
 
     public BinanceTickerResponse getTickerPrice(String ticker) {
-        logger.info("Fetching current {} pair price", ticker);
-        final ResponseEntity<BinanceTickerResponse> result = restTemplate.getForEntity(binanceUrls[0] +
-                tickerPath + ticker, BinanceTickerResponse.class);
-        logger.info("Fetched {} pair price. Price: {}", ticker, result.getBody());
-        return result.getBody();
+        final ResponseEntity<BinanceTickerResponse> result;
+        try {
+            logger.info("Fetching current {} pair price", ticker);
+            result = restTemplate.getForEntity(binanceUrls[0] + tickerPath + ticker, BinanceTickerResponse.class);
+            logger.info("Fetched {} pair price. Price: {}", ticker, result.getBody().getPrice());
+            return result.getBody();
+        } catch (NullPointerException e) {
+            logger.info("Unable to fetch pair {}. Reason: {}", ticker, e.getMessage());
+            return null;
+        }
     }
 
     @Async
     private CompletableFuture<BinanceTickerResponse> getTickerPriceAsync(String ticker) {
-        return CompletableFuture.supplyAsync(() -> {
-            logger.info("Fetching current {} pair price", ticker);
-            final ResponseEntity<BinanceTickerResponse> result = restTemplate.getForEntity(binanceUrls[0] +
-                    tickerPath + ticker, BinanceTickerResponse.class);
-            return result.getBody();
-        });
+        return CompletableFuture.supplyAsync(() -> getTickerPrice(ticker));
     }
 
     public List<BinanceTickerResponse> getTickerPricesSync(List<String> tickers) {
@@ -58,9 +57,8 @@ public class CryptoService {
 
         final Instant start = Instant.now();
         for (String ticker : tickers) {
-            ResponseEntity<BinanceTickerResponse> response = restTemplate.getForEntity(binanceUrls[0] +
-                    tickerPath + ticker, BinanceTickerResponse.class);
-            responses.add(response.getBody());
+            BinanceTickerResponse response = getTickerPrice(ticker);
+            responses.add(response);
         }
         final Instant end = Instant.now();
 
@@ -82,7 +80,7 @@ public class CryptoService {
         // wait for all requests to be finished
         CompletableFuture.allOf(requests.toArray(new CompletableFuture[0])).join();
         final Instant end = Instant.now();
-        logger.info("Completed batch ticker request in {}ms", end.minusMillis(start.toEpochMilli()).toEpochMilli());
+        logger.info("Completed async ticker request in {}ms", end.minusMillis(start.toEpochMilli()).toEpochMilli());
 
         responses = requests.stream().map(c -> {
             BinanceTickerResponse response = null;
@@ -99,9 +97,13 @@ public class CryptoService {
 
     public DebankBalanceResponse getAccountBalances(String address) {
         logger.info("Fetching account balances for {}", address);
-        final ResponseEntity<DebankBalanceResponse> response = restTemplate.getForEntity(debankUrl +
-                balancePath + address, DebankBalanceResponse.class);
+        final ResponseEntity<DebankBalanceResponse> response = restTemplate.getForEntity(debankUrl + balancePath + address, DebankBalanceResponse.class);
         logger.info("Fetched account balances for {}", address);
         return response.getBody();
+    }
+
+    @Async
+    public CompletableFuture<DebankBalanceResponse> getAccountBalance(String address) {
+        return CompletableFuture.supplyAsync(() -> getAccountBalances(address));
     }
 }
