@@ -12,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,10 +25,16 @@ class CryptoServiceTest {
     private final BinanceTickerResponse BTC_USDT = new BinanceTickerResponse(Asset.BTC.getPair(), "40102.44");
     private final BinanceTickerResponse BNB_USDT = new BinanceTickerResponse(Asset.BNB.getPair(), "389.22");
     private final BinanceTickerResponse ETH_USDT = new BinanceTickerResponse(Asset.ETH.getPair(), "2900.24");
-    private final DebankBalanceResponse BALANCE = new DebankBalanceResponse();
+    private final List<BinanceTickerResponse> PRICES = List.of(BTC_USDT, BNB_USDT, ETH_USDT);
+    private final DebankBalanceResponse GUPPY = new DebankBalanceResponse("21.234", new ArrayList<>());
+    private final DebankBalanceResponse WHALE = new DebankBalanceResponse("3000000.23", new ArrayList<>());
 
+    private final List<DebankBalanceResponse> BALANCES = List.of(GUPPY, WHALE);
     private final String binanceEndpoint = "https://api1.binance.com/api/v3/ticker/price?symbol=";
     private final String debankEndpoint =  "https://openapi.debank.com/v1/user/total_balance?id=";
+
+    private final String guppyAddress = "0x344532524";
+    private final String whaleAddress = "0x344532512";
     @MockBean
     private RestTemplate restTemplate;
     @Autowired
@@ -39,7 +46,8 @@ class CryptoServiceTest {
         when(restTemplate.getForEntity(binanceEndpoint + Asset.BTC.getPair(), BinanceTickerResponse.class)).thenReturn(ResponseEntity.ok(BTC_USDT));
         when(restTemplate.getForEntity(binanceEndpoint + Asset.BNB.getPair(), BinanceTickerResponse.class)).thenReturn(ResponseEntity.ok(BNB_USDT));
         when(restTemplate.getForEntity(binanceEndpoint + Asset.ETH.getPair(), BinanceTickerResponse.class)).thenReturn(ResponseEntity.ok(ETH_USDT));
-        when(restTemplate.getForEntity(debankEndpoint + "0x344532524", DebankBalanceResponse.class)).thenReturn(ResponseEntity.ok(BALANCE));
+        when(restTemplate.getForEntity(debankEndpoint + guppyAddress, DebankBalanceResponse.class)).thenReturn(ResponseEntity.ok(GUPPY));
+        when(restTemplate.getForEntity(debankEndpoint + whaleAddress, DebankBalanceResponse.class)).thenReturn(ResponseEntity.ok(WHALE));
     }
 
     @Test
@@ -51,20 +59,31 @@ class CryptoServiceTest {
 
     @Test
     void getTickerPricesSync() {
-        List<BinanceTickerResponse> responses = List.of(BTC_USDT, BNB_USDT, ETH_USDT);
-        List<BinanceTickerResponse> tickerResponses = cryptoService.getTickerPricesSync(List.of(Asset.BTC.getPair(),
+        List<BinanceTickerResponse> responses = cryptoService.getTickerPricesSync(List.of(Asset.BTC.getPair(),
                 Asset.BNB.getPair(), Asset.ETH.getPair()));
 
-        assertIterableEquals(responses, tickerResponses);
+        assertIterableEquals(PRICES, responses);
     }
 
     @Test
     void getTickerPricesAsync() {
+        List<BinanceTickerResponse> responses = cryptoService.getTickerPricesAsync(List.of(Asset.BTC.getPair(),
+                Asset.BNB.getPair(), Asset.ETH.getPair()));
 
+        assertIterableEquals(PRICES, responses);
+    }
+
+    @Test
+    void getAccountBalance() {
+        DebankBalanceResponse response = cryptoService.getAccountBalance(guppyAddress);
+
+        assertEquals(GUPPY, response);
     }
 
     @Test
     void getAccountBalances() {
+        List<DebankBalanceResponse> responses = cryptoService.getAccountBalances(List.of(guppyAddress, whaleAddress));
 
+        assertIterableEquals(BALANCES, responses);
     }
 }

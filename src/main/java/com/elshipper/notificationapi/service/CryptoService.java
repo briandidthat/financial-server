@@ -34,11 +34,11 @@ public class CryptoService {
     private String balancePath;
 
     public BinanceTickerResponse getTickerPrice(String ticker) {
-        final ResponseEntity<BinanceTickerResponse> result;
         try {
             logger.info("Fetching current {} pair price", ticker);
-            result = restTemplate.getForEntity(binanceUrls[0] + tickerPath + ticker, BinanceTickerResponse.class);
-            logger.info("Fetched {} pair price. Price: {}", ticker, result.getBody().getPrice());
+            final ResponseEntity<BinanceTickerResponse> result = restTemplate.getForEntity(binanceUrls[0] +
+                    tickerPath + ticker, BinanceTickerResponse.class);
+            logger.info("Fetched {} pair price. Response: {}", ticker, result.getBody());
             return result.getBody();
         } catch (NullPointerException e) {
             logger.info("Unable to fetch pair {}. Reason: {}", ticker, e.getMessage());
@@ -95,15 +95,49 @@ public class CryptoService {
         return responses;
     }
 
-    public DebankBalanceResponse getAccountBalances(String address) {
-        logger.info("Fetching account balances for {}", address);
-        final ResponseEntity<DebankBalanceResponse> response = restTemplate.getForEntity(debankUrl + balancePath + address, DebankBalanceResponse.class);
-        logger.info("Fetched account balances for {}", address);
-        return response.getBody();
+    public DebankBalanceResponse getAccountBalance(String address) {
+        try {
+            logger.info("Fetching account balances for {}", address);
+            final ResponseEntity<DebankBalanceResponse> response = restTemplate.getForEntity(debankUrl + balancePath
+                    + address, DebankBalanceResponse.class);
+            logger.info("Fetched account balances for {}", address);
+            return response.getBody();
+        } catch (Exception e) {
+            logger.info("Unable to fetch balances for {}. Reason: {}", address, e.getMessage());
+            return null;
+        }
     }
 
     @Async
-    public CompletableFuture<DebankBalanceResponse> getAccountBalance(String address) {
-        return CompletableFuture.supplyAsync(() -> getAccountBalances(address));
+    public CompletableFuture<DebankBalanceResponse> getAccountBalanceAsync(String address) {
+        return CompletableFuture.supplyAsync(() -> getAccountBalance(address));
+    }
+
+    public List<DebankBalanceResponse> getAccountBalances(List<String> addresses) {
+        final List<DebankBalanceResponse> responses;
+        final List<CompletableFuture<DebankBalanceResponse>> requests;
+
+        logger.info("Fetching balances asynchronously {}", addresses);
+
+        final Instant start = Instant.now();
+        // create list of balance requests to be run in parallel
+        requests = addresses.stream().map(this::getAccountBalanceAsync).collect(Collectors.toList());
+        // wait for all requests to be finished
+        CompletableFuture.allOf(requests.toArray(new CompletableFuture[0])).join();
+        final Instant end = Instant.now();
+
+        logger.info("Completed async ticker request in {}ms", end.minusMillis(start.toEpochMilli()).toEpochMilli());
+
+        responses = requests.stream().map(c -> {
+            DebankBalanceResponse response = null;
+            try {
+                response = c.get();
+            } catch (Exception e) {
+                logger.info("Unable to fetch balance. Reason: {}", e.getMessage());
+            }
+            return response;
+        }).collect(Collectors.toList());
+
+        return responses;
     }
 }

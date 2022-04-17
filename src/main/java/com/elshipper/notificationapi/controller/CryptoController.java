@@ -47,6 +47,13 @@ public class CryptoController {
     @GetMapping("/accounts/total-balance")
     public DebankBalanceResponse getAccountBalance(@RequestParam @NotNull String address) {
 
-        return service.getAccountBalances(address);
+        return service.getAccountBalance(address);
+    }
+
+    @GetMapping("/accounts/total-balance/batch")
+    public List<DebankBalanceResponse> getAccountBalancesAsync(@RequestBody List<String> addresses) {
+        if (addresses.size() == 0) throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Empty address list");
+
+        return service.getAccountBalances(addresses);
     }
 }
