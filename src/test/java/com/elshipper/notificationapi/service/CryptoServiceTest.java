@@ -3,6 +3,7 @@ package com.elshipper.notificationapi.service;
 import com.elshipper.notificationapi.domain.Asset;
 import com.elshipper.notificationapi.domain.rest.BinanceTickerResponse;
 import com.elshipper.notificationapi.domain.rest.DebankBalanceResponse;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,10 +26,10 @@ class CryptoServiceTest {
     private final BinanceTickerResponse BTC_USDT = new BinanceTickerResponse(Asset.BTC.getPair(), "40102.44");
     private final BinanceTickerResponse BNB_USDT = new BinanceTickerResponse(Asset.BNB.getPair(), "389.22");
     private final BinanceTickerResponse ETH_USDT = new BinanceTickerResponse(Asset.ETH.getPair(), "2900.24");
-    private final List<BinanceTickerResponse> PRICES = List.of(BTC_USDT, BNB_USDT, ETH_USDT);
     private final DebankBalanceResponse GUPPY = new DebankBalanceResponse("21.234", new ArrayList<>());
     private final DebankBalanceResponse WHALE = new DebankBalanceResponse("3000000.23", new ArrayList<>());
 
+    private final List<BinanceTickerResponse> PRICES = List.of(BTC_USDT, BNB_USDT, ETH_USDT);
     private final List<DebankBalanceResponse> BALANCES = List.of(GUPPY, WHALE);
     private final String binanceEndpoint = "https://api1.binance.com/api/v3/ticker/price?symbol=";
     private final String debankEndpoint =  "https://openapi.debank.com/v1/user/total_balance?id=";
