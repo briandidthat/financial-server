@@ -75,9 +75,9 @@ public class CryptoService {
         logger.info("Fetching prices asynchronously {}", tickers);
 
         final Instant start = Instant.now();
-        // create list of tickers requests to be run in parallel
+        // store list of tickers requests to be run in parallel
         requests = tickers.stream().map(this::getTickerPriceAsync).collect(Collectors.toList());
-        // wait for all requests to be finished
+        // wait for all requests to be completed
         CompletableFuture.allOf(requests.toArray(new CompletableFuture[0])).join();
         final Instant end = Instant.now();
         logger.info("Completed async ticker request in {}ms", end.minusMillis(start.toEpochMilli()).toEpochMilli());
