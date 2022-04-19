@@ -1,9 +1,10 @@
 package com.elshipper.notificationapi.domain.rest;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AlphaVantageQuoteResponse {
-    @JsonProperty("Global Quote")
+    @JsonProperty(value = "Global Quote")
     private Quote quote;
 
     public static class Quote {
@@ -23,20 +24,12 @@ public class AlphaVantageQuoteResponse {
         private String change;
         @JsonProperty("10. change percent")
         private String percentChange;
+    }
 
-        @Override
-        public String toString() {
-            return "Quote{" +
-                    "symbol='" + symbol + '\'' +
-                    ", open='" + open + '\'' +
-                    ", high='" + high + '\'' +
-                    ", low='" + low + '\'' +
-                    ", price='" + price + '\'' +
-                    ", previousClose='" + previousClose + '\'' +
-                    ", change='" + change + '\'' +
-                    ", percentChange='" + percentChange + '\'' +
-                    '}';
-        }
+    public AlphaVantageQuoteResponse() {}
+
+    public AlphaVantageQuoteResponse(Quote quote) {
+        this.quote = quote;
     }
 
     public String getSymbol() {
@@ -74,7 +67,14 @@ public class AlphaVantageQuoteResponse {
     @Override
     public String toString() {
         return "AlphaVantageQuoteResponse{" +
-                "quote=" + quote +
+                "symbol=" + quote.symbol + ", " +
+                "open=" + quote.open + ", " +
+                "high=" + quote.high + ", " +
+                "low=" + quote.low + ", " +
+                "price=" + quote.price + ", " +
+                "previousClose=" + quote.previousClose + ", " +
+                "change=" + quote.change + ", " +
+                "percentChange=" + quote.percentChange +
                 '}';
     }
 }
