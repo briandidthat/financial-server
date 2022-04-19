@@ -26,13 +26,15 @@ public class StockService {
     private String baseUrl;
     @Value("${alphaVantage.paths.quote}")
     private String quotePath;
+    @Value("${alphaVantage.apiKey}")
+    private String apiKey;
 
     public AlphaVantageQuoteResponse getQuote(String symbol) {
         try {
             logger.info("Fetching quote for {}", symbol);
             final ResponseEntity<AlphaVantageQuoteResponse> response = restTemplate.getForEntity(baseUrl +
-                    quotePath + symbol, AlphaVantageQuoteResponse.class);
-            logger.info("fetch");
+                    quotePath + symbol + apiKey, AlphaVantageQuoteResponse.class);
+            logger.info("Fetched quote for {}", response.getBody());
             return response.getBody();
         } catch (Exception e) {
             logger.info("Unable to fetch quote. Reason: {}", e.getMessage());

@@ -1,8 +1,6 @@
 package com.elshipper.notificationapi.domain;
 
-import java.util.List;
-
-public enum Asset {
+public enum Cryptocurrency {
     BTC("BTCUSDT"),
     BNB("BNBUSDT"),
     ETH("ETHUSDT"),
@@ -12,7 +10,7 @@ public enum Asset {
 
     private final String pair;
 
-    Asset(String pair) {
+    Cryptocurrency(String pair) {
         this.pair = pair;
     }
 
