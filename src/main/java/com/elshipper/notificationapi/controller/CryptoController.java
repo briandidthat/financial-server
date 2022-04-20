@@ -27,9 +27,9 @@ public class CryptoController {
         return service.getTickerPrice(ticker);
     }
 
-    @GetMapping("/tickers/batch")
+    @GetMapping("/tickers/multiple")
     public List<BinanceTickerResponse> getMultipleCryptoPrices(@RequestBody List<String> tickers) {
-        if (tickers.size() == 0 || RequestUtilities.validateCryptocurrencies(tickers)) {
+        if (tickers.size() == 0 || !RequestUtilities.validateCryptocurrencies(tickers)) {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid ticker");
         }
         return service.getTickerPricesAsync(tickers);
@@ -37,7 +37,7 @@ public class CryptoController {
 
     @GetMapping("/tickers/sequential")
     public List<BinanceTickerResponse> getMultipleCryptoPricesSync(@RequestBody List<String> tickers) {
-        if (tickers.size() == 0 || RequestUtilities.validateCryptocurrencies(tickers)) {
+        if (tickers.size() == 0 || !RequestUtilities.validateCryptocurrencies(tickers)) {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid ticker");
         }
         return service.getTickerPricesSync(tickers);
@@ -48,7 +48,7 @@ public class CryptoController {
         return service.getAccountBalance(address);
     }
 
-    @GetMapping("/accounts/total-balance/batch")
+    @GetMapping("/accounts/total-balance/multiple")
     public List<DebankBalanceResponse> getMultipleAccountBalances(@RequestBody List<String> addresses) {
         if (addresses.size() == 0) throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Empty address list");
         return service.getAccountBalances(addresses);

@@ -26,8 +26,6 @@ public class RequestUtilities {
         return count == tickers.size();
     }
 
-
-
     public static boolean validateStockSymbol(String symbol) {
         for (Stock stock : Stock.values()) {
             if (stock.getSymbol().equalsIgnoreCase(symbol)) {
