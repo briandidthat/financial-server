@@ -6,6 +6,9 @@ public enum Cryptocurrency {
     ETH("ETHUSDT"),
     FTM("FTMUSDT"),
     SOL("SOLUSDT"),
+    NVIDIA("NVDA"),
+    VISA("V"),
+    MASTERCARD("MA"),
     AVAX("AVAXUSDT");
 
     private final String pair;
