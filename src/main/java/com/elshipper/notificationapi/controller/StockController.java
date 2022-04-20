@@ -18,14 +18,15 @@ public class StockController {
 
     @GetMapping("/symbol")
     public AlphaVantageQuoteResponse getQuote(@RequestParam String symbol) {
+        if (!RequestUtilities.validateStockSymbol(symbol))
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid symbol");
         return service.getQuote(symbol);
     }
 
     @GetMapping("/symbol/multiple")
     public List<AlphaVantageQuoteResponse> getQuotes(@RequestBody List<String> symbols) {
-        if (symbols.size() == 0 || !RequestUtilities.validateCryptocurrencies(symbols)) {
+        if (symbols.size() == 0 || !RequestUtilities.validateStockSymbols(symbols))
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid symbol array");
-        }
         return service.getMultipleQuotes(symbols);
     }
 
