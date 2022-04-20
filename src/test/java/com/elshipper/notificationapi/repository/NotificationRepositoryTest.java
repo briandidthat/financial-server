@@ -1,6 +1,6 @@
 package com.elshipper.notificationapi.repository;
 
-import com.elshipper.notificationapi.domain.Asset;
+import com.elshipper.notificationapi.domain.Cryptocurrency;
 import com.elshipper.notificationapi.domain.Notification;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,8 +23,10 @@ class NotificationRepositoryTest {
     @BeforeEach
     void setUp() {
         repository.deleteAll();
-        notification1 = new Notification(Asset.BTC.getPair(), "42345.22", "down", "once", true);
-        notification2 = new Notification(Asset.FTM.getPair(), "1.34", "down", "once", false);
+        notification1 = new Notification(Cryptocurrency.BTC.getPair(), "42345.22",
+                "down", "once", true);
+        notification2 = new Notification(Cryptocurrency.FTM.getPair(), "1.34",
+                "down", "once", false);
     }
 
     @Test
@@ -42,7 +44,7 @@ class NotificationRepositoryTest {
         repository.save(notification1);
         repository.save(notification2);
 
-        List<Notification> notifications = repository.findNotificationsByAsset(Asset.FTM.getPair());
+        List<Notification> notifications = repository.findNotificationsByAsset(Cryptocurrency.FTM.getPair());
 
         assertEquals(1, notifications.size());
     }

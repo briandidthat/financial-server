@@ -1,17 +1,13 @@
 package com.elshipper.notificationapi.service;
 
-import com.elshipper.notificationapi.domain.Asset;
+import com.elshipper.notificationapi.domain.Cryptocurrency;
 import com.elshipper.notificationapi.domain.Notification;
 import com.elshipper.notificationapi.repository.NotificationRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,11 +17,11 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class NotificationServiceTest {
-    private final Notification TO_SAVE = new Notification(Asset.AVAX.getPair(), "54.00", "down", "everytime", false);
-    private final Notification AVAX_NOTIFICATION = new Notification(1, Asset.AVAX.getPair(), "54.00", "down", "everytime", false);
-    private final Notification BTC_NOTIFICATION = new Notification(2, Asset.BTC.getPair(), "40000.00", "down", "everytime", false);
-    private final Notification BNB_NOTIFICATION = new Notification(3, Asset.BNB.getPair(), "380.00", "down", "everytime", true);
-    private final Notification BNB_UPDATED = new Notification(3, Asset.BNB.getPair(), "380.00", "down", "once", true);
+    private final Notification TO_SAVE = new Notification(Cryptocurrency.AVAX.getPair(), "54.00", "down", "everytime", false);
+    private final Notification AVAX_NOTIFICATION = new Notification(1, Cryptocurrency.AVAX.getPair(), "54.00", "down", "everytime", false);
+    private final Notification BTC_NOTIFICATION = new Notification(2, Cryptocurrency.BTC.getPair(), "40000.00", "down", "everytime", false);
+    private final Notification BNB_NOTIFICATION = new Notification(3, Cryptocurrency.BNB.getPair(), "380.00", "down", "everytime", true);
+    private final Notification BNB_UPDATED = new Notification(3, Cryptocurrency.BNB.getPair(), "380.00", "down", "once", true);
 
     @MockBean
     private NotificationRepository repository;
@@ -84,7 +80,7 @@ class NotificationServiceTest {
 
     @Test
     void findNotificationsByAsset() {
-        when(repository.findNotificationsByAsset(Asset.AVAX.getPair())).thenReturn(List.of(AVAX_NOTIFICATION));
+        when(repository.findNotificationsByAsset(Cryptocurrency.AVAX.getPair())).thenReturn(List.of(AVAX_NOTIFICATION));
 
         List<Notification> notifications = service.findNotificationsByAsset(AVAX_NOTIFICATION.getAsset());
 

@@ -7,6 +7,14 @@ import java.util.List;
 
 public class RequestUtilities {
     private RequestUtilities() {}
+    public static boolean validateCryptocurrency(String ticker) {
+        for (Cryptocurrency cryptocurrency : Cryptocurrency.values()) {
+            if (cryptocurrency.getPair().equalsIgnoreCase(ticker)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public static boolean validateCryptocurrencies(List<String> tickers) {
         int count = 0;
@@ -18,14 +26,7 @@ public class RequestUtilities {
         return count == tickers.size();
     }
 
-    public static boolean validateCryptocurrency(String ticker) {
-        for (Cryptocurrency cryptocurrency : Cryptocurrency.values()) {
-            if (cryptocurrency.getPair().equalsIgnoreCase(ticker)) {
-                return true;
-            }
-        }
-        return false;
-    }
+
 
     public static boolean validateStockSymbol(String symbol) {
         for (Stock stock : Stock.values()) {
