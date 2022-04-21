@@ -13,10 +13,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class NotificationService {
+    private static final Logger logger = LoggerFactory.getLogger(NotificationService.class);
     @Autowired
     private NotificationRepository repository;
-
-    private static final Logger logger = LoggerFactory.getLogger(NotificationService.class);
 
     public Notification saveNotification(Notification notification) {
         logger.info("Storing new notification for {}", notification.getAsset());

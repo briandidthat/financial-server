@@ -23,7 +23,7 @@ public class RequestUtilities {
                 count++;
             }
         }
-        return count == tickers.size();
+        return count != tickers.size();
     }
 
     public static boolean validateStockSymbol(String symbol) {
