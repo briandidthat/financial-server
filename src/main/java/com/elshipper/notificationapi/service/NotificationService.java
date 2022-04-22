@@ -17,6 +17,12 @@ public class NotificationService {
     @Autowired
     private NotificationRepository repository;
 
+    public Notification findNotification(Integer id) {
+        logger.info("Fetching notification for id {}", id);
+        Optional<Notification> notification = repository.findById(id);
+        return notification.orElse(null);
+    }
+
     public Notification saveNotification(Notification notification) {
         logger.info("Storing new notification for {}", notification.getAsset());
         return repository.save(notification);

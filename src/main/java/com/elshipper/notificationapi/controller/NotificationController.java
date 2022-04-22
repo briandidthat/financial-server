@@ -39,11 +39,12 @@ public class NotificationController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteNotification(@PathVariable Integer id) {
+    public String deleteNotification(@PathVariable Integer id) {
         boolean deleted = service.deleteNotification(id);
         if (!deleted) {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid notification id");
         }
+        return "successful";
     }
 
     @GetMapping("/triggered")
@@ -55,7 +56,7 @@ public class NotificationController {
         return notifications;
     }
 
-    @GetMapping("/asset/")
+    @GetMapping("/asset")
     @ResponseStatus(HttpStatus.OK)
     public List<Notification> getNotificationsByAsset(@RequestParam String asset) {
         List<Notification> notifications = service.findNotificationsByAsset(asset);

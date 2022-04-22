@@ -49,8 +49,6 @@ public class Notification {
         return asset;
     }
 
-    public Cryptocurrency getAssetType() { return Cryptocurrency.valueOf(this.asset);}
-
     public void setAsset(String asset) {
         this.asset = asset;
     }
