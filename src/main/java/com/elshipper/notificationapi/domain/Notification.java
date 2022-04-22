@@ -1,5 +1,7 @@
 package com.elshipper.notificationapi.domain;
 
+import com.sun.istack.NotNull;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -9,9 +11,13 @@ public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @NotNull
     private String asset;
+    @NotNull
     private String value;
+    @NotNull
     private String direction;
+    @NotNull
     private String frequency;
     private Boolean triggered;
 
@@ -42,8 +48,6 @@ public class Notification {
     public String getAsset() {
         return asset;
     }
-
-    public Cryptocurrency getAssetType() { return Cryptocurrency.valueOf(this.asset);}
 
     public void setAsset(String asset) {
         this.asset = asset;

@@ -4,7 +4,6 @@ import com.elshipper.notificationapi.domain.Cryptocurrency;
 import com.elshipper.notificationapi.domain.rest.BinanceTickerResponse;
 import com.elshipper.notificationapi.domain.rest.DebankBalanceResponse;
 import com.elshipper.notificationapi.service.CryptoService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,21 +24,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(CryptoController.class)
 class CryptoControllerTest {
+    private final BinanceTickerResponse BTC_USDT = new BinanceTickerResponse(Cryptocurrency.BTC.getPair(), "40102.44");
+    private final BinanceTickerResponse BNB_USDT = new BinanceTickerResponse(Cryptocurrency.BNB.getPair(), "389.22");
+    private final BinanceTickerResponse ETH_USDT = new BinanceTickerResponse(Cryptocurrency.ETH.getPair(), "2900.24");
+    private final DebankBalanceResponse GUPPY = new DebankBalanceResponse("21.234", new ArrayList<>());
+    private final DebankBalanceResponse WHALE = new DebankBalanceResponse("3000000.23", new ArrayList<>());
+    private final String guppyAddress = "0x344532524";
+    private final String whaleAddress = "0x344532512";
+
     @Autowired
     private ObjectMapper mapper;
     @Autowired
     private MockMvc mockMvc;
     @MockBean
     private CryptoService service;
-
-    private final BinanceTickerResponse BTC_USDT = new BinanceTickerResponse(Cryptocurrency.BTC.getPair(), "40102.44");
-    private final BinanceTickerResponse BNB_USDT = new BinanceTickerResponse(Cryptocurrency.BNB.getPair(), "389.22");
-    private final BinanceTickerResponse ETH_USDT = new BinanceTickerResponse(Cryptocurrency.ETH.getPair(), "2900.24");
-    private final DebankBalanceResponse GUPPY = new DebankBalanceResponse("21.234", new ArrayList<>());
-    private final DebankBalanceResponse WHALE = new DebankBalanceResponse("3000000.23", new ArrayList<>());
-
-    private final String guppyAddress = "0x344532524";
-    private final String whaleAddress = "0x344532512";
 
     @BeforeEach
     void setUp() {
@@ -69,8 +67,8 @@ class CryptoControllerTest {
         String outputJson = mapper.writeValueAsString(responses);
 
         this.mockMvc.perform(get("/crypto/tickers/multiple")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(inputJson))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(inputJson))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
@@ -99,8 +97,8 @@ class CryptoControllerTest {
         String outputJson = mapper.writeValueAsString(responses);
 
         this.mockMvc.perform(get("/crypto/accounts/total-balance/multiple")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(inputJson))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(inputJson))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
