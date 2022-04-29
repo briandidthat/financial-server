@@ -34,7 +34,7 @@ class NotificationRepositoryTest {
         repository.save(notification1);
         repository.save(notification2);
 
-        List<Notification> triggered = repository.findByTriggeredTrue();
+        List<Notification> triggered = repository.findByTriggered(true);
 
         assertEquals(1, triggered.size());
     }
@@ -44,7 +44,7 @@ class NotificationRepositoryTest {
         repository.save(notification1);
         repository.save(notification2);
 
-        List<Notification> unTriggered = repository.findByTriggeredFalse();
+        List<Notification> unTriggered = repository.findByTriggered(false);
 
         assertEquals(1, unTriggered.size());
     }
@@ -54,10 +54,8 @@ class NotificationRepositoryTest {
         repository.save(notification1);
         repository.save(notification2);
 
-        List<Notification> notifications = repository.findNotificationsByAsset(Cryptocurrency.FTM.getPair());
+        List<Notification> notifications = repository.findByAsset(Cryptocurrency.FTM.getPair());
 
         assertEquals(1, notifications.size());
     }
-
-
 }

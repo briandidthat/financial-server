@@ -54,19 +54,19 @@ public class NotificationService {
 
     public List<Notification> findTriggeredNotifications(String asset) {
         logger.info("Fetching triggered notifications for {}", asset);
-        final List<Notification> triggered = repository.findByTriggeredTrue();
+        final List<Notification> triggered = repository.findByTriggered(true);
         return triggered.stream().filter(f -> f.getAsset().equalsIgnoreCase(asset)).collect(Collectors.toList());
     }
 
     public List<Notification> findUntriggeredNotifications(String asset) {
-        logger.info("Fetching triggered notifications for {}", asset);
-        final List<Notification> untriggered = repository.findByTriggeredFalse();
+        logger.info("Fetching untriggered notifications for {}", asset);
+        final List<Notification> untriggered = repository.findByTriggered(false);
         return untriggered.stream().filter(f -> f.getAsset().equalsIgnoreCase(asset)).collect(Collectors.toList());
     }
 
     public List<Notification> findNotificationsByAsset(String asset) {
         logger.info("Fetching all notifications for {}", asset);
-        return repository.findNotificationsByAsset(asset);
+        return repository.findByAsset(asset);
     }
 
 }
