@@ -77,7 +77,7 @@ public class Notification {
         this.frequency = frequency;
     }
 
-    public Boolean getTriggered() {
+    public Boolean isTriggered() {
         return triggered;
     }
 

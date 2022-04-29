@@ -43,14 +43,13 @@ class CryptoControllerTest {
     void setUp() {
     }
 
-
     @Test
     void getCryptoPrice() throws Exception {
         String outputJson = mapper.writeValueAsString(BTC_USDT);
 
         when(service.getTickerPrice(Cryptocurrency.BTC.getPair())).thenReturn(BTC_USDT);
 
-        this.mockMvc.perform(get("/crypto/tickers?ticker=" + Cryptocurrency.BTC.getPair()))
+        this.mockMvc.perform(get("/crypto/tickers").param("ticker",Cryptocurrency.BTC.getPair()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
@@ -80,7 +79,7 @@ class CryptoControllerTest {
 
         when(service.getAccountBalance(guppyAddress)).thenReturn(GUPPY);
 
-        this.mockMvc.perform(get("/crypto/accounts/total-balance?address=" + guppyAddress))
+        this.mockMvc.perform(get("/crypto/accounts/total-balance").param("address", guppyAddress))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
@@ -97,6 +96,7 @@ class CryptoControllerTest {
         String outputJson = mapper.writeValueAsString(responses);
 
         this.mockMvc.perform(get("/crypto/accounts/total-balance/multiple")
+                        .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(inputJson))
                 .andExpect(status().isOk())

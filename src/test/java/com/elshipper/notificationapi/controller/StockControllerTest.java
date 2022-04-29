@@ -45,7 +45,7 @@ class StockControllerTest {
 
         when(service.getQuote(Stock.IBM.getSymbol())).thenReturn(IBM_RESPONSE);
 
-        this.mockMvc.perform(get("/stocks/symbol?symbol=" + Stock.IBM.getSymbol()))
+        this.mockMvc.perform(get("/stocks/symbol").param("symbol", Stock.IBM.getSymbol()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
@@ -62,8 +62,9 @@ class StockControllerTest {
         when(service.getMultipleQuotes(symbols)).thenReturn(responses);
 
         this.mockMvc.perform(get("/stocks/symbol/multiple")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(inputJson))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(inputJson))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());

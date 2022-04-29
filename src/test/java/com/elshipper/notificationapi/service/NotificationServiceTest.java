@@ -71,7 +71,7 @@ class NotificationServiceTest {
 
     @Test
     void findNotificationsByTriggered() {
-        when(repository.findByTriggeredTrue()).thenReturn(List.of(BNB_NOTIFICATION));
+        when(repository.findByTriggered(true)).thenReturn(List.of(BNB_NOTIFICATION));
 
         List<Notification> notifications = service.findTriggeredNotifications(BNB_NOTIFICATION.getAsset());
 
@@ -80,7 +80,7 @@ class NotificationServiceTest {
 
     @Test
     void findNotificationsByTriggeredFalse() {
-        when(repository.findByTriggeredFalse()).thenReturn(List.of(AVAX_NOTIFICATION));
+        when(repository.findByTriggered(false)).thenReturn(List.of(AVAX_NOTIFICATION));
 
         List<Notification> notifications = service.findUntriggeredNotifications(AVAX_NOTIFICATION.getAsset());
 
@@ -89,7 +89,7 @@ class NotificationServiceTest {
 
     @Test
     void findNotificationsByAsset() {
-        when(repository.findNotificationsByAsset(Cryptocurrency.AVAX.getPair())).thenReturn(List.of(AVAX_NOTIFICATION));
+        when(repository.findByAsset(Cryptocurrency.AVAX.getPair())).thenReturn(List.of(AVAX_NOTIFICATION));
 
         List<Notification> notifications = service.findNotificationsByAsset(AVAX_NOTIFICATION.getAsset());
 

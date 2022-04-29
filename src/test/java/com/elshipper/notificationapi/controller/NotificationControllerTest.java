@@ -106,7 +106,24 @@ class NotificationControllerTest {
 
         when(service.findTriggeredNotifications(BNB_NOTIFICATION.getAsset())).thenReturn(notifications);
 
-        this.mockMvc.perform(get("/notifications/triggered?asset=" + BNB_NOTIFICATION.getAsset()))
+        this.mockMvc.perform(get("/notifications/status")
+                        .param("asset", BNB_NOTIFICATION.getAsset())
+                        .param("triggered", String.valueOf(BNB_NOTIFICATION.isTriggered())))
+                .andExpect(status().isOk())
+                .andExpect(content().json(outputJson))
+                .andDo(print());
+    }
+
+    @Test
+    void getUntriggeredNotifications() throws Exception {
+        List<Notification> notifications = List.of(BTC_NOTIFICATION);
+        String outputJson = mapper.writeValueAsString(notifications);
+
+        when(service.findUntriggeredNotifications(BTC_NOTIFICATION.getAsset())).thenReturn(notifications);
+
+        this.mockMvc.perform(get("/notifications/status")
+                        .param("asset", BTC_NOTIFICATION.getAsset())
+                        .param("triggered", String.valueOf(BTC_NOTIFICATION.isTriggered())))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
@@ -119,7 +136,8 @@ class NotificationControllerTest {
 
         when(service.findNotificationsByAsset(AVAX_NOTIFICATION.getAsset())).thenReturn(notifications);
 
-        this.mockMvc.perform(get("/notifications/asset?asset=" + AVAX_NOTIFICATION.getAsset()))
+        this.mockMvc.perform(get("/notifications/asset")
+                        .param("asset", AVAX_NOTIFICATION.getAsset()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
