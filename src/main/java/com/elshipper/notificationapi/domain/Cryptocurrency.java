@@ -3,13 +3,13 @@ package com.elshipper.notificationapi.domain;
 public enum Cryptocurrency {
     BTC("BTCUSDT"),
     BNB("BNBUSDT"),
+    DOT("DOTUSDT"),
     ETH("ETHUSDT"),
     FTM("FTMUSDT"),
     SOL("SOLUSDT"),
-    NVIDIA("NVDA"),
-    VISA("V"),
-    MASTERCARD("MA"),
+    ATOM("ATOMUSDT"),
     AVAX("AVAXUSDT");
+
 
     private final String pair;
 
@@ -21,4 +21,10 @@ public enum Cryptocurrency {
         return pair;
     }
 
+    @Override
+    public String toString() {
+        return "Cryptocurrency{" +
+                "pair='" + pair + '\'' +
+                '}';
+    }
 }

@@ -40,6 +40,16 @@ class NotificationRepositoryTest {
     }
 
     @Test
+    void findByTriggeredFalse() {
+        repository.save(notification1);
+        repository.save(notification2);
+
+        List<Notification> unTriggered = repository.findByTriggeredFalse();
+
+        assertEquals(1, unTriggered.size());
+    }
+
+    @Test
     void findNotificationsByAsset() {
         repository.save(notification1);
         repository.save(notification2);
@@ -48,4 +58,6 @@ class NotificationRepositoryTest {
 
         assertEquals(1, notifications.size());
     }
+
+
 }
