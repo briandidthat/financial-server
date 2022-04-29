@@ -47,12 +47,18 @@ public class NotificationController {
         return "successful";
     }
 
-    @GetMapping("/triggered")
+    @GetMapping("/status")
     @ResponseStatus(HttpStatus.OK)
-    public List<Notification> getTriggeredNotifications(@RequestParam String asset) {
-        List<Notification> notifications = service.findNotificationsByTriggered(asset);
+    public List<Notification> getNotificationsByStatus(@RequestParam String asset, @RequestParam(required = false, defaultValue = "false") boolean triggered) {
+        final List<Notification> notifications;
+        if (triggered) {
+            notifications = service.findTriggeredNotifications(asset);
+        } else {
+            notifications = service.findUntriggeredNotifications(asset);
+        }
+
         if (notifications.size() == 0)
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "No triggered notifications for that asset");
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "No notifications for that asset");
         return notifications;
     }
 

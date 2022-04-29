@@ -73,7 +73,16 @@ class NotificationServiceTest {
     void findNotificationsByTriggered() {
         when(repository.findByTriggeredTrue()).thenReturn(List.of(BNB_NOTIFICATION));
 
-        List<Notification> notifications = service.findNotificationsByTriggered(BNB_NOTIFICATION.getAsset());
+        List<Notification> notifications = service.findTriggeredNotifications(BNB_NOTIFICATION.getAsset());
+
+        assertEquals(1, notifications.size());
+    }
+
+    @Test
+    void findNotificationsByTriggeredFalse() {
+        when(repository.findByTriggeredFalse()).thenReturn(List.of(AVAX_NOTIFICATION));
+
+        List<Notification> notifications = service.findUntriggeredNotifications(AVAX_NOTIFICATION.getAsset());
 
         assertEquals(1, notifications.size());
     }

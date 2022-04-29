@@ -104,7 +104,7 @@ class NotificationControllerTest {
         List<Notification> notifications = List.of(BNB_NOTIFICATION);
         String outputJson = mapper.writeValueAsString(notifications);
 
-        when(service.findNotificationsByTriggered(BNB_NOTIFICATION.getAsset())).thenReturn(notifications);
+        when(service.findTriggeredNotifications(BNB_NOTIFICATION.getAsset())).thenReturn(notifications);
 
         this.mockMvc.perform(get("/notifications/triggered?asset=" + BNB_NOTIFICATION.getAsset()))
                 .andExpect(status().isOk())

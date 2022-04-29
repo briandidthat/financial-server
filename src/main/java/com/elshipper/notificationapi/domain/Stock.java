@@ -3,14 +3,18 @@ package com.elshipper.notificationapi.domain;
 public enum Stock {
     IBM("IBM"),
     VOO("VOO"),
+    VISA("V"),
     APPLE("AAPL"),
     GOOGLE("GOOG"),
     MICROSOFT("MSFT"),
     TESLA("TSLA"),
     NETFLIX("NFLX"),
-    AMAZON("AMZN");
+    AMAZON("AMZN"),
+    NVIDIA("NVDA"),
 
-    private String symbol;
+    MASTERCARD("MA");
+
+    private final String symbol;
 
     Stock(String symbol) {
         this.symbol = symbol;
