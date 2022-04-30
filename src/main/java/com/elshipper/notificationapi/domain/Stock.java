@@ -11,10 +11,10 @@ public enum Stock {
     NETFLIX("NFLX"),
     AMAZON("AMZN"),
     NVIDIA("NVDA"),
-
     MASTERCARD("MA");
 
     private final String symbol;
+    private final String type = "STOCK";
 
     Stock(String symbol) {
         this.symbol = symbol;

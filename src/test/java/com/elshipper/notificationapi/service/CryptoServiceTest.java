@@ -22,9 +22,9 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class CryptoServiceTest {
-    private final BinanceTickerResponse BTC_USDT = new BinanceTickerResponse(Cryptocurrency.BTC.getPair(), "40102.44");
-    private final BinanceTickerResponse BNB_USDT = new BinanceTickerResponse(Cryptocurrency.BNB.getPair(), "389.22");
-    private final BinanceTickerResponse ETH_USDT = new BinanceTickerResponse(Cryptocurrency.ETH.getPair(), "2900.24");
+    private final BinanceTickerResponse BTC_USDT = new BinanceTickerResponse(Cryptocurrency.BTC.getSymbol(), "40102.44");
+    private final BinanceTickerResponse BNB_USDT = new BinanceTickerResponse(Cryptocurrency.BNB.getSymbol(), "389.22");
+    private final BinanceTickerResponse ETH_USDT = new BinanceTickerResponse(Cryptocurrency.ETH.getSymbol(), "2900.24");
     private final DebankBalanceResponse GUPPY = new DebankBalanceResponse("21.234", new ArrayList<>());
     private final DebankBalanceResponse WHALE = new DebankBalanceResponse("3000000.23", new ArrayList<>());
 
@@ -43,32 +43,32 @@ class CryptoServiceTest {
 
     @BeforeEach
     void setUp() {
-        when(restTemplate.getForEntity(binanceEndpoint + Cryptocurrency.BTC.getPair(), BinanceTickerResponse.class)).thenReturn(ResponseEntity.ok(BTC_USDT));
-        when(restTemplate.getForEntity(binanceEndpoint + Cryptocurrency.BNB.getPair(), BinanceTickerResponse.class)).thenReturn(ResponseEntity.ok(BNB_USDT));
-        when(restTemplate.getForEntity(binanceEndpoint + Cryptocurrency.ETH.getPair(), BinanceTickerResponse.class)).thenReturn(ResponseEntity.ok(ETH_USDT));
+        when(restTemplate.getForEntity(binanceEndpoint + Cryptocurrency.BTC.getSymbol(), BinanceTickerResponse.class)).thenReturn(ResponseEntity.ok(BTC_USDT));
+        when(restTemplate.getForEntity(binanceEndpoint + Cryptocurrency.BNB.getSymbol(), BinanceTickerResponse.class)).thenReturn(ResponseEntity.ok(BNB_USDT));
+        when(restTemplate.getForEntity(binanceEndpoint + Cryptocurrency.ETH.getSymbol(), BinanceTickerResponse.class)).thenReturn(ResponseEntity.ok(ETH_USDT));
         when(restTemplate.getForEntity(debankEndpoint + guppyAddress, DebankBalanceResponse.class)).thenReturn(ResponseEntity.ok(GUPPY));
         when(restTemplate.getForEntity(debankEndpoint + whaleAddress, DebankBalanceResponse.class)).thenReturn(ResponseEntity.ok(WHALE));
     }
 
     @Test
     void getTickerPrice() {
-        BinanceTickerResponse tickerResponse = cryptoService.getTickerPrice(Cryptocurrency.BTC.getPair());
+        BinanceTickerResponse tickerResponse = cryptoService.getTickerPrice(Cryptocurrency.BTC.getSymbol());
 
         assertEquals(BTC_USDT, tickerResponse);
     }
 
     @Test
     void getTickerPricesSync() {
-        List<BinanceTickerResponse> responses = cryptoService.getTickerPricesSync(List.of(Cryptocurrency.BTC.getPair(),
-                Cryptocurrency.BNB.getPair(), Cryptocurrency.ETH.getPair()));
+        List<BinanceTickerResponse> responses = cryptoService.getTickerPricesSync(List.of(Cryptocurrency.BTC.getSymbol(),
+                Cryptocurrency.BNB.getSymbol(), Cryptocurrency.ETH.getSymbol()));
 
         assertIterableEquals(PRICES, responses);
     }
 
     @Test
     void getTickerPricesAsync() {
-        List<BinanceTickerResponse> responses = cryptoService.getTickerPricesAsync(List.of(Cryptocurrency.BTC.getPair(),
-                Cryptocurrency.BNB.getPair(), Cryptocurrency.ETH.getPair()));
+        List<BinanceTickerResponse> responses = cryptoService.getTickerPricesAsync(List.of(Cryptocurrency.BTC.getSymbol(),
+                Cryptocurrency.BNB.getSymbol(), Cryptocurrency.ETH.getSymbol()));
 
         assertIterableEquals(PRICES, responses);
     }

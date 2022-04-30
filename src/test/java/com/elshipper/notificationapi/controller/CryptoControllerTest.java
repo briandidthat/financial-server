@@ -24,9 +24,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(CryptoController.class)
 class CryptoControllerTest {
-    private final BinanceTickerResponse BTC_USDT = new BinanceTickerResponse(Cryptocurrency.BTC.getPair(), "40102.44");
-    private final BinanceTickerResponse BNB_USDT = new BinanceTickerResponse(Cryptocurrency.BNB.getPair(), "389.22");
-    private final BinanceTickerResponse ETH_USDT = new BinanceTickerResponse(Cryptocurrency.ETH.getPair(), "2900.24");
+    private final BinanceTickerResponse BTC_USDT = new BinanceTickerResponse(Cryptocurrency.BTC.getSymbol(), "40102.44");
+    private final BinanceTickerResponse BNB_USDT = new BinanceTickerResponse(Cryptocurrency.BNB.getSymbol(), "389.22");
+    private final BinanceTickerResponse ETH_USDT = new BinanceTickerResponse(Cryptocurrency.ETH.getSymbol(), "2900.24");
     private final DebankBalanceResponse GUPPY = new DebankBalanceResponse("21.234", new ArrayList<>());
     private final DebankBalanceResponse WHALE = new DebankBalanceResponse("3000000.23", new ArrayList<>());
     private final String guppyAddress = "0x344532524";
@@ -47,9 +47,9 @@ class CryptoControllerTest {
     void getCryptoPrice() throws Exception {
         String outputJson = mapper.writeValueAsString(BTC_USDT);
 
-        when(service.getTickerPrice(Cryptocurrency.BTC.getPair())).thenReturn(BTC_USDT);
+        when(service.getTickerPrice(Cryptocurrency.BTC.getSymbol())).thenReturn(BTC_USDT);
 
-        this.mockMvc.perform(get("/crypto/tickers").param("ticker",Cryptocurrency.BTC.getPair()))
+        this.mockMvc.perform(get("/crypto/tickers").param("ticker",Cryptocurrency.BTC.getSymbol()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
@@ -58,7 +58,7 @@ class CryptoControllerTest {
     @Test
     void getMultipleCryptoPrices() throws Exception {
         List<BinanceTickerResponse> responses = List.of(BTC_USDT, BNB_USDT, ETH_USDT);
-        List<String> tickers = List.of(Cryptocurrency.BTC.getPair(), Cryptocurrency.BNB.getPair(), Cryptocurrency.ETH.getPair());
+        List<String> tickers = List.of(Cryptocurrency.BTC.getSymbol(), Cryptocurrency.BNB.getSymbol(), Cryptocurrency.ETH.getSymbol());
 
         when(service.getTickerPricesAsync(tickers)).thenReturn(responses);
 

@@ -10,21 +10,24 @@ public enum Cryptocurrency {
     ATOM("ATOMUSDT"),
     AVAX("AVAXUSDT");
 
+    private final String symbol;
+    private final String type = "CRYPTO";
 
-    private final String pair;
-
-    Cryptocurrency(String pair) {
-        this.pair = pair;
-    }
-
-    public String getPair() {
-        return pair;
+    Cryptocurrency(String symbol) {
+        this.symbol = symbol;
     }
 
     @Override
     public String toString() {
         return "Cryptocurrency{" +
-                "pair='" + pair + '\'' +
+                "pair='" + symbol + '\'' +
                 '}';
+    }
+
+    public String getSymbol() {
+        return this.symbol;
+    }
+    public String getType() {
+        return this.type;
     }
 }

@@ -22,15 +22,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(NotificationController.class)
 class NotificationControllerTest {
-    private final Notification TO_SAVE = new Notification(Cryptocurrency.AVAX.getPair(), "54.00", "down",
+    private final Notification TO_SAVE = new Notification(Cryptocurrency.AVAX.getSymbol(), "54.00", "down",
             "everytime", false);
-    private final Notification AVAX_NOTIFICATION = new Notification(1, Cryptocurrency.AVAX.getPair(), "54.00",
+    private final Notification AVAX_NOTIFICATION = new Notification(1, Cryptocurrency.AVAX.getSymbol(), "54.00",
             "down", "everytime", false);
-    private final Notification BTC_NOTIFICATION = new Notification(2, Cryptocurrency.BTC.getPair(), "40000.00",
+    private final Notification BTC_NOTIFICATION = new Notification(2, Cryptocurrency.BTC.getSymbol(), "40000.00",
             "down", "everytime", false);
-    private final Notification BNB_NOTIFICATION = new Notification(3, Cryptocurrency.BNB.getPair(), "380.00",
+    private final Notification BNB_NOTIFICATION = new Notification(3, Cryptocurrency.BNB.getSymbol(), "380.00",
             "down", "everytime", true);
-    private final Notification BNB_UPDATED = new Notification(3, Cryptocurrency.BNB.getPair(), "380.00",
+    private final Notification BNB_UPDATED = new Notification(3, Cryptocurrency.BNB.getSymbol(), "380.00",
             "down", "once", true);
 
     @Autowired
