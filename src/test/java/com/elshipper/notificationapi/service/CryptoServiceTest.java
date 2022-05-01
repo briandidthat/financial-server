@@ -21,6 +21,7 @@ import static org.mockito.Mockito.when;
 
 
 @SpringBootTest
+@MockBean(SchedulingService.class)
 class CryptoServiceTest {
     private final BinanceTickerResponse BTC_USDT = new BinanceTickerResponse(Cryptocurrency.BTC.getSymbol(), "40102.44");
     private final BinanceTickerResponse BNB_USDT = new BinanceTickerResponse(Cryptocurrency.BNB.getSymbol(), "389.22");

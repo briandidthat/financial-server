@@ -10,4 +10,5 @@ import java.util.List;
 public interface NotificationRepository extends JpaRepository<Notification, Integer> {
     List<Notification> findByTriggered(boolean status);
     List<Notification> findByAsset(String asset);
+    List<Notification> findByAssetType(String assetType);
 }

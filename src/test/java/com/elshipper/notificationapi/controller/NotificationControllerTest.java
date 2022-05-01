@@ -1,8 +1,10 @@
 package com.elshipper.notificationapi.controller;
 
+import com.elshipper.notificationapi.domain.AssetType;
 import com.elshipper.notificationapi.domain.Cryptocurrency;
 import com.elshipper.notificationapi.domain.Notification;
 import com.elshipper.notificationapi.service.NotificationService;
+import com.elshipper.notificationapi.service.SchedulingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,17 +23,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(NotificationController.class)
+@MockBean(SchedulingService.class)
 class NotificationControllerTest {
-    private final Notification TO_SAVE = new Notification(Cryptocurrency.AVAX.getSymbol(), "54.00", "down",
-            "everytime", false);
-    private final Notification AVAX_NOTIFICATION = new Notification(1, Cryptocurrency.AVAX.getSymbol(), "54.00",
-            "down", "everytime", false);
-    private final Notification BTC_NOTIFICATION = new Notification(2, Cryptocurrency.BTC.getSymbol(), "40000.00",
-            "down", "everytime", false);
-    private final Notification BNB_NOTIFICATION = new Notification(3, Cryptocurrency.BNB.getSymbol(), "380.00",
-            "down", "everytime", true);
-    private final Notification BNB_UPDATED = new Notification(3, Cryptocurrency.BNB.getSymbol(), "380.00",
-            "down", "once", true);
+    private final Notification TO_SAVE = new Notification(Cryptocurrency.AVAX.getSymbol(),
+            AssetType.CRYPTO.getType(), "54.00", "down", "everytime", false);
+    private final Notification AVAX_NOTIFICATION = new Notification(1, Cryptocurrency.AVAX.getSymbol(),
+            AssetType.CRYPTO.getType(), "54.00", "down", "everytime", false);
+    private final Notification BTC_NOTIFICATION = new Notification(2, Cryptocurrency.BTC.getSymbol(),
+            AssetType.CRYPTO.getType(), "40000.00", "down", "everytime", false);
+    private final Notification BNB_NOTIFICATION = new Notification(3, Cryptocurrency.BNB.getSymbol(),
+            AssetType.CRYPTO.getType(), "380.00", "down", "everytime", true);
+    private final Notification BNB_UPDATED = new Notification(3, Cryptocurrency.BNB.getSymbol(),
+            AssetType.CRYPTO.getType(), "380.00", "down", "once", true);
 
     @Autowired
     private ObjectMapper mapper;
@@ -104,10 +107,9 @@ class NotificationControllerTest {
         List<Notification> notifications = List.of(BNB_NOTIFICATION);
         String outputJson = mapper.writeValueAsString(notifications);
 
-        when(service.findTriggeredNotifications(BNB_NOTIFICATION.getAsset())).thenReturn(notifications);
+        when(service.findTriggeredNotifications()).thenReturn(notifications);
 
         this.mockMvc.perform(get("/notifications/status")
-                        .param("asset", BNB_NOTIFICATION.getAsset())
                         .param("triggered", String.valueOf(BNB_NOTIFICATION.isTriggered())))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
@@ -119,10 +121,39 @@ class NotificationControllerTest {
         List<Notification> notifications = List.of(BTC_NOTIFICATION);
         String outputJson = mapper.writeValueAsString(notifications);
 
-        when(service.findUntriggeredNotifications(BTC_NOTIFICATION.getAsset())).thenReturn(notifications);
+        when(service.findUntriggeredNotifications()).thenReturn(notifications);
 
         this.mockMvc.perform(get("/notifications/status")
-                        .param("asset", BTC_NOTIFICATION.getAsset())
+                        .param("triggered", String.valueOf(BTC_NOTIFICATION.isTriggered())))
+                .andExpect(status().isOk())
+                .andExpect(content().json(outputJson))
+                .andDo(print());
+    }
+
+    @Test
+    void getTriggeredNotificationsForAsset() throws Exception {
+        List<Notification> notifications = List.of(BNB_NOTIFICATION);
+        String outputJson = mapper.writeValueAsString(notifications);
+
+        when(service.findTriggeredNotificationsForAsset(BNB_NOTIFICATION.getAsset())).thenReturn(notifications);
+
+        this.mockMvc.perform(get("/notifications/status/asset")
+                        .param("symbol", BNB_NOTIFICATION.getAsset())
+                        .param("triggered", String.valueOf(BNB_NOTIFICATION.isTriggered())))
+                .andExpect(status().isOk())
+                .andExpect(content().json(outputJson))
+                .andDo(print());
+    }
+
+    @Test
+    void getUntriggeredNotificationsForAsset() throws Exception {
+        List<Notification> notifications = List.of(BTC_NOTIFICATION);
+        String outputJson = mapper.writeValueAsString(notifications);
+
+        when(service.findUntriggeredNotificationsForAsset(BTC_NOTIFICATION.getAsset())).thenReturn(notifications);
+
+        this.mockMvc.perform(get("/notifications/status/asset")
+                        .param("symbol", BTC_NOTIFICATION.getAsset())
                         .param("triggered", String.valueOf(BTC_NOTIFICATION.isTriggered())))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))

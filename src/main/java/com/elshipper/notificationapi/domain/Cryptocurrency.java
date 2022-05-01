@@ -11,7 +11,6 @@ public enum Cryptocurrency {
     AVAX("AVAXUSDT");
 
     private final String symbol;
-    private final String type = "CRYPTO";
 
     Cryptocurrency(String symbol) {
         this.symbol = symbol;
@@ -26,8 +25,5 @@ public enum Cryptocurrency {
 
     public String getSymbol() {
         return this.symbol;
-    }
-    public String getType() {
-        return this.type;
     }
 }

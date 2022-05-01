@@ -14,6 +14,8 @@ public class Notification {
     @NotNull
     private String asset;
     @NotNull
+    private String assetType;
+    @NotNull
     private String value;
     @NotNull
     private String direction;
@@ -24,16 +26,17 @@ public class Notification {
     public Notification() {
     }
 
-    public Notification(String asset, String value, String direction, String frequency, Boolean triggered) {
+    public Notification(String asset, String assetType, String value, String direction, String frequency, Boolean triggered) {
         this.asset = asset;
+        this.assetType = assetType;
         this.value = value;
         this.direction = direction;
         this.frequency = frequency;
         this.triggered = triggered;
     }
 
-    public Notification(Integer id, String asset, String value, String direction, String frequency, Boolean triggered) {
-        this(asset, value, direction, frequency, triggered);
+    public Notification(Integer id, String asset, String assetType, String value, String direction, String frequency, Boolean triggered) {
+        this(asset, assetType, value, direction, frequency, triggered);
         this.id = id;
     }
 
@@ -51,6 +54,14 @@ public class Notification {
 
     public void setAsset(String asset) {
         this.asset = asset;
+    }
+
+    public String getAssetType() {
+        return assetType;
+    }
+
+    public void setAssetType(String assetType) {
+        this.assetType = assetType;
     }
 
     public String getValue() {
@@ -77,11 +88,11 @@ public class Notification {
         this.frequency = frequency;
     }
 
-    public Boolean isTriggered() {
+    public boolean isTriggered() {
         return triggered;
     }
 
-    public void setTriggered(Boolean triggered) {
+    public void setTriggered(boolean triggered) {
         this.triggered = triggered;
     }
 
@@ -91,12 +102,13 @@ public class Notification {
         if (o == null || getClass() != o.getClass()) return false;
         Notification that = (Notification) o;
         return Objects.equals(id, that.id) && Objects.equals(asset, that.asset) &&
-                Objects.equals(value, that.value) && Objects.equals(direction, that.direction) &&
-                Objects.equals(frequency, that.frequency) && Objects.equals(triggered, that.triggered);
+                Objects.equals(assetType, that.assetType) && Objects.equals(value, that.value) &&
+                Objects.equals(direction, that.direction) && Objects.equals(frequency, that.frequency) &&
+                Objects.equals(triggered, that.triggered);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, asset, value, direction, frequency, triggered);
+        return Objects.hash(id, asset, assetType, value, direction, frequency, triggered);
     }
 }

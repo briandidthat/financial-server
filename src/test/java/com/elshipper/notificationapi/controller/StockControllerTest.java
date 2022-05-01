@@ -2,6 +2,7 @@ package com.elshipper.notificationapi.controller;
 
 import com.elshipper.notificationapi.domain.Stock;
 import com.elshipper.notificationapi.domain.rest.AlphaVantageQuoteResponse;
+import com.elshipper.notificationapi.service.SchedulingService;
 import com.elshipper.notificationapi.service.StockService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @WebMvcTest(StockController.class)
+@MockBean(SchedulingService.class)
 class StockControllerTest {
     private final AlphaVantageQuoteResponse IBM_RESPONSE = new AlphaVantageQuoteResponse(new AlphaVantageQuoteResponse.Quote());
     private final AlphaVantageQuoteResponse VOO_RESPONSE = new AlphaVantageQuoteResponse(new AlphaVantageQuoteResponse.Quote());
