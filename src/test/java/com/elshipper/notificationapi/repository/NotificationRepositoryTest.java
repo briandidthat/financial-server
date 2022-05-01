@@ -23,9 +23,9 @@ class NotificationRepositoryTest {
     @BeforeEach
     void setUp() {
         repository.deleteAll();
-        notification1 = new Notification(Cryptocurrency.BTC.getPair(), "42345.22",
+        notification1 = new Notification(Cryptocurrency.BTC.getSymbol(), "42345.22",
                 "down", "once", true);
-        notification2 = new Notification(Cryptocurrency.FTM.getPair(), "1.34",
+        notification2 = new Notification(Cryptocurrency.FTM.getSymbol(), "1.34",
                 "down", "once", false);
     }
 
@@ -54,7 +54,7 @@ class NotificationRepositoryTest {
         repository.save(notification1);
         repository.save(notification2);
 
-        List<Notification> notifications = repository.findByAsset(Cryptocurrency.FTM.getPair());
+        List<Notification> notifications = repository.findByAsset(Cryptocurrency.FTM.getSymbol());
 
         assertEquals(1, notifications.size());
     }

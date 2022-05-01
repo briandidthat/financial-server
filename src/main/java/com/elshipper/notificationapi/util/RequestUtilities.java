@@ -9,7 +9,7 @@ public class RequestUtilities {
     private RequestUtilities() {}
     public static boolean validateCryptocurrency(String ticker) {
         for (Cryptocurrency cryptocurrency : Cryptocurrency.values()) {
-            if (cryptocurrency.getPair().equalsIgnoreCase(ticker)) {
+            if (cryptocurrency.getSymbol().equalsIgnoreCase(ticker)) {
                 return true;
             }
         }
@@ -44,4 +44,5 @@ public class RequestUtilities {
         }
         return counter == symbols.size();
     }
+
 }
