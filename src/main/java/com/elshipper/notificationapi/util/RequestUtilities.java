@@ -1,9 +1,14 @@
 package com.elshipper.notificationapi.util;
 
+import com.elshipper.notificationapi.domain.AssetType;
 import com.elshipper.notificationapi.domain.Cryptocurrency;
+import com.elshipper.notificationapi.domain.Notification;
 import com.elshipper.notificationapi.domain.Stock;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RequestUtilities {
     private RequestUtilities() {}
@@ -17,13 +22,12 @@ public class RequestUtilities {
     }
 
     public static boolean validateCryptocurrencies(List<String> tickers) {
-        int count = 0;
         for (String ticker : tickers) {
-            if (validateCryptocurrency(ticker)) {
-                count++;
+            if (!validateCryptocurrency(ticker)) {
+                return false;
             }
         }
-        return count != tickers.size();
+        return true;
     }
 
     public static boolean validateStockSymbol(String symbol) {
@@ -36,13 +40,33 @@ public class RequestUtilities {
     }
 
     public static boolean validateStockSymbols(List<String> symbols) {
-        int counter = 0;
         for (String symbol : symbols) {
-            if (validateStockSymbol(symbol)) {
-                counter++;
+            if (!validateStockSymbol(symbol)) {
+                return false;
             }
         }
-        return counter == symbols.size();
+        return true;
+    }
+
+
+    public static Map<String, List<String>> extractSymbols(List<Notification> notifications) {
+        final Map<String, List<String>> assets = new HashMap<>();
+        List<String> crypto = new ArrayList<>();
+        List<String> stocks = new ArrayList<>();
+        notifications.forEach((notification -> {
+            switch (notification.getAssetType()) {
+                case "CRYPTO":
+                    crypto.add(notification.getAsset());
+                    break;
+                case "STOCK":
+                    stocks.add(notification.getAsset());
+                default:
+                    break;
+            }
+        }));
+        assets.put(AssetType.CRYPTO.getType(), crypto);
+        assets.put(AssetType.STOCK.getType(), stocks);
+        return assets;
     }
 
 }

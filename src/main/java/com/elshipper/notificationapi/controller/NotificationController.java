@@ -47,16 +47,29 @@ public class NotificationController {
         return "successful";
     }
 
-    @GetMapping("/status")
+    @GetMapping("status")
     @ResponseStatus(HttpStatus.OK)
-    public List<Notification> getNotificationsByStatus(@RequestParam String asset, @RequestParam(required = false, defaultValue = "false") boolean triggered) {
+    public List<Notification> getNotificationsByStatus(@RequestParam boolean triggered) {
         final List<Notification> notifications;
         if (triggered) {
-            notifications = service.findTriggeredNotifications(asset);
+            notifications = service.findTriggeredNotifications();
         } else {
-            notifications = service.findUntriggeredNotifications(asset);
+            notifications = service.findUntriggeredNotifications();
         }
+        if (notifications.size() == 0)
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "No existing notifications");
+        return notifications;
+    }
 
+    @GetMapping("/status/asset")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Notification> getNotificationsByStatusForAsset(@RequestParam String symbol, @RequestParam(required = false, defaultValue = "false") boolean triggered) {
+        final List<Notification> notifications;
+        if (triggered) {
+            notifications = service.findTriggeredNotificationsForAsset(symbol);
+        } else {
+            notifications = service.findUntriggeredNotificationsForAsset(symbol);
+        }
         if (notifications.size() == 0)
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "No notifications for that asset");
         return notifications;

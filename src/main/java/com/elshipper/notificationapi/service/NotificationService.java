@@ -28,6 +28,11 @@ public class NotificationService {
         return repository.save(notification);
     }
 
+    public List<Notification> saveAllNotifications(List<Notification> notifications) {
+        logger.info("Storing multiple notifications for {}", notifications.toString());
+        return repository.saveAll(notifications);
+    }
+
     public Notification updateNotification(Notification notification) {
         Optional<Notification> fromRepo = repository.findById(notification.getId());
         if (fromRepo.isPresent()) {
@@ -52,13 +57,23 @@ public class NotificationService {
         return repository.findAll();
     }
 
-    public List<Notification> findTriggeredNotifications(String asset) {
+    public List<Notification> findTriggeredNotifications() {
+        logger.info("Fetching all triggered notifications");
+        return repository.findByTriggered(true);
+    }
+
+    public List<Notification> findUntriggeredNotifications() {
+        logger.info("Fetching all untriggered notifications");
+        return repository.findByTriggered(false);
+    }
+
+    public List<Notification> findTriggeredNotificationsForAsset(String asset) {
         logger.info("Fetching triggered notifications for {}", asset);
         final List<Notification> triggered = repository.findByTriggered(true);
         return triggered.stream().filter(f -> f.getAsset().equalsIgnoreCase(asset)).collect(Collectors.toList());
     }
 
-    public List<Notification> findUntriggeredNotifications(String asset) {
+    public List<Notification> findUntriggeredNotificationsForAsset(String asset) {
         logger.info("Fetching untriggered notifications for {}", asset);
         final List<Notification> untriggered = repository.findByTriggered(false);
         return untriggered.stream().filter(f -> f.getAsset().equalsIgnoreCase(asset)).collect(Collectors.toList());

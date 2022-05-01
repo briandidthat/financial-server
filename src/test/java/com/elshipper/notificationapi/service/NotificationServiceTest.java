@@ -1,5 +1,6 @@
 package com.elshipper.notificationapi.service;
 
+import com.elshipper.notificationapi.domain.AssetType;
 import com.elshipper.notificationapi.domain.Cryptocurrency;
 import com.elshipper.notificationapi.domain.Notification;
 import com.elshipper.notificationapi.repository.NotificationRepository;
@@ -17,11 +18,16 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class NotificationServiceTest {
-    private final Notification TO_SAVE = new Notification(Cryptocurrency.AVAX.getSymbol(), "54.00", "down", "everytime", false);
-    private final Notification AVAX_NOTIFICATION = new Notification(1, Cryptocurrency.AVAX.getSymbol(), "54.00", "down", "everytime", false);
-    private final Notification BTC_NOTIFICATION = new Notification(2, Cryptocurrency.BTC.getSymbol(), "40000.00", "down", "everytime", false);
-    private final Notification BNB_NOTIFICATION = new Notification(3, Cryptocurrency.BNB.getSymbol(), "380.00", "down", "everytime", true);
-    private final Notification BNB_UPDATED = new Notification(3, Cryptocurrency.BNB.getSymbol(), "380.00", "down", "once", true);
+    private final Notification TO_SAVE = new Notification(Cryptocurrency.AVAX.getSymbol(),
+            AssetType.CRYPTO.getType(), "54.00", "down", "everytime", false);
+    private final Notification AVAX_NOTIFICATION = new Notification(1, Cryptocurrency.AVAX.getSymbol(),
+            AssetType.CRYPTO.getType(), "54.00", "down", "everytime", false);
+    private final Notification BTC_NOTIFICATION = new Notification(2, Cryptocurrency.BTC.getSymbol(),
+            AssetType.CRYPTO.getType(), "40000.00", "down", "everytime", false);
+    private final Notification BNB_NOTIFICATION = new Notification(3, Cryptocurrency.BNB.getSymbol(),
+            AssetType.CRYPTO.getType(), "380.00", "down", "everytime", true);
+    private final Notification BNB_UPDATED = new Notification(3, Cryptocurrency.BNB.getSymbol(),
+            AssetType.CRYPTO.getType(), "380.00", "down", "once", true);
 
     @MockBean
     private NotificationRepository repository;
@@ -69,11 +75,12 @@ class NotificationServiceTest {
         assertEquals(2, notifications.size());
     }
 
+
     @Test
     void findNotificationsByTriggered() {
         when(repository.findByTriggered(true)).thenReturn(List.of(BNB_NOTIFICATION));
 
-        List<Notification> notifications = service.findTriggeredNotifications(BNB_NOTIFICATION.getAsset());
+        List<Notification> notifications = service.findTriggeredNotifications();
 
         assertEquals(1, notifications.size());
     }
@@ -82,7 +89,25 @@ class NotificationServiceTest {
     void findNotificationsByTriggeredFalse() {
         when(repository.findByTriggered(false)).thenReturn(List.of(AVAX_NOTIFICATION));
 
-        List<Notification> notifications = service.findUntriggeredNotifications(AVAX_NOTIFICATION.getAsset());
+        List<Notification> notifications = service.findUntriggeredNotifications();
+
+        assertEquals(1, notifications.size());
+    }
+
+    @Test
+    void findNotificationsByTriggeredForAsset() {
+        when(repository.findByTriggered(true)).thenReturn(List.of(BNB_NOTIFICATION));
+
+        List<Notification> notifications = service.findTriggeredNotificationsForAsset(BNB_NOTIFICATION.getAsset());
+
+        assertEquals(1, notifications.size());
+    }
+
+    @Test
+    void findNotificationsByTriggeredFalseForAsset() {
+        when(repository.findByTriggered(false)).thenReturn(List.of(AVAX_NOTIFICATION));
+
+        List<Notification> notifications = service.findUntriggeredNotificationsForAsset(AVAX_NOTIFICATION.getAsset());
 
         assertEquals(1, notifications.size());
     }
@@ -94,5 +119,38 @@ class NotificationServiceTest {
         List<Notification> notifications = service.findNotificationsByAsset(AVAX_NOTIFICATION.getAsset());
 
         assertEquals(1, notifications.size());
+    }
+
+    @Test
+    void saveAllNotifications() {
+        List<Notification> expected = List.of(AVAX_NOTIFICATION, BTC_NOTIFICATION, BTC_NOTIFICATION);
+
+        when(repository.saveAll(expected)).thenReturn(expected);
+
+        List<Notification> actual = service.saveAllNotifications(expected);
+
+        assertIterableEquals(expected, actual);
+    }
+
+    @Test
+    void findTriggeredNotifications() {
+        List<Notification> expected = List.of(BNB_NOTIFICATION);
+
+        when(repository.findByTriggered(true)).thenReturn(expected);
+
+        List<Notification> actual = service.findTriggeredNotifications();
+
+        assertIterableEquals(expected, actual);
+    }
+
+    @Test
+    void findUntriggeredNotifications() {
+        List<Notification> expected = List.of(AVAX_NOTIFICATION, BTC_NOTIFICATION);
+
+        when(repository.findByTriggered(false)).thenReturn(expected);
+
+        List<Notification> actual = service.findUntriggeredNotifications();
+
+        assertIterableEquals(expected, actual);
     }
 }

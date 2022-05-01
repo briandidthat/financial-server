@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@MockBean(SchedulingService.class)
 class StockServiceTest {
     private final String alphaVantage = "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=";
     private final String IBM_SYMBOL = "IBM";

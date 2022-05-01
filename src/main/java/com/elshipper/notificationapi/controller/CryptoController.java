@@ -29,7 +29,7 @@ public class CryptoController {
 
     @GetMapping("/tickers/multiple")
     public List<BinanceTickerResponse> getMultipleCryptoPrices(@RequestBody List<String> tickers) {
-        if (tickers.size() == 0 || RequestUtilities.validateCryptocurrencies(tickers)) {
+        if (tickers.size() == 0 || !RequestUtilities.validateCryptocurrencies(tickers)) {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid ticker");
         }
         return service.getTickerPricesAsync(tickers);
@@ -37,7 +37,7 @@ public class CryptoController {
 
     @GetMapping("/tickers/sequential")
     public List<BinanceTickerResponse> getMultipleCryptoPricesSync(@RequestBody List<String> tickers) {
-        if (tickers.size() == 0 || RequestUtilities.validateCryptocurrencies(tickers)) {
+        if (tickers.size() == 0 || !RequestUtilities.validateCryptocurrencies(tickers)) {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid ticker");
         }
         return service.getTickerPricesSync(tickers);
