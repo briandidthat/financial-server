@@ -4,18 +4,18 @@ import com.elshipper.notificationapi.domain.AssetType;
 import com.elshipper.notificationapi.domain.Cryptocurrency;
 import com.elshipper.notificationapi.domain.Notification;
 import com.elshipper.notificationapi.domain.Stock;
-import com.elshipper.notificationapi.repository.NotificationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class SchedulingServiceTest {
@@ -25,6 +25,8 @@ class SchedulingServiceTest {
     private CryptoService cryptoService;
     @MockBean
     private StockService stockService;
+    @Autowired
+    private SchedulingService schedulingService;
 
     private final Notification btc = new Notification(Cryptocurrency.BTC.getSymbol(), AssetType.CRYPTO.getType(),
             "42345.22", "down", "once", true);
@@ -37,10 +39,7 @@ class SchedulingServiceTest {
 
     @BeforeEach
     void setUp() {
+        when(notificationService.findTriggeredNotifications()).thenReturn(List.of(btc, ftm, ibm, voo));
     }
 
-    @Test
-    void checkNotifications() {
-
-    }
 }

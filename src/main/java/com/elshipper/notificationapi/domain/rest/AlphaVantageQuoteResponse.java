@@ -3,7 +3,7 @@ package com.elshipper.notificationapi.domain.rest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class AlphaVantageQuoteResponse {
+public class AlphaVantageQuoteResponse implements AssetResponse {
     @JsonProperty(value = "Global Quote")
     private Quote quote;
 
@@ -14,6 +14,7 @@ public class AlphaVantageQuoteResponse {
         this.quote = quote;
     }
 
+    @Override
     public String getSymbol() {
         return quote.symbol;
     }
@@ -30,7 +31,8 @@ public class AlphaVantageQuoteResponse {
         return quote.low;
     }
 
-    public String getCurrentPrice() {
+    @Override
+    public String getPrice() {
         return quote.price;
     }
 
