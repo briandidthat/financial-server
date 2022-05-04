@@ -1,6 +1,6 @@
 package com.elshipper.notificationapi.domain.rest;
 
-public class BinanceTickerResponse {
+public class BinanceTickerResponse implements AssetResponse {
     private String symbol;
     private String price;
 
@@ -13,6 +13,7 @@ public class BinanceTickerResponse {
         this.price = price;
     }
 
+    @Override
     public String getSymbol() {
         return symbol;
     }
@@ -21,6 +22,7 @@ public class BinanceTickerResponse {
         this.symbol = symbol;
     }
 
+    @Override
     public String getPrice() {
         return price;
     }

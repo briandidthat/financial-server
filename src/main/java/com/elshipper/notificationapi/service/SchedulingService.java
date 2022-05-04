@@ -5,6 +5,7 @@ import com.elshipper.notificationapi.domain.Cryptocurrency;
 import com.elshipper.notificationapi.domain.Notification;
 import com.elshipper.notificationapi.domain.Stock;
 import com.elshipper.notificationapi.domain.rest.AlphaVantageQuoteResponse;
+import com.elshipper.notificationapi.domain.rest.AssetResponse;
 import com.elshipper.notificationapi.domain.rest.BinanceTickerResponse;
 import com.elshipper.notificationapi.util.RequestUtilities;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +49,7 @@ public class SchedulingService {
     }
 
     @Scheduled(fixedRate = 60000L)
-    public void checkNotifications() {
+    public void run() {
         final List<Notification> notifications = notificationService.findUntriggeredNotifications();
         final Map<String, List<String>> symbols = RequestUtilities.extractSymbols(notifications);
         final List<BinanceTickerResponse> cryptoPrices;
@@ -58,6 +60,9 @@ public class SchedulingService {
             logger.info("symbols: {}",symbols);
             cryptoPrices = cryptoService.getTickerPricesAsync(symbols.get(AssetType.CRYPTO.getType()));
             stockPrices = stockService.getMultipleQuotes(symbols.get(AssetType.STOCK.getType()));
+
+
+
             logger.info("cryptoPrices: {}", cryptoPrices);
             logger.info("stock prices {}", stockPrices);
         } catch (Exception e) {

@@ -47,7 +47,7 @@ public class NotificationController {
         return "successful";
     }
 
-    @GetMapping("status")
+    @GetMapping("/status")
     @ResponseStatus(HttpStatus.OK)
     public List<Notification> getNotificationsByStatus(@RequestParam boolean triggered) {
         final List<Notification> notifications;
