@@ -50,16 +50,7 @@ public class AlphaVantageQuoteResponse implements AssetResponse {
 
     @Override
     public String toString() {
-        return "AlphaVantageQuoteResponse{" +
-                "symbol=" + quote.symbol + ", " +
-                "open=" + quote.open + ", " +
-                "high=" + quote.high + ", " +
-                "low=" + quote.low + ", " +
-                "price=" + quote.price + ", " +
-                "previousClose=" + quote.previousClose + ", " +
-                "change=" + quote.change + ", " +
-                "percentChange=" + quote.percentChange +
-                '}';
+        return quote.toString();
     }
 
     public static class Quote {
@@ -79,5 +70,19 @@ public class AlphaVantageQuoteResponse implements AssetResponse {
         private String change;
         @JsonProperty("10. change percent")
         private String percentChange;
+
+        @Override
+        public String toString() {
+            return "Quote{" +
+                    "symbol='" + symbol + '\'' +
+                    ", open='" + open + '\'' +
+                    ", high='" + high + '\'' +
+                    ", low='" + low + '\'' +
+                    ", price='" + price + '\'' +
+                    ", previousClose='" + previousClose + '\'' +
+                    ", change='" + change + '\'' +
+                    ", percentChange='" + percentChange + '\'' +
+                    '}';
+        }
     }
 }
