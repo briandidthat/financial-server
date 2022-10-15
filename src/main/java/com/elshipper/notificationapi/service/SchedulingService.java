@@ -16,7 +16,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -60,9 +59,6 @@ public class SchedulingService {
             logger.info("symbols: {}",symbols);
             cryptoPrices = cryptoService.getTickerPricesAsync(symbols.get(AssetType.CRYPTO.getType()));
             stockPrices = stockService.getMultipleQuotes(symbols.get(AssetType.STOCK.getType()));
-
-
-
             logger.info("cryptoPrices: {}", cryptoPrices);
             logger.info("stock prices {}", stockPrices);
         } catch (Exception e) {
