@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: price-server
+
+server:
+  port: 8080
+
+apis:
+  coinbase:
+    baseUrl: "GET https://api.coinbase.com/v2"
+    available: "/currencies";
+    spotPrice: "/prices";
