@@ -1,8 +1,8 @@
 package com.toogroovy.notificationapi.controller;
 
-import com.toogroovy.notificationapi.domain.Stock;
-import com.toogroovy.notificationapi.domain.rest.AlphaVantageQuoteResponse;
-import com.toogroovy.notificationapi.service.StockService;
+import com.toogroovy.notificationapi.domain.Cryptocurrency;
+import com.toogroovy.notificationapi.domain.ApiResponse;
+import com.toogroovy.notificationapi.service.CryptoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,50 +20,46 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-@WebMvcTest(StockController.class)
-@MockBean(SchedulingService.class)
-class StockControllerTest {
-    private final AlphaVantageQuoteResponse IBM_RESPONSE = new AlphaVantageQuoteResponse(new AlphaVantageQuoteResponse.Quote());
-    private final AlphaVantageQuoteResponse VOO_RESPONSE = new AlphaVantageQuoteResponse(new AlphaVantageQuoteResponse.Quote());
-    private final AlphaVantageQuoteResponse TSLA_RESPONSE = new AlphaVantageQuoteResponse(new AlphaVantageQuoteResponse.Quote());
+@WebMvcTest(Controller.class)
+class ControllerTest {
+    private final ApiResponse BTC_USD = new ApiResponse(Cryptocurrency.BTC, "40102.44", "coinbase");
+    private final ApiResponse BNB_USD = new ApiResponse(Cryptocurrency.BNB, "389.22", "coinbase");
+    private final ApiResponse ETH_USD = new ApiResponse(Cryptocurrency.ETH, "2900.24", "coinbase");
 
     @Autowired
     private ObjectMapper mapper;
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private StockService service;
+    private CryptoService service;
 
     @BeforeEach
     void setUp() {
-
     }
 
     @Test
-    void getQuote() throws Exception {
-        String outputJson = mapper.writeValueAsString(IBM_RESPONSE);
+    void getCryptoPrice() throws Exception {
+        String outputJson = mapper.writeValueAsString(BTC_USD);
 
-        when(service.getQuote(Stock.IBM.getSymbol())).thenReturn(IBM_RESPONSE);
+        when(service.getSpotPrice(Cryptocurrency.BTC)).thenReturn(BTC_USD);
 
-        this.mockMvc.perform(get("/stocks/symbol").param("symbol", Stock.IBM.getSymbol()))
+        this.mockMvc.perform(get("/crypto/symbol").param("symbol",Cryptocurrency.BTC))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
     }
 
     @Test
-    void getQuotes() throws Exception {
-        List<String> symbols = List.of(Stock.IBM.getSymbol(), Stock.VOO.getSymbol(), Stock.TESLA.getSymbol());
-        List<AlphaVantageQuoteResponse> responses = List.of(IBM_RESPONSE, VOO_RESPONSE, TSLA_RESPONSE);
+    void getMultipleCryptoPrices() throws Exception {
+        List<ApiResponse> responses = List.of(BTC_USD, BNB_USD, ETH_USD);
+        List<String> symbols = List.of(Cryptocurrency.BTC, Cryptocurrency.BNB, Cryptocurrency.ETH);
+
+        when(service.getSpotPrices(symbols)).thenReturn(responses);
 
         String inputJson = mapper.writeValueAsString(symbols);
         String outputJson = mapper.writeValueAsString(responses);
 
-        when(service.getMultipleQuotes(symbols)).thenReturn(responses);
-
-        this.mockMvc.perform(get("/stocks/symbol/multiple")
-                        .accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(get("/crypto/symbols/multiple")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(inputJson))
                 .andExpect(status().isOk())
