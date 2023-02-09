@@ -8,13 +8,13 @@
 		<version>2.6.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.elshipper</groupId>
+	<groupId>com.toogroovy</groupId>
 	<artifactId>notification-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>notification-api</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
