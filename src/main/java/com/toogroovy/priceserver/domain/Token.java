@@ -1,28 +1,14 @@
 package com.toogroovy.priceserver.domain;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record Token (String code,
-                     String name,
-                     String color,
-                     Integer sortIndex,
-                     Integer exponent,
-                     String type,
-                     String addressRegex,
-                     String assetId) {
+import java.io.Serializable;
 
-    @Override
-    public String toString() {
-        return "Token{" +
-                "code='" + code + '\'' +
-                ", name='" + name + '\'' +
-                ", color='" + color + '\'' +
-                ", sortIndex=" + sortIndex +
-                ", exponent=" + exponent +
-                ", type='" + type + '\'' +
-                ", addressRegex='" + addressRegex + '\'' +
-                '}';
-    }
+@JsonIgnoreProperties(ignoreUnknown = true)
+public record Token(@JsonProperty("code") String code, @JsonProperty("name") String name,
+                    @JsonProperty("color") String color, @JsonProperty("sort_index") Integer sortIndex,
+                    @JsonProperty("exponent") Integer exponent, @JsonProperty("type") String type,
+                    @JsonProperty("address_regex") String addressRegex,
+                    @JsonProperty("asset_id") String assetId) implements Serializable {
 }
