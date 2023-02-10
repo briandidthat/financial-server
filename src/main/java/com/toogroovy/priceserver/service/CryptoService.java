@@ -1,5 +1,7 @@
 package com.toogroovy.priceserver.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.toogroovy.priceserver.domain.ApiResponse;
 import com.toogroovy.priceserver.domain.Token;
 import com.toogroovy.priceserver.util.RequestUtilities;
@@ -20,7 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -34,9 +36,12 @@ public class CryptoService {
     private volatile List<Token> availableTokens;
 
     public List<Token> getAvailableTokens() {
+        final ObjectMapper mapper = new ObjectMapper();
         try {
-            ResponseEntity<Token[]> response = restTemplate.getForEntity(coinbaseUrl + "/currencies/crypto", Token[].class);
-            return Arrays.asList(Objects.requireNonNull(response.getBody()));
+            ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/currencies/crypto", String.class);
+            Map<String, Token[]> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
+            Token[] tokens = result.get("data");
+            return Arrays.asList(tokens);
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
@@ -45,6 +50,7 @@ public class CryptoService {
 
     public ApiResponse getSpotPrice(String symbol) throws HttpClientErrorException {
         symbol = symbol.toUpperCase();
+
         if (!RequestUtilities.validateCryptocurrency(symbol, availableTokens)) {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid symbol");
         }
