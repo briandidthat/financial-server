@@ -1,7 +1,7 @@
-package com.toogroovy.notificationapi.controller;
+package com.toogroovy.priceserver.controller;
 
-import com.toogroovy.notificationapi.domain.exception.ExceptionDetails;
-import com.toogroovy.notificationapi.domain.exception.ResourceNotFoundException;
+import com.toogroovy.priceserver.domain.exception.ExceptionDetails;
+import com.toogroovy.priceserver.domain.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;

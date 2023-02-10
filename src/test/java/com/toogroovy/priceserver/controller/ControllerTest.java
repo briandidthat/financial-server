@@ -1,8 +1,8 @@
-package com.toogroovy.notificationapi.controller;
+package com.toogroovy.priceserver.controller;
 
-import com.toogroovy.notificationapi.domain.Cryptocurrency;
-import com.toogroovy.notificationapi.domain.ApiResponse;
-import com.toogroovy.notificationapi.service.CryptoService;
+import com.toogroovy.priceserver.domain.Cryptocurrency;
+import com.toogroovy.priceserver.domain.ApiResponse;
+import com.toogroovy.priceserver.service.CryptoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
