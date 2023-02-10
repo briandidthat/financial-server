@@ -1,4 +1,4 @@
-package com.toogroovy.notificationapi.domain.exception;
+package com.toogroovy.priceserver.domain.exception;
 
 import java.util.Date;
 

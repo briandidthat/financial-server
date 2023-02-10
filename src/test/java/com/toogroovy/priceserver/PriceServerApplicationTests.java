@@ -1,10 +1,10 @@
-package com.toogroovy.notificationapi;
+package com.toogroovy.priceserver;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class NotificationApiApplicationTests {
+class PriceServerApplicationTests {
 
 	@Test
 	void contextLoads() {
