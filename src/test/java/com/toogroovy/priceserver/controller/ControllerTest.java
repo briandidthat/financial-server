@@ -1,7 +1,6 @@
 package com.toogroovy.priceserver.controller;
 
 import com.toogroovy.priceserver.domain.Cryptocurrency;
-import com.toogroovy.priceserver.domain.ApiResponse;
 import com.toogroovy.priceserver.service.CryptoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,9 +21,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(Controller.class)
 class ControllerTest {
-    private final ApiResponse BTC_USD = new ApiResponse(Cryptocurrency.BTC, "40102.44", "coinbase");
-    private final ApiResponse BNB_USD = new ApiResponse(Cryptocurrency.BNB, "389.22", "coinbase");
-    private final ApiResponse ETH_USD = new ApiResponse(Cryptocurrency.ETH, "2900.24", "coinbase");
+    private final SpotPrice BTC_USD = new SpotPrice(Cryptocurrency.BTC, "40102.44", "coinbase");
+    private final SpotPrice BNB_USD = new SpotPrice(Cryptocurrency.BNB, "389.22", "coinbase");
+    private final SpotPrice ETH_USD = new SpotPrice(Cryptocurrency.ETH, "2900.24", "coinbase");
 
     @Autowired
     private ObjectMapper mapper;
@@ -51,7 +50,7 @@ class ControllerTest {
 
     @Test
     void getMultipleCryptoPrices() throws Exception {
-        List<ApiResponse> responses = List.of(BTC_USD, BNB_USD, ETH_USD);
+        List<SpotPrice> responses = List.of(BTC_USD, BNB_USD, ETH_USD);
         List<String> symbols = List.of(Cryptocurrency.BTC, Cryptocurrency.BNB, Cryptocurrency.ETH);
 
         when(service.getSpotPrices(symbols)).thenReturn(responses);
