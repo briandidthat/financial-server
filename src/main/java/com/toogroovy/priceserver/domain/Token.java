@@ -11,4 +11,17 @@ public record Token(@JsonProperty("code") String code, @JsonProperty("name") Str
                     @JsonProperty("exponent") Integer exponent, @JsonProperty("type") String type,
                     @JsonProperty("address_regex") String addressRegex,
                     @JsonProperty("asset_id") String assetId) implements Serializable {
+    @Override
+    public String toString() {
+        return "Token{" +
+                "code='" + code + '\'' +
+                ", name='" + name + '\'' +
+                ", color='" + color + '\'' +
+                ", sortIndex=" + sortIndex +
+                ", exponent=" + exponent +
+                ", type='" + type + '\'' +
+                ", addressRegex='" + addressRegex + '\'' +
+                ", assetId='" + assetId + '\'' +
+                '}';
+    }
 }

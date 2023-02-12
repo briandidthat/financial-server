@@ -11,9 +11,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RequestUtilitiesTest {
     private static final List<Token> availableTokens = List.of(
-            new Token("11", "AVAX", "red", 1, 8, "crypto", "dsfas", "23df"),
-            new Token("12", "BTC", "orange", 2, 8, "crypto", "dsfas", "23df"),
-            new Token("13", "BNB", "gold", 3, 8, "crypto", "dsfas", "23df"));
+            new Token("AVAX", "Avalanche","red", 1, 8, "crypto", "dsfas", "23df"),
+            new Token( "BTC", "Bitcoin", "orange", 2, 8, "crypto", "dsfas", "23df"),
+            new Token("BNB","Binance Coin", "gold", 3, 8, "crypto", "dsfas", "23df"));
 
     @Test
     void testValidateCryptocurrency() {

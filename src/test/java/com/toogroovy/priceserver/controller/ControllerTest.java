@@ -1,6 +1,7 @@
 package com.toogroovy.priceserver.controller;
 
 import com.toogroovy.priceserver.domain.Cryptocurrency;
+import com.toogroovy.priceserver.domain.SpotPrice;
 import com.toogroovy.priceserver.service.CryptoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +43,7 @@ class ControllerTest {
 
         when(service.getSpotPrice(Cryptocurrency.BTC)).thenReturn(BTC_USD);
 
-        this.mockMvc.perform(get("/crypto/symbol").param("symbol",Cryptocurrency.BTC))
+        this.mockMvc.perform(get("/crypto/symbol").param("symbol", Cryptocurrency.BTC))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
@@ -58,7 +59,7 @@ class ControllerTest {
         String inputJson = mapper.writeValueAsString(symbols);
         String outputJson = mapper.writeValueAsString(responses);
 
-        this.mockMvc.perform(get("/crypto/symbols/multiple")
+        this.mockMvc.perform(get("/crypto/symbol/multiple")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(inputJson))
                 .andExpect(status().isOk())
