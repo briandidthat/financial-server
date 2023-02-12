@@ -1,6 +1,6 @@
 package com.toogroovy.priceserver.controller;
 
-import com.toogroovy.priceserver.domain.ApiResponse;
+import com.toogroovy.priceserver.domain.SpotPrice;
 import com.toogroovy.priceserver.service.CryptoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,12 +14,12 @@ public class Controller {
     private CryptoService service;
 
     @GetMapping("/symbol")
-    public ApiResponse getCryptoPrice(@RequestParam String symbol) {
+    public SpotPrice getCryptoPrice(@RequestParam String symbol) {
         return service.getSpotPrice(symbol);
     }
 
-    @GetMapping("/symbols/multiple")
-    public List<ApiResponse> getMultipleCryptoPrices(@RequestBody List<String> symbols) {
+    @GetMapping("/symbol/multiple")
+    public List<SpotPrice> getMultipleCryptoPrices(@RequestBody List<String> symbols) {
         return service.getSpotPrices(symbols);
     }
 }

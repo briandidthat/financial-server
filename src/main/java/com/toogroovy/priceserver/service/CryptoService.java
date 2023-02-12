@@ -2,7 +2,7 @@ package com.toogroovy.priceserver.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.toogroovy.priceserver.domain.ApiResponse;
+import com.toogroovy.priceserver.domain.SpotPrice;
 import com.toogroovy.priceserver.domain.Token;
 import com.toogroovy.priceserver.util.RequestUtilities;
 import org.slf4j.Logger;
@@ -29,14 +29,15 @@ import java.util.stream.Collectors;
 @Service
 public class CryptoService {
     private static final Logger logger = LoggerFactory.getLogger(CryptoService.class);
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private volatile List<Token> availableTokens;
+
     @Value("${apis.coinbase.baseUrl}")
     private String coinbaseUrl;
     @Autowired
     private RestTemplate restTemplate;
-    private volatile List<Token> availableTokens;
 
     public List<Token> getAvailableTokens() {
-        final ObjectMapper mapper = new ObjectMapper();
         try {
             ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/currencies/crypto", String.class);
             Map<String, Token[]> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
@@ -48,32 +49,34 @@ public class CryptoService {
         return null;
     }
 
-    public ApiResponse getSpotPrice(String symbol) throws HttpClientErrorException {
+    public SpotPrice getSpotPrice(String symbol) throws HttpClientErrorException {
         symbol = symbol.toUpperCase();
 
         if (!RequestUtilities.validateCryptocurrency(symbol, availableTokens)) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid symbol");
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid symbol: " + symbol);
         }
 
         try {
             logger.info("Fetching current price for {}", symbol);
-            final ResponseEntity<ApiResponse> result = restTemplate.getForEntity(coinbaseUrl + "/prices/" + symbol + "-USD/spot", ApiResponse.class);
-            logger.info("Fetched {} pair price. Response: {}", symbol, result.getBody());
-            return result.getBody();
-        } catch (NullPointerException e) {
+            final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/prices/" + symbol + "-USD/spot", String.class);
+            Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
+            SpotPrice spotPrice = result.get("data");
+            logger.info("Fetched {} pair price. Response: {}", symbol, spotPrice.amount());
+            return spotPrice;
+        } catch (Exception e) {
             logger.error("Unable to fetch pair {}. Reason: {}", symbol, e.getMessage());
         }
         return null;
     }
 
     @Async
-    private CompletableFuture<ApiResponse> getSpotPriceAsync(String symbol) {
+    private CompletableFuture<SpotPrice> getSpotPriceAsync(String symbol) {
         return CompletableFuture.supplyAsync(() -> getSpotPrice(symbol));
     }
 
-    public List<ApiResponse> getSpotPrices(List<String> symbols) {
-        final List<ApiResponse> responses;
-        final List<CompletableFuture<ApiResponse>> requests;
+    public List<SpotPrice> getSpotPrices(List<String> symbols) {
+        final List<SpotPrice> responses;
+        final List<CompletableFuture<SpotPrice>> requests;
 
         logger.info("Fetching prices asynchronously {}", symbols);
 
@@ -84,10 +87,10 @@ public class CryptoService {
         CompletableFuture.allOf(requests.toArray(new CompletableFuture[0])).join();
         // calculate the time it took for our request to be completed
         final Instant end = Instant.now();
-        logger.info("Completed async ticker request in {}ms", end.minusMillis(start.toEpochMilli()).toEpochMilli());
+        logger.info("Completed async spot price request in {}ms", end.minusMillis(start.toEpochMilli()).toEpochMilli());
 
         responses = requests.stream().map(c -> {
-            ApiResponse response = null;
+            SpotPrice response = null;
             try {
                 response = c.get();
             } catch (Exception e) {
@@ -103,6 +106,32 @@ public class CryptoService {
     @EventListener(ApplicationReadyEvent.class)
     protected void updateAvailableTokens() {
         availableTokens = getAvailableTokens();
+        if (availableTokens == null) {
+            logger.error("Error retrieving available tokens. Retrying");
+
+            boolean retry = true;
+            int retryCount = 0;
+
+            while(retry) {
+                List<Token> tokens = getAvailableTokens();
+                if (tokens != null) {
+                    availableTokens = tokens;
+                    retry = false;
+                } else {
+                    if (retryCount == 5) {
+                        logger.info("Reached max retries {}.", retryCount);
+                        return;
+                    }
+
+                    retryCount++;
+                    tokens = getAvailableTokens();
+                    if (tokens != null) {
+                        retry = false;
+                    }
+                }
+            }
+        }
+
         logger.info("Updated available tokens list");
     }
 }
