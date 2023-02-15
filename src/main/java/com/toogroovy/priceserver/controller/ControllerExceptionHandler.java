@@ -1,5 +1,6 @@
 package com.toogroovy.priceserver.controller;
 
+import com.toogroovy.priceserver.domain.exception.BackendClientException;
 import com.toogroovy.priceserver.domain.exception.ExceptionDetails;
 import com.toogroovy.priceserver.domain.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -31,8 +32,14 @@ public class ControllerExceptionHandler {
         return new ResponseEntity(details, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(BackendClientException.class)
+    public ResponseEntity<Error> handleInternalServerError(Exception e, WebRequest request) {
+        ExceptionDetails details = new ExceptionDetails(new Date(), e.getMessage(), request.getDescription(false));
+        return new ResponseEntity(details, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Error> outOfRangeException(IllegalArgumentException e, WebRequest request) {
+    public ResponseEntity<Error> handleOutOfRangeException(IllegalArgumentException e, WebRequest request) {
         ExceptionDetails details = new ExceptionDetails(new Date(), e.getMessage(), request.getDescription(false));
         return new ResponseEntity(details, HttpStatus.UNPROCESSABLE_ENTITY);
     }
@@ -52,4 +59,5 @@ public class ControllerExceptionHandler {
 
         return new ResponseEntity(errors, HttpStatus.UNPROCESSABLE_ENTITY);
     }
+
 }

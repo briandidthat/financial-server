@@ -1,9 +1,11 @@
 package com.toogroovy.priceserver.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.toogroovy.priceserver.domain.SpotPrice;
 import com.toogroovy.priceserver.domain.Token;
+import com.toogroovy.priceserver.domain.exception.BackendClientException;
 import com.toogroovy.priceserver.util.RequestUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +19,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
@@ -43,8 +46,10 @@ public class CryptoService {
             Map<String, Token[]> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
             Token[] tokens = result.get("data");
             return Arrays.asList(tokens);
-        } catch (Exception e) {
-            logger.error(e.getMessage());
+        } catch (RestClientException e) {
+            throw new BackendClientException(e.toString());
+        } catch (JsonProcessingException js) {
+            logger.info("Unable to map Json response: {}", js.getMessage());
         }
         return null;
     }
@@ -109,9 +114,12 @@ public class CryptoService {
         if (availableTokens == null) {
             logger.error("Error retrieving available tokens. Retrying");
 
+            boolean successful = false;
             boolean retry = true;
             int retryCount = 0;
 
+            // continue to retry until we update the available tokens or fail 5 times in which case we will wait till
+            // next request or next day
             while(retry) {
                 List<Token> tokens = getAvailableTokens();
                 if (tokens != null) {

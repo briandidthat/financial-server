@@ -1,9 +1,9 @@
 package com.toogroovy.priceserver.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.toogroovy.priceserver.domain.Cryptocurrency;
 import com.toogroovy.priceserver.domain.SpotPrice;
 import com.toogroovy.priceserver.service.CryptoService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,19 +38,19 @@ class ControllerTest {
     }
 
     @Test
-    void getCryptoPrice() throws Exception {
+    void getSpotPrice() throws Exception {
         String outputJson = mapper.writeValueAsString(BTC_USD);
 
         when(service.getSpotPrice(Cryptocurrency.BTC)).thenReturn(BTC_USD);
 
-        this.mockMvc.perform(get("/crypto/symbol").param("symbol", Cryptocurrency.BTC))
+        this.mockMvc.perform(get("/spot").param("symbol", Cryptocurrency.BTC))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
     }
 
     @Test
-    void getMultipleCryptoPrices() throws Exception {
+    void getMultipleSpotPrices() throws Exception {
         List<SpotPrice> responses = List.of(BTC_USD, BNB_USD, ETH_USD);
         List<String> symbols = List.of(Cryptocurrency.BTC, Cryptocurrency.BNB, Cryptocurrency.ETH);
 
@@ -59,7 +59,7 @@ class ControllerTest {
         String inputJson = mapper.writeValueAsString(symbols);
         String outputJson = mapper.writeValueAsString(responses);
 
-        this.mockMvc.perform(get("/crypto/symbol/multiple")
+        this.mockMvc.perform(get("/spot/batch")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(inputJson))
                 .andExpect(status().isOk())

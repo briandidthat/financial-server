@@ -8,18 +8,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/crypto")
+@RequestMapping("/spot")
 public class Controller {
     @Autowired
     private CryptoService service;
 
-    @GetMapping("/symbol")
-    public SpotPrice getCryptoPrice(@RequestParam String symbol) {
+    @GetMapping
+    public SpotPrice getSpotPrice(@RequestParam String symbol) {
         return service.getSpotPrice(symbol);
     }
 
-    @GetMapping("/symbol/multiple")
-    public List<SpotPrice> getMultipleCryptoPrices(@RequestBody List<String> symbols) {
+    @GetMapping("/batch")
+    public List<SpotPrice> getMultipleSpotPrices(@RequestBody List<String> symbols) {
         return service.getSpotPrices(symbols);
     }
 }
