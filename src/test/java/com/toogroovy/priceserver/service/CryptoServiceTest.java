@@ -43,13 +43,9 @@ class CryptoServiceTest {
     void setUp() throws Exception {
         final String coinbaseEndpoint = "https://api.coinbase.com/v2";
 
-        final Map<String, SpotPrice> BTC_RESPONSE = new HashMap<>();
-        final Map<String, SpotPrice> BNB_RESPONSE = new HashMap<>();
-        final Map<String, SpotPrice> ETH_RESPONSE = new HashMap<>();
-
-        BTC_RESPONSE.put("data", BTC);
-        BNB_RESPONSE.put("data", BNB);
-        ETH_RESPONSE.put("data", ETH);
+        final Map<String, SpotPrice> BTC_RESPONSE = Map.of("data", BTC);
+        final Map<String, SpotPrice> BNB_RESPONSE = Map.of("data", BNB);
+        final Map<String, SpotPrice> ETH_RESPONSE = Map.of("data", ETH);
 
         final String btcJson = mapper.writeValueAsString(BTC_RESPONSE);
         final String bnbJson = mapper.writeValueAsString(BNB_RESPONSE);
@@ -74,14 +70,7 @@ class CryptoServiceTest {
     }
 
     @Test
-    void getSpotPricesSync() {
-        List<SpotPrice> responses = cryptoService.getSpotPrices(List.of(Cryptocurrency.BTC, Cryptocurrency.BNB, Cryptocurrency.ETH));
-
-        assertIterableEquals(PRICES, responses);
-    }
-
-    @Test
-    void getSpotPricesAsync() {
+    void getMultipleSpotPrices() {
         List<SpotPrice> responses = cryptoService.getSpotPrices(List.of(Cryptocurrency.BTC, Cryptocurrency.BNB, Cryptocurrency.ETH));
 
         assertIterableEquals(PRICES, responses);
