@@ -50,6 +50,18 @@ class ControllerTest {
     }
 
     @Test
+    void getHistoricalSpotPrice() throws Exception {
+        String outputJson = mapper.writeValueAsString(BTC_USD);
+
+        when(service.getSpotPrice(Cryptocurrency.BTC)).thenReturn(BTC_USD);
+
+        this.mockMvc.perform(get("/spot").param("symbol", Cryptocurrency.BTC))
+                .andExpect(status().isOk())
+                .andExpect(content().json(outputJson))
+                .andDo(print());
+    }
+
+    @Test
     void getMultipleSpotPrices() throws Exception {
         List<SpotPrice> responses = List.of(BTC_USD, BNB_USD, ETH_USD);
         List<String> symbols = List.of(Cryptocurrency.BTC, Cryptocurrency.BNB, Cryptocurrency.ETH);

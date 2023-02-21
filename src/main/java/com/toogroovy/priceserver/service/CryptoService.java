@@ -24,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -40,38 +41,64 @@ public class CryptoService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public List<Token> getAvailableTokens() {
+    public List<Token> getAvailableTokens() throws BackendClientException, HttpClientErrorException {
         try {
-            ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/currencies/crypto", String.class);
-            Map<String, Token[]> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
-            Token[] tokens = result.get("data");
+            final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/currencies/crypto", String.class);
+            final Map<String, Token[]> result = mapper.readValue(response.getBody(), new TypeReference<>() {
+            });
+            final Token[] tokens = result.get("data");
             return Arrays.asList(tokens);
         } catch (RestClientException e) {
             throw new BackendClientException(e.toString());
-        } catch (JsonProcessingException js) {
-            logger.info("Unable to map Json response: {}", js.getMessage());
+        } catch (JsonProcessingException e) {
+            logger.error("Unable to map Json response");
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
-        return null;
     }
 
-    public SpotPrice getSpotPrice(String symbol) throws HttpClientErrorException {
+    public SpotPrice getHistoricalSpotPrice(String symbol, Date date) {
         symbol = symbol.toUpperCase();
 
-        if (!RequestUtilities.validateCryptocurrency(symbol, availableTokens)) {
+        if (!RequestUtilities.validateCryptocurrency(symbol, availableTokens))
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid symbol: " + symbol);
+
+        try {
+            logger.info("Fetching historical price for {} on date {}", symbol, date);
+            final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/prices/{symbol}-USD/spot?date={date}",
+                    String.class, Map.of("symbol", symbol, "date", date.toString()));
+            final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
+            final SpotPrice spotPrice = result.get("data");
+            logger.info("Fetched historical spot price for {}. Response: {}", symbol, spotPrice.amount());
+            return spotPrice;
+        } catch (RestClientException e) {
+            logger.error("Unable to fetch historical price for {}", symbol);
+            throw new BackendClientException(e.getMessage());
+        } catch (JsonProcessingException e) {
+            logger.error("Unable to map json response");
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
+    }
+
+    public SpotPrice getSpotPrice(String symbol) throws HttpClientErrorException, BackendClientException {
+        symbol = symbol.toUpperCase();
+
+        if (!RequestUtilities.validateCryptocurrency(symbol, availableTokens))
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid symbol: " + symbol);
 
         try {
             logger.info("Fetching current price for {}", symbol);
-            final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/prices/" + symbol + "-USD/spot", String.class);
-            Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
-            SpotPrice spotPrice = result.get("data");
-            logger.info("Fetched {} pair price. Response: {}", symbol, spotPrice.amount());
+            final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/prices/{symbol}-USD/spot",
+                    String.class, Map.of("symbol", symbol));
+            final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
+            final SpotPrice spotPrice = result.get("data");
+            logger.info("Fetched {} spot price. Response: {}", symbol, spotPrice.amount());
             return spotPrice;
-        } catch (Exception e) {
-            logger.error("Unable to fetch pair {}. Reason: {}", symbol, e.getMessage());
+        } catch (RestClientException e) {
+            logger.error("Unable to fetch {} spot price. Reason: {}", symbol, e.getMessage());
+            throw new BackendClientException(e.getMessage());
+        } catch (JsonProcessingException e) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
-        return null;
     }
 
     @Async
@@ -114,13 +141,12 @@ public class CryptoService {
         if (availableTokens == null) {
             logger.error("Error retrieving available tokens. Retrying");
 
-            boolean successful = false;
             boolean retry = true;
             int retryCount = 0;
 
             // continue to retry until we update the available tokens or fail 5 times in which case we will wait till
             // next request or next day
-            while(retry) {
+            while (retry) {
                 List<Token> tokens = getAvailableTokens();
                 if (tokens != null) {
                     availableTokens = tokens;

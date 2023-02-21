@@ -44,16 +44,17 @@ class CryptoServiceTest {
         final String coinbaseEndpoint = "https://api.coinbase.com/v2";
 
         final Map<String, SpotPrice> BTC_RESPONSE = Map.of("data", BTC);
-        final Map<String, SpotPrice> BNB_RESPONSE = Map.of("data", BNB);
         final Map<String, SpotPrice> ETH_RESPONSE = Map.of("data", ETH);
+        final Map<String, SpotPrice> BNB_RESPONSE = Map.of("data", BNB);
 
         final String btcJson = mapper.writeValueAsString(BTC_RESPONSE);
-        final String bnbJson = mapper.writeValueAsString(BNB_RESPONSE);
         final String ethJson = mapper.writeValueAsString(ETH_RESPONSE);
+        final String bnbJson = mapper.writeValueAsString(BNB_RESPONSE);
 
-        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/"+ Cryptocurrency.BTC + "-USD/spot", String.class)).thenReturn(ResponseEntity.ok(btcJson));
-        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/"+ Cryptocurrency.BNB + "-USD/spot", String.class)).thenReturn(ResponseEntity.ok(bnbJson));
-        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/"+ Cryptocurrency.ETH + "-USD/spot", String.class)).thenReturn(ResponseEntity.ok(ethJson));
+
+        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot", String.class, Map.of("symbol", Cryptocurrency.BTC))).thenReturn(ResponseEntity.ok(btcJson));
+        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot", String.class, Map.of("symbol", Cryptocurrency.ETH))).thenReturn(ResponseEntity.ok(ethJson));
+        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot", String.class, Map.of("symbol", Cryptocurrency.BNB))).thenReturn(ResponseEntity.ok(bnbJson));
 
         ReflectionTestUtils.setField(cryptoService, "coinbaseUrl", coinbaseEndpoint);
         ReflectionTestUtils.setField(cryptoService, "availableTokens", List.of(
@@ -74,5 +75,9 @@ class CryptoServiceTest {
         List<SpotPrice> responses = cryptoService.getSpotPrices(List.of(Cryptocurrency.BTC, Cryptocurrency.BNB, Cryptocurrency.ETH));
 
         assertIterableEquals(PRICES, responses);
+    }
+
+    @Test
+    void getHistoricalSpotPrice() {
     }
 }
