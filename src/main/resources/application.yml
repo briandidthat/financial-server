@@ -1,6 +1,10 @@
 spring:
   application:
     name: price-server
+  mvc:
+    format:
+      date: iso
+      date-time: iso
 
 server:
   port: 8080

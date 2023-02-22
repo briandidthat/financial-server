@@ -12,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
@@ -44,6 +45,18 @@ class ControllerTest {
         when(service.getSpotPrice(Cryptocurrency.BTC)).thenReturn(BTC_USD);
 
         this.mockMvc.perform(get("/spot").param("symbol", Cryptocurrency.BTC))
+                .andExpect(status().isOk())
+                .andExpect(content().json(outputJson))
+                .andDo(print());
+    }
+
+    @Test
+    void getHistoricalSpotPrice() throws Exception {
+        String outputJson = mapper.writeValueAsString(BTC_USD);
+
+        when(service.getHistoricalSpotPrice(Cryptocurrency.BTC, LocalDate.of(2023, 1, 1))).thenReturn(BTC_USD);
+
+        this.mockMvc.perform(get("/spot/historical").param("symbol", Cryptocurrency.BTC).param("date", "2023-01-01"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());

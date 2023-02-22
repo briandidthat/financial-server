@@ -1,6 +1,6 @@
 package com.toogroovy.priceserver.domain.exception;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
-public record ExceptionDetails (Date timestamp, String message, String details) {
+public record ExceptionDetails (LocalDateTime timestamp, String message, String details) {
 }
