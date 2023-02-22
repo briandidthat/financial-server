@@ -1,10 +1,8 @@
 package com.toogroovy.priceserver.controller;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.toogroovy.priceserver.domain.SpotPrice;
 import com.toogroovy.priceserver.service.CryptoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;

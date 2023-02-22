@@ -41,18 +41,16 @@ public class CryptoService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public List<Token> getAvailableTokens() throws BackendClientException, HttpClientErrorException {
+    public List<Token> getAvailableTokens() {
         try {
             final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/currencies/crypto", String.class);
             final Map<String, Token[]> result = mapper.readValue(response.getBody(), new TypeReference<>() {
             });
             final Token[] tokens = result.get("data");
             return Arrays.asList(tokens);
-        } catch (RestClientException e) {
-            throw new BackendClientException(e.toString());
-        } catch (JsonProcessingException e) {
-            logger.error("Unable to map Json response");
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            logger.error("Unable to retrieve token list");
+            return null;
         }
     }
 

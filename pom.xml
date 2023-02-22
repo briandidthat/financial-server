@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.toogroovy</groupId>
     <artifactId>price-server</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <name>notification-api</name>
     <description>Demo project for Spring Boot</description>
     <properties>
