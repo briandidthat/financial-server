@@ -23,8 +23,8 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -56,10 +56,10 @@ public class CryptoService {
         }
     }
 
-    public SpotPrice getHistoricalSpotPrice(String symbol, Date date) {
+    public SpotPrice getHistoricalSpotPrice(String symbol, LocalDate date) {
         symbol = symbol.toUpperCase();
 
-        if (!RequestUtilities.validateCryptocurrency(symbol, availableTokens))
+        if (!RequestUtilities.validateSymbol(symbol, availableTokens))
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid symbol: " + symbol);
 
         try {
@@ -82,7 +82,7 @@ public class CryptoService {
     public SpotPrice getSpotPrice(String symbol) throws HttpClientErrorException, BackendClientException {
         symbol = symbol.toUpperCase();
 
-        if (!RequestUtilities.validateCryptocurrency(symbol, availableTokens))
+        if (!RequestUtilities.validateSymbol(symbol, availableTokens))
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid symbol: " + symbol);
 
         try {

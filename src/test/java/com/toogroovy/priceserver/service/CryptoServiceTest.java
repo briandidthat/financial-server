@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,8 @@ class CryptoServiceTest {
     void setUp() throws Exception {
         final String coinbaseEndpoint = "https://api.coinbase.com/v2";
 
+        final LocalDate date = LocalDate.of(2021, 8, 1);
+
         final Map<String, SpotPrice> BTC_RESPONSE = Map.of("data", BTC);
         final Map<String, SpotPrice> ETH_RESPONSE = Map.of("data", ETH);
         final Map<String, SpotPrice> BNB_RESPONSE = Map.of("data", BNB);
@@ -51,10 +54,10 @@ class CryptoServiceTest {
         final String ethJson = mapper.writeValueAsString(ETH_RESPONSE);
         final String bnbJson = mapper.writeValueAsString(BNB_RESPONSE);
 
-
         when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot", String.class, Map.of("symbol", Cryptocurrency.BTC))).thenReturn(ResponseEntity.ok(btcJson));
         when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot", String.class, Map.of("symbol", Cryptocurrency.ETH))).thenReturn(ResponseEntity.ok(ethJson));
         when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot", String.class, Map.of("symbol", Cryptocurrency.BNB))).thenReturn(ResponseEntity.ok(bnbJson));
+        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot?date={date}", String.class, Map.of("symbol", Cryptocurrency.BTC, "date", date.toString()))).thenReturn(ResponseEntity.ok(btcJson));
 
         ReflectionTestUtils.setField(cryptoService, "coinbaseUrl", coinbaseEndpoint);
         ReflectionTestUtils.setField(cryptoService, "availableTokens", List.of(
@@ -79,5 +82,7 @@ class CryptoServiceTest {
 
     @Test
     void getHistoricalSpotPrice() {
+        SpotPrice response = cryptoService.getHistoricalSpotPrice(Cryptocurrency.BTC, LocalDate.of(2021, 8, 1));
+        assertEquals(BTC, response);
     }
 }

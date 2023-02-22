@@ -17,25 +17,25 @@ class RequestUtilitiesTest {
 
     @Test
     void testValidateCryptocurrency() {
-        boolean validated = RequestUtilities.validateCryptocurrency(Cryptocurrency.AVAX, availableTokens);
+        boolean validated = RequestUtilities.validateSymbol(Cryptocurrency.AVAX, availableTokens);
         assertTrue(validated);
     }
 
     @Test
     void testValidateCryptocurrencyWithInvalidSymbol() {
-        boolean validated = RequestUtilities.validateCryptocurrency("WMEMO", availableTokens);
+        boolean validated = RequestUtilities.validateSymbol("WMEMO", availableTokens);
         assertFalse(validated);
     }
 
     @Test
     void testValidateCryptocurrencies() {
-        boolean validated = RequestUtilities.validateCryptocurrencies(List.of(Cryptocurrency.BTC, Cryptocurrency.BNB), availableTokens);
+        boolean validated = RequestUtilities.validateSymbols(List.of(Cryptocurrency.BTC, Cryptocurrency.BNB), availableTokens);
         assertTrue(validated);
     }
 
     @Test
     void testValidateCryptocurrenciesWithInvalidSymbols() {
-        boolean validated = RequestUtilities.validateCryptocurrencies(List.of("WMEMO", "MIM"), availableTokens);
+        boolean validated = RequestUtilities.validateSymbols(List.of("WMEMO", "MIM"), availableTokens);
         assertFalse(validated);
     }
 

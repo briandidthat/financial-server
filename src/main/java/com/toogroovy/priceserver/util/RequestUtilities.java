@@ -6,7 +6,7 @@ import java.util.List;
 
 public final class RequestUtilities {
     private RequestUtilities() {}
-    public static boolean validateCryptocurrency(String symbol, List<Token> tokens) {
+    public static boolean validateSymbol(String symbol, List<Token> tokens) {
         for (Token token : tokens) {
             if (symbol.equals(token.code())) {
                 return true;
@@ -15,9 +15,9 @@ public final class RequestUtilities {
         return false;
     }
 
-    public static boolean validateCryptocurrencies(List<String> symbols, List<Token> tokens) {
+    public static boolean validateSymbols(List<String> symbols, List<Token> tokens) {
         for (String ticker : symbols) {
-            if (!validateCryptocurrency(ticker, tokens)) {
+            if (!validateSymbol(ticker, tokens)) {
                 return false;
             }
         }
