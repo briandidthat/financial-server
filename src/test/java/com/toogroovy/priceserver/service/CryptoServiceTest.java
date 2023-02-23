@@ -32,8 +32,8 @@ import static org.mockito.Mockito.when;
 class CryptoServiceTest {
     private final SpotPrice BTC = new SpotPrice(Cryptocurrency.BTC, "USD","40102.44");
     private final SpotPrice BNB = new SpotPrice(Cryptocurrency.BNB, "USD", "389.22");
-    private final SpotPrice ETH = new SpotPrice(Cryptocurrency.ETH, "USD", "2900.24");
-    private final SpotPrice HISTORICAL_ETH = new SpotPrice(Cryptocurrency.ETH, "USD", "4000.24");
+    private final SpotPrice ETH = new SpotPrice(Cryptocurrency.ETH, "USD", "2900.00");
+    private final SpotPrice HISTORICAL_ETH = new SpotPrice(Cryptocurrency.ETH, "USD", "4000.00");
     private final LocalDate HISTORICAL_DATE = LocalDate.of(2021, 8, 1);
     private final List<SpotPrice> PRICES = List.of(BTC, BNB, ETH);
 
@@ -92,6 +92,8 @@ class CryptoServiceTest {
     @Test
     void getPriceStatistics() {
         Statistic statistic = cryptoService.getPriceStatistics(Cryptocurrency.ETH, HISTORICAL_DATE);
-
+        assertEquals("-1100.00", statistic.priceChange());
+        assertEquals("-27.50", statistic.percentChange());
+        assertEquals("571", statistic.timeDelta());
     }
 }
