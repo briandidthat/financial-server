@@ -4,9 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.toogroovy.priceserver.domain.SpotPrice;
+import com.toogroovy.priceserver.domain.Statistic;
 import com.toogroovy.priceserver.domain.Token;
 import com.toogroovy.priceserver.domain.exception.BackendClientException;
 import com.toogroovy.priceserver.util.RequestUtilities;
+import com.toogroovy.priceserver.util.StatisticsUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +56,28 @@ public class CryptoService {
         }
     }
 
+    public SpotPrice getSpotPrice(String symbol) throws HttpClientErrorException, BackendClientException {
+        symbol = symbol.toUpperCase();
+
+        if (!RequestUtilities.validateSymbol(symbol, availableTokens))
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid symbol: " + symbol);
+
+        try {
+            logger.info("Fetching current price for {}", symbol);
+            final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/prices/{symbol}-USD/spot",
+                    String.class, Map.of("symbol", symbol));
+            final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
+            final SpotPrice spotPrice = result.get("data");
+            logger.info("Fetched {} spot price. Response: {}", symbol, spotPrice.amount());
+            return spotPrice;
+        } catch (RestClientException e) {
+            logger.error("Unable to fetch {} spot price. Reason: {}", symbol, e.getMessage());
+            throw new BackendClientException(e.getMessage());
+        } catch (JsonProcessingException e) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
     public SpotPrice getHistoricalSpotPrice(String symbol, LocalDate date) {
         symbol = symbol.toUpperCase();
 
@@ -77,26 +101,11 @@ public class CryptoService {
         }
     }
 
-    public SpotPrice getSpotPrice(String symbol) throws HttpClientErrorException, BackendClientException {
-        symbol = symbol.toUpperCase();
+    public Statistic getPriceStatistics(String symbol, LocalDate startDate) {
+        final SpotPrice currentPrice = getSpotPrice(symbol);
+        final SpotPrice historicalPrice = getHistoricalSpotPrice(symbol, startDate);
 
-        if (!RequestUtilities.validateSymbol(symbol, availableTokens))
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid symbol: " + symbol);
-
-        try {
-            logger.info("Fetching current price for {}", symbol);
-            final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/prices/{symbol}-USD/spot",
-                    String.class, Map.of("symbol", symbol));
-            final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
-            final SpotPrice spotPrice = result.get("data");
-            logger.info("Fetched {} spot price. Response: {}", symbol, spotPrice.amount());
-            return spotPrice;
-        } catch (RestClientException e) {
-            logger.error("Unable to fetch {} spot price. Reason: {}", symbol, e.getMessage());
-            throw new BackendClientException(e.getMessage());
-        } catch (JsonProcessingException e) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        return StatisticsUtilities.buildStatistic(startDate, historicalPrice, currentPrice);
     }
 
     @Async

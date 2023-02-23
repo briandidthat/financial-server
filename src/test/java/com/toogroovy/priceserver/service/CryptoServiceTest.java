@@ -85,4 +85,8 @@ class CryptoServiceTest {
         SpotPrice response = cryptoService.getHistoricalSpotPrice(Cryptocurrency.BTC, LocalDate.of(2021, 8, 1));
         assertEquals(BTC, response);
     }
+
+    @Test
+    void getPriceStatistics() {
+    }
 }
