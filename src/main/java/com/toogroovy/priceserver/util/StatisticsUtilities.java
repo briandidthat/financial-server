@@ -4,6 +4,8 @@ import com.toogroovy.priceserver.domain.SpotPrice;
 import com.toogroovy.priceserver.domain.Statistic;
 
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 
 public final class StatisticsUtilities {
 
@@ -15,15 +17,15 @@ public final class StatisticsUtilities {
         return currentValue - oldValue;
     }
 
-    public static int calculateTimeDelta(LocalDate start, LocalDate end) {
-        return end.compareTo(start);
+    public static long calculateTimeDelta(LocalDate start, LocalDate end) {
+        return ChronoUnit.DAYS.between(start, end);
     }
 
     public static Statistic buildStatistic(LocalDate start, SpotPrice oldPrice, SpotPrice currentPrice) {
         final double oldPriceDouble = Double.parseDouble(oldPrice.amount());
         final double currentPriceDouble = Double.parseDouble(currentPrice.amount());
 
-        final int timeDelta = calculateTimeDelta(start, LocalDate.now());
+        final long timeDelta = calculateTimeDelta(start, LocalDate.now());
         final double priceChange = calculatePriceChange(oldPriceDouble, currentPriceDouble);
         final double percentChange = calculatePercentChange(oldPriceDouble, currentPriceDouble);
 

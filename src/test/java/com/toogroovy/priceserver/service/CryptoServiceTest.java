@@ -3,6 +3,7 @@ package com.toogroovy.priceserver.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.toogroovy.priceserver.domain.Cryptocurrency;
 import com.toogroovy.priceserver.domain.SpotPrice;
+import com.toogroovy.priceserver.domain.Statistic;
 import com.toogroovy.priceserver.domain.Token;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,8 @@ class CryptoServiceTest {
     private final SpotPrice BTC = new SpotPrice(Cryptocurrency.BTC, "USD","40102.44");
     private final SpotPrice BNB = new SpotPrice(Cryptocurrency.BNB, "USD", "389.22");
     private final SpotPrice ETH = new SpotPrice(Cryptocurrency.ETH, "USD", "2900.24");
+    private final SpotPrice HISTORICAL_ETH = new SpotPrice(Cryptocurrency.ETH, "USD", "4000.24");
+    private final LocalDate HISTORICAL_DATE = LocalDate.of(2021, 8, 1);
     private final List<SpotPrice> PRICES = List.of(BTC, BNB, ETH);
 
     @Mock
@@ -44,20 +47,20 @@ class CryptoServiceTest {
     void setUp() throws Exception {
         final String coinbaseEndpoint = "https://api.coinbase.com/v2";
 
-        final LocalDate date = LocalDate.of(2021, 8, 1);
-
         final Map<String, SpotPrice> BTC_RESPONSE = Map.of("data", BTC);
         final Map<String, SpotPrice> ETH_RESPONSE = Map.of("data", ETH);
         final Map<String, SpotPrice> BNB_RESPONSE = Map.of("data", BNB);
+        final Map<String, SpotPrice> HISTORICAL_ETH_RESPONSE = Map.of("data", HISTORICAL_ETH);
 
         final String btcJson = mapper.writeValueAsString(BTC_RESPONSE);
         final String ethJson = mapper.writeValueAsString(ETH_RESPONSE);
         final String bnbJson = mapper.writeValueAsString(BNB_RESPONSE);
+        final String historicalEthJson = mapper.writeValueAsString(HISTORICAL_ETH_RESPONSE);
 
         when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot", String.class, Map.of("symbol", Cryptocurrency.BTC))).thenReturn(ResponseEntity.ok(btcJson));
         when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot", String.class, Map.of("symbol", Cryptocurrency.ETH))).thenReturn(ResponseEntity.ok(ethJson));
         when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot", String.class, Map.of("symbol", Cryptocurrency.BNB))).thenReturn(ResponseEntity.ok(bnbJson));
-        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot?date={date}", String.class, Map.of("symbol", Cryptocurrency.BTC, "date", date.toString()))).thenReturn(ResponseEntity.ok(btcJson));
+        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot?date={date}", String.class, Map.of("symbol", Cryptocurrency.ETH, "date", HISTORICAL_DATE.toString()))).thenReturn(ResponseEntity.ok(historicalEthJson));
 
         ReflectionTestUtils.setField(cryptoService, "coinbaseUrl", coinbaseEndpoint);
         ReflectionTestUtils.setField(cryptoService, "availableTokens", List.of(
@@ -82,11 +85,13 @@ class CryptoServiceTest {
 
     @Test
     void getHistoricalSpotPrice() {
-        SpotPrice response = cryptoService.getHistoricalSpotPrice(Cryptocurrency.BTC, LocalDate.of(2021, 8, 1));
-        assertEquals(BTC, response);
+        SpotPrice response = cryptoService.getHistoricalSpotPrice(Cryptocurrency.ETH, HISTORICAL_DATE);
+        assertEquals(HISTORICAL_ETH, response);
     }
 
     @Test
     void getPriceStatistics() {
+        Statistic statistic = cryptoService.getPriceStatistics(Cryptocurrency.ETH, HISTORICAL_DATE);
+
     }
 }

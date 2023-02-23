@@ -15,10 +15,8 @@ class StatisticsUtilitiesTest {
     void calculatePercentChange() {
         final double oldPriceDouble = Double.parseDouble("20.00");
         final double currentPriceDouble = Double.parseDouble("18.00");
-        final double expected = Double.parseDouble("-10.0"); // (18 - 20 ) = -2 / 20 = -.10 * 100 = 10.0%
+        final double expected = Double.parseDouble("-10.0"); // (18 - 20 ) = -2 / 20 = -.10 * 100 = -10.0%
         final double percentChange = StatisticsUtilities.calculatePercentChange(oldPriceDouble, currentPriceDouble);
-
-        System.out.println(percentChange);
 
         assertEquals(expected, percentChange);
     }
@@ -30,7 +28,7 @@ class StatisticsUtilitiesTest {
         final double expected = Double.parseDouble("45.50");
         final double priceChange = StatisticsUtilities.calculatePriceChange(oldPrice, currentPrice);
 
-        assertEquals(expected,priceChange);
+        assertEquals(expected, priceChange);
     }
 
     @Test
