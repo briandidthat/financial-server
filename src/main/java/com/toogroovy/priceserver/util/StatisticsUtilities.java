@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 public final class StatisticsUtilities {
+    private StatisticsUtilities() {}
 
     public static double calculatePercentChange(double oldValue, double currentValue) {
         return ((currentValue - oldValue) / oldValue) * 100;
@@ -20,11 +21,11 @@ public final class StatisticsUtilities {
         return ChronoUnit.DAYS.between(start, end);
     }
 
-    public static Statistic buildStatistic(LocalDate start, SpotPrice oldPrice, SpotPrice currentPrice) {
+    public static Statistic buildStatistic(LocalDate start, LocalDate end, SpotPrice oldPrice, SpotPrice currentPrice) {
         final double oldPriceDouble = Double.parseDouble(oldPrice.amount());
         final double currentPriceDouble = Double.parseDouble(currentPrice.amount());
 
-        final long timeDelta = calculateTimeDelta(start, LocalDate.now());
+        final long timeDelta = calculateTimeDelta(start, end);
         final double priceChange = calculatePriceChange(oldPriceDouble, currentPriceDouble);
         final double percentChange = calculatePercentChange(oldPriceDouble, currentPriceDouble);
 

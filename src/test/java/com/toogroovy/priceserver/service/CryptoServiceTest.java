@@ -34,7 +34,8 @@ class CryptoServiceTest {
     private final SpotPrice BNB = new SpotPrice(Cryptocurrency.BNB, "USD", "389.22");
     private final SpotPrice ETH = new SpotPrice(Cryptocurrency.ETH, "USD", "2900.00");
     private final SpotPrice HISTORICAL_ETH = new SpotPrice(Cryptocurrency.ETH, "USD", "4000.00");
-    private final LocalDate HISTORICAL_DATE = LocalDate.of(2021, 8, 1);
+    private final LocalDate START_DATE = LocalDate.of(2021, 8, 1);
+    private final LocalDate END_DATE = LocalDate.of(2023, 8, 1); // 730 days in between
     private final List<SpotPrice> PRICES = List.of(BTC, BNB, ETH);
 
     @Mock
@@ -60,7 +61,9 @@ class CryptoServiceTest {
         when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot", String.class, Map.of("symbol", Cryptocurrency.BTC))).thenReturn(ResponseEntity.ok(btcJson));
         when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot", String.class, Map.of("symbol", Cryptocurrency.ETH))).thenReturn(ResponseEntity.ok(ethJson));
         when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot", String.class, Map.of("symbol", Cryptocurrency.BNB))).thenReturn(ResponseEntity.ok(bnbJson));
-        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot?date={date}", String.class, Map.of("symbol", Cryptocurrency.ETH, "date", HISTORICAL_DATE.toString()))).thenReturn(ResponseEntity.ok(historicalEthJson));
+        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot?date={date}", String.class, Map.of("symbol", Cryptocurrency.ETH, "date", START_DATE.toString()))).thenReturn(ResponseEntity.ok(historicalEthJson));
+        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot?date={date}", String.class, Map.of("symbol", Cryptocurrency.ETH, "date", END_DATE.toString()))).thenReturn(ResponseEntity.ok(ethJson));
+
 
         ReflectionTestUtils.setField(cryptoService, "coinbaseUrl", coinbaseEndpoint);
         ReflectionTestUtils.setField(cryptoService, "availableTokens", List.of(
@@ -70,30 +73,30 @@ class CryptoServiceTest {
     }
 
     @Test
-    void getSpotPrice() {
+    void testGetSpotPrice() {
         SpotPrice tickerResponse = cryptoService.getSpotPrice(Cryptocurrency.BTC);
 
         assertEquals(BTC, tickerResponse);
     }
 
     @Test
-    void getMultipleSpotPrices() {
+    void testGetMultipleSpotPrices() {
         List<SpotPrice> responses = cryptoService.getSpotPrices(List.of(Cryptocurrency.BTC, Cryptocurrency.BNB, Cryptocurrency.ETH));
 
         assertIterableEquals(PRICES, responses);
     }
 
     @Test
-    void getHistoricalSpotPrice() {
-        SpotPrice response = cryptoService.getHistoricalSpotPrice(Cryptocurrency.ETH, HISTORICAL_DATE);
+    void testGetHistoricalSpotPrice() {
+        SpotPrice response = cryptoService.getHistoricalSpotPrice(Cryptocurrency.ETH, START_DATE);
         assertEquals(HISTORICAL_ETH, response);
     }
 
     @Test
-    void getPriceStatistics() {
-        Statistic statistic = cryptoService.getPriceStatistics(Cryptocurrency.ETH, HISTORICAL_DATE);
+    void testGetPriceStatistics() {
+        Statistic statistic = cryptoService.getPriceStatistics(Cryptocurrency.ETH, START_DATE, END_DATE);
         assertEquals("-1100.00", statistic.priceChange());
         assertEquals("-27.50", statistic.percentChange());
-        assertEquals("571", statistic.timeDelta());
+        assertEquals("730", statistic.timeDelta());
     }
 }

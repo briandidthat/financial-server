@@ -31,7 +31,8 @@ public class Controller {
     }
 
     @GetMapping("/statistics")
-    public Statistic getPriceStatistics(@RequestParam String symbol, @RequestParam LocalDate startDate) {
-        return service.getPriceStatistics(symbol, startDate);
+    public Statistic getPriceStatistics(@RequestParam String symbol, @RequestParam LocalDate startDate, @RequestParam(required = false) LocalDate endDate) {
+        final LocalDate end = endDate == null ? LocalDate.now() : endDate;
+        return service.getPriceStatistics(symbol, startDate, end);
     }
 }

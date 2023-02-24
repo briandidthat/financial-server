@@ -101,11 +101,13 @@ public class CryptoService {
         }
     }
 
-    public Statistic getPriceStatistics(String symbol, LocalDate startDate) {
-        final SpotPrice currentPrice = getSpotPrice(symbol);
-        final SpotPrice historicalPrice = getHistoricalSpotPrice(symbol, startDate);
+    public Statistic getPriceStatistics(String symbol, LocalDate startDate, LocalDate endDate) {
+        final boolean isToday = endDate.isEqual(LocalDate.now());
+        final SpotPrice startPrice = getHistoricalSpotPrice(symbol, startDate);
+        // if the end date is today, get current spot price. Else get historical price
+        final SpotPrice endPrice = isToday ? getSpotPrice(symbol) : getHistoricalSpotPrice(symbol, endDate);
 
-        return StatisticsUtilities.buildStatistic(startDate, historicalPrice, currentPrice);
+        return StatisticsUtilities.buildStatistic(startDate, endDate, startPrice, endPrice);
     }
 
     @Async
