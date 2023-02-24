@@ -39,7 +39,7 @@ class ControllerTest {
     }
 
     @Test
-    void getSpotPrice() throws Exception {
+    void testGetSpotPrice() throws Exception {
         String outputJson = mapper.writeValueAsString(BTC_USD);
 
         when(service.getSpotPrice(Cryptocurrency.BTC)).thenReturn(BTC_USD);
@@ -51,7 +51,7 @@ class ControllerTest {
     }
 
     @Test
-    void getHistoricalSpotPrice() throws Exception {
+    void testGetHistoricalSpotPrice() throws Exception {
         String outputJson = mapper.writeValueAsString(BTC_USD);
 
         when(service.getHistoricalSpotPrice(Cryptocurrency.BTC, LocalDate.of(2023, 1, 1))).thenReturn(BTC_USD);
@@ -63,7 +63,7 @@ class ControllerTest {
     }
 
     @Test
-    void getMultipleSpotPrices() throws Exception {
+    void testGetMultipleSpotPrices() throws Exception {
         List<SpotPrice> responses = List.of(BTC_USD, BNB_USD, ETH_USD);
         List<String> symbols = List.of(Cryptocurrency.BTC, Cryptocurrency.BNB, Cryptocurrency.ETH);
 
@@ -78,5 +78,9 @@ class ControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
+    }
+
+    @Test
+    void testGetPriceStatistics() {
     }
 }
