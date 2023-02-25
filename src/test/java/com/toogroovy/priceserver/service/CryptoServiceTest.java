@@ -13,13 +13,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,12 +28,13 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class CryptoServiceTest {
-    private final SpotPrice BTC = new SpotPrice(Cryptocurrency.BTC, "USD","40102.44");
-    private final SpotPrice BNB = new SpotPrice(Cryptocurrency.BNB, "USD", "389.22");
-    private final SpotPrice ETH = new SpotPrice(Cryptocurrency.ETH, "USD", "2900.00");
-    private final SpotPrice HISTORICAL_ETH = new SpotPrice(Cryptocurrency.ETH, "USD", "4000.00");
+    private final SpotPrice BTC = new SpotPrice(Cryptocurrency.BTC, "USD","40102.44", LocalDate.now());
+    private final SpotPrice BNB = new SpotPrice(Cryptocurrency.BNB, "USD", "389.22", LocalDate.now());
+    private final SpotPrice ETH = new SpotPrice(Cryptocurrency.ETH, "USD", "2900.00", LocalDate.now());
     private final LocalDate START_DATE = LocalDate.of(2021, 8, 1);
     private final LocalDate END_DATE = LocalDate.of(2023, 8, 1); // 730 days in between
+    private final SpotPrice HISTORICAL_ETH = new SpotPrice(Cryptocurrency.ETH, "USD", "4000.00", START_DATE);
+
     private final List<SpotPrice> PRICES = List.of(BTC, BNB, ETH);
 
     @Mock
@@ -43,6 +42,7 @@ class CryptoServiceTest {
     @InjectMocks
     private CryptoService cryptoService;
     private final ObjectMapper mapper = new ObjectMapper();
+
 
     @BeforeEach
     void setUp() throws Exception {
@@ -97,6 +97,7 @@ class CryptoServiceTest {
         Statistic statistic = cryptoService.getPriceStatistics(Cryptocurrency.ETH, START_DATE, END_DATE);
         assertEquals("-1100.00", statistic.priceChange());
         assertEquals("-27.50", statistic.percentChange());
+        System.out.println(statistic);
         assertEquals("730", statistic.timeDelta());
     }
 }

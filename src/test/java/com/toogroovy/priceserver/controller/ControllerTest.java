@@ -24,9 +24,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(Controller.class)
 class ControllerTest {
-    private final SpotPrice BTC = new SpotPrice(Cryptocurrency.BTC, "40102.44", "coinbase");
-    private final SpotPrice BNB = new SpotPrice(Cryptocurrency.BNB, "389.22", "coinbase");
-    private final SpotPrice ETH = new SpotPrice(Cryptocurrency.ETH, "2900.24", "coinbase");
+    private final SpotPrice BTC = new SpotPrice(Cryptocurrency.BTC, "40102.44", "coinbase", LocalDate.now());
+    private final SpotPrice BNB = new SpotPrice(Cryptocurrency.BNB, "389.22", "coinbase", LocalDate.now());
+    private final SpotPrice ETH = new SpotPrice(Cryptocurrency.ETH, "2900.24", "coinbase", LocalDate.now());
     private final LocalDate START_DATE = LocalDate.of(2021, 8, 1);
     private final LocalDate END_DATE = LocalDate.of(2023, 8, 1); // 730 days in between
     private final Statistic ETH_STATISTICS = new Statistic("ETH", "-1100.00", "-27.50", "730");
@@ -58,11 +58,11 @@ class ControllerTest {
     void testGetHistoricalSpotPrice() throws Exception {
         String outputJson = mapper.writeValueAsString(BTC);
 
-        when(service.getHistoricalSpotPrice(Cryptocurrency.BTC, LocalDate.of(2023, 1, 1))).thenReturn(BTC);
+        when(service.getHistoricalSpotPrice(Cryptocurrency.BTC, START_DATE)).thenReturn(BTC);
 
         this.mockMvc.perform(get("/spot/historical")
                 .param("symbol", Cryptocurrency.BTC)
-                .param("date", "2023-01-01"))
+                .param("date", START_DATE.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
