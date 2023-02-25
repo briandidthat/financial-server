@@ -46,8 +46,7 @@ public class CryptoService {
     public List<Token> getAvailableTokens() {
         try {
             final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/currencies/crypto", String.class);
-            final Map<String, Token[]> result = mapper.readValue(response.getBody(), new TypeReference<>() {
-            });
+            final Map<String, Token[]> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
             final Token[] tokens = result.get("data");
             return Arrays.asList(tokens);
         } catch (Exception e) {
@@ -68,7 +67,9 @@ public class CryptoService {
                     String.class, Map.of("symbol", symbol));
             final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
             final SpotPrice spotPrice = result.get("data");
-            logger.info("Fetched {} spot price. Response: {}", symbol, spotPrice.amount());
+            spotPrice.setDate(LocalDate.now());
+
+            logger.info("Fetched {} spot price. Response: {}", symbol, spotPrice.getAmount());
             return spotPrice;
         } catch (RestClientException e) {
             logger.error("Unable to fetch {} spot price. Reason: {}", symbol, e.getMessage());
@@ -90,7 +91,9 @@ public class CryptoService {
                     String.class, Map.of("symbol", symbol, "date", date.toString()));
             final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
             final SpotPrice spotPrice = result.get("data");
-            logger.info("Fetched historical spot price for {}. Response: {}", symbol, spotPrice.amount());
+            spotPrice.setDate(date);
+
+            logger.info("Fetched historical spot price for {}. Response: {}", symbol, spotPrice.getAmount());
             return spotPrice;
         } catch (RestClientException e) {
             logger.error("Unable to fetch historical price for {}", symbol);
@@ -107,7 +110,7 @@ public class CryptoService {
         // if the end date is today, get current spot price. Else get historical price
         final SpotPrice endPrice = isToday ? getSpotPrice(symbol) : getHistoricalSpotPrice(symbol, endDate);
 
-        return StatisticsUtilities.buildStatistic(startDate, endDate, startPrice, endPrice);
+        return StatisticsUtilities.buildStatistic(startPrice, endPrice);
     }
 
     @Async
