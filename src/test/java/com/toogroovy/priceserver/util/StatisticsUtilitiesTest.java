@@ -23,7 +23,7 @@ class StatisticsUtilitiesTest {
         SpotPrice historicalEth = new SpotPrice(Cryptocurrency.ETH, "USD", "4000", START);
         SpotPrice currentEth = new SpotPrice(Cryptocurrency.ETH, "USD", "3000", END);
 
-        final Statistic expected = new Statistic(Cryptocurrency.ETH, "-1000.00", "-25.00", "730");
+        final Statistic expected = new Statistic(Cryptocurrency.ETH, "-1000.00", "-25.00", "24 months");
 
         Statistic statistic = StatisticsUtilities.buildStatistic(historicalEth, currentEth);
         assertEquals(expected, statistic);

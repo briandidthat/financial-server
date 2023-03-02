@@ -32,7 +32,7 @@ class CryptoServiceTest {
     private final SpotPrice BNB = new SpotPrice(Cryptocurrency.BNB, "USD", "389.22", LocalDate.now());
     private final SpotPrice ETH = new SpotPrice(Cryptocurrency.ETH, "USD", "2900.00", LocalDate.now());
     private final LocalDate START_DATE = LocalDate.of(2021, 8, 1);
-    private final LocalDate END_DATE = LocalDate.of(2023, 8, 1); // 730 days in between
+    private final LocalDate END_DATE = LocalDate.of(2023, 8, 1); // 2 yrs in between (24 months)
     private final SpotPrice HISTORICAL_ETH = new SpotPrice(Cryptocurrency.ETH, "USD", "4000.00", START_DATE);
 
     private final List<SpotPrice> PRICES = List.of(BTC, BNB, ETH);
@@ -98,6 +98,6 @@ class CryptoServiceTest {
         assertEquals("-1100.00", statistic.priceChange());
         assertEquals("-27.50", statistic.percentChange());
         System.out.println(statistic);
-        assertEquals("730", statistic.timeDelta());
+        assertEquals("24 months", statistic.timeDelta());
     }
 }
