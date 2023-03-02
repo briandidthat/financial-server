@@ -5,6 +5,7 @@ import com.toogroovy.priceserver.domain.Cryptocurrency;
 import com.toogroovy.priceserver.domain.SpotPrice;
 import com.toogroovy.priceserver.domain.Statistic;
 import com.toogroovy.priceserver.service.CryptoService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,7 @@ class ControllerTest {
     void testGetSpotPrice() throws Exception {
         String outputJson = mapper.writeValueAsString(BTC);
 
+
         when(service.getSpotPrice(Cryptocurrency.BTC)).thenReturn(BTC);
 
         this.mockMvc.perform(get("/spot").param("symbol", Cryptocurrency.BTC))
@@ -61,8 +63,8 @@ class ControllerTest {
         when(service.getHistoricalSpotPrice(Cryptocurrency.BTC, START_DATE)).thenReturn(BTC);
 
         this.mockMvc.perform(get("/spot/historical")
-                .param("symbol", Cryptocurrency.BTC)
-                .param("date", START_DATE.toString()))
+                        .param("symbol", Cryptocurrency.BTC)
+                        .param("date", START_DATE.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
@@ -79,8 +81,8 @@ class ControllerTest {
         String outputJson = mapper.writeValueAsString(responses);
 
         this.mockMvc.perform(get("/spot/batch")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(inputJson))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(inputJson))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
@@ -92,11 +94,23 @@ class ControllerTest {
         when(service.getPriceStatistics(Cryptocurrency.ETH, START_DATE, END_DATE)).thenReturn(ETH_STATISTICS);
 
         this.mockMvc.perform(get("/spot/statistics")
-                .param("symbol", Cryptocurrency.ETH)
-                .param("startDate", START_DATE.toString())
-                .param("endDate", END_DATE.toString()))
+                        .param("symbol", Cryptocurrency.ETH)
+                        .param("startDate", START_DATE.toString())
+                        .param("endDate", END_DATE.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
     }
+
+//    @Test
+//    void testGetPriceStatisticsShouldThrowValidationError() throws Exception {
+//        when(service.getHistoricalSpotPrice(anyString(), any())).thenThrow(new RestClientException("Service down for maintenance"));
+//
+//        this.mockMvc.perform(get("/spot/statistics")
+//                        .param("symbol", Cryptocurrency.ETH)
+//                        .param("startDate", START_DATE.toString())
+//                        .param("endDate", END_DATE.toString()))
+//                .andExpect(status().isInternalServerError())
+//                .andDo(print());
+//    }
 }

@@ -16,8 +16,8 @@ public final class RequestUtilities {
     }
 
     public static boolean validateSymbols(List<String> symbols, List<Token> tokens) {
-        for (String ticker : symbols) {
-            if (!validateSymbol(ticker, tokens)) {
+        for (String symbol : symbols) {
+            if (!validateSymbol(symbol, tokens)) {
                 return false;
             }
         }
