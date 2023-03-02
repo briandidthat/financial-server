@@ -46,8 +46,9 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Error> handleValidationException(MethodArgumentNotValidException e, WebRequest request) {
+        System.out.println(e);
         BindingResult result = e.getBindingResult();
-        List<FieldError> fieldErrors = result.getFieldErrors();
+        List<FieldError> fieldErrors = e.getFieldErrors();
         List<ExceptionDetails> errors = new ArrayList<>();
 
         LocalDateTime date = LocalDateTime.now();

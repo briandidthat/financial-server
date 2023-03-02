@@ -1,6 +1,5 @@
 package com.toogroovy.priceserver.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.toogroovy.priceserver.domain.SpotPrice;
@@ -21,7 +20,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
@@ -71,11 +69,9 @@ public class CryptoService {
 
             logger.info("Fetched {} spot price. Response: {}", symbol, spotPrice.getAmount());
             return spotPrice;
-        } catch (RestClientException e) {
+        } catch (Exception e) {
             logger.error("Unable to fetch {} spot price. Reason: {}", symbol, e.getMessage());
             throw new BackendClientException(e.getMessage());
-        } catch (JsonProcessingException e) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
@@ -95,16 +91,16 @@ public class CryptoService {
 
             logger.info("Fetched historical spot price for {}. Response: {}", symbol, spotPrice.getAmount());
             return spotPrice;
-        } catch (RestClientException e) {
-            logger.error("Unable to fetch historical price for {}", symbol);
+        } catch (Exception e) {
+            logger.error("Unable to fetch historical price for {}. Reason: {}", symbol, e.getMessage());
             throw new BackendClientException(e.getMessage());
-        } catch (JsonProcessingException e) {
-            logger.error("Unable to map json response");
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
     public Statistic getPriceStatistics(String symbol, LocalDate startDate, LocalDate endDate) {
+        if (!RequestUtilities.validateSymbol(symbol, availableTokens))
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid symbol: " + symbol);
+
         final boolean isToday = endDate.isEqual(LocalDate.now());
         final SpotPrice startPrice = getHistoricalSpotPrice(symbol, startDate);
         // if the end date is today, get current spot price. Else get historical price
@@ -146,6 +142,11 @@ public class CryptoService {
         return responses;
     }
 
+    @Async
+    public CompletableFuture<SpotPrice> getHistoricalPriceAsync(String symbol, LocalDate date) {
+        return CompletableFuture.supplyAsync(() -> getHistoricalSpotPrice(symbol, date));
+    }
+
     @Scheduled(cron = "0 0 0 * * *")
     @EventListener(ApplicationReadyEvent.class)
     protected void updateAvailableTokens() {
@@ -156,8 +157,8 @@ public class CryptoService {
             boolean retry = true;
             int retryCount = 0;
 
-            // continue to retry until we update the available tokens or fail 5 times in which case we will wait till
-            // next request or next day
+            // continue to retry until we update the available tokens or fail 5 times in which case
+            // we will wait till the next request or next day
             while (retry) {
                 List<Token> tokens = getAvailableTokens();
                 if (tokens != null) {
