@@ -1,5 +1,6 @@
 package com.toogroovy.priceserver.controller;
 
+import com.toogroovy.priceserver.domain.BatchRequest;
 import com.toogroovy.priceserver.domain.SpotPrice;
 import com.toogroovy.priceserver.domain.Statistic;
 import com.toogroovy.priceserver.service.CryptoService;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -28,8 +30,8 @@ public class Controller {
     }
 
     @GetMapping("/batch")
-    public List<SpotPrice> getMultipleSpotPrices(@RequestBody List<String> symbols) {
-        return service.getSpotPrices(symbols);
+    public List<SpotPrice> getMultipleSpotPrices(@RequestBody @Valid BatchRequest request) {
+        return service.getSpotPrices(request.symbols());
     }
 
     @GetMapping("/statistics")

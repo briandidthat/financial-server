@@ -5,14 +5,13 @@ import com.toogroovy.priceserver.domain.exception.ExceptionDetails;
 import com.toogroovy.priceserver.domain.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,20 +43,16 @@ public class ControllerExceptionHandler {
         return new ResponseEntity(details, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Error> handleValidationException(MethodArgumentNotValidException e, WebRequest request) {
-        System.out.println(e);
-        BindingResult result = e.getBindingResult();
-        List<FieldError> fieldErrors = e.getFieldErrors();
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Error> handleConstraintValidationException(ConstraintViolationException e, WebRequest request) {
         List<ExceptionDetails> errors = new ArrayList<>();
-
         LocalDateTime date = LocalDateTime.now();
-        for (FieldError fieldError : fieldErrors) {
-            String message = fieldError.getField() + ": " + fieldError.getDefaultMessage();
+
+        for (ConstraintViolation violation : e.getConstraintViolations()) {
+            String message = violation.getPropertyPath() + ": " + violation.getMessage();
             ExceptionDetails details = new ExceptionDetails(date, message, request.getDescription(false));
             errors.add(details);
         }
-
         return new ResponseEntity(errors, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
