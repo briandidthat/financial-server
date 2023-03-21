@@ -5,7 +5,6 @@ import com.toogroovy.priceserver.domain.Cryptocurrency;
 import com.toogroovy.priceserver.domain.SpotPrice;
 import com.toogroovy.priceserver.domain.Statistic;
 import com.toogroovy.priceserver.service.CryptoService;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -74,10 +74,11 @@ class ControllerTest {
     void testGetMultipleSpotPrices() throws Exception {
         List<SpotPrice> responses = List.of(BTC, BNB, ETH);
         List<String> symbols = List.of(Cryptocurrency.BTC, Cryptocurrency.BNB, Cryptocurrency.ETH);
+        Map<String, List<String>> body = Map.of("symbols", symbols);
 
         when(service.getSpotPrices(symbols)).thenReturn(responses);
 
-        String inputJson = mapper.writeValueAsString(symbols);
+        String inputJson = mapper.writeValueAsString(body);
         String outputJson = mapper.writeValueAsString(responses);
 
         this.mockMvc.perform(get("/spot/batch")
@@ -102,15 +103,17 @@ class ControllerTest {
                 .andDo(print());
     }
 
-//    @Test
-//    void testGetPriceStatisticsShouldThrowValidationError() throws Exception {
-//        when(service.getHistoricalSpotPrice(anyString(), any())).thenThrow(new RestClientException("Service down for maintenance"));
-//
-//        this.mockMvc.perform(get("/spot/statistics")
-//                        .param("symbol", Cryptocurrency.ETH)
-//                        .param("startDate", START_DATE.toString())
-//                        .param("endDate", END_DATE.toString()))
-//                .andExpect(status().isInternalServerError())
-//                .andDo(print());
-//    }
+    @Test
+    void testGetBatchSpotPricesShouldThrowConstraintViolation() throws Exception {
+        // should throw constraint violation due to exceeding max of 5 symbols per request
+        List<String> symbols = List.of(Cryptocurrency.BTC, Cryptocurrency.BNB, Cryptocurrency.ETH, "USDC", "CAKE", "APE");
+        Map<String, List<String>> body = Map.of("symbols", symbols);
+        String inputJson = mapper.writeValueAsString(body);
+
+        this.mockMvc.perform(get("/spot/batch")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(inputJson))
+                .andExpect(status().isUnprocessableEntity())
+                .andDo(print());
+    }
 }
