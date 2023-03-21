@@ -5,13 +5,13 @@ import com.toogroovy.priceserver.domain.exception.ExceptionDetails;
 import com.toogroovy.priceserver.domain.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,23 +37,18 @@ public class ControllerExceptionHandler {
         return new ResponseEntity(details, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Error> handleOutOfRangeException(IllegalArgumentException e, WebRequest request) {
-        ExceptionDetails details = new ExceptionDetails(LocalDateTime.now(), e.getMessage(), request.getDescription(false));
-        return new ResponseEntity(details, HttpStatus.UNPROCESSABLE_ENTITY);
-    }
-
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Error> handleConstraintValidationException(ConstraintViolationException e, WebRequest request) {
-        List<ExceptionDetails> errors = new ArrayList<>();
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Error> handleConstraintValidationException(MethodArgumentNotValidException e, WebRequest request) {
+        List<ExceptionDetails> violations = new ArrayList<>();
         LocalDateTime date = LocalDateTime.now();
 
-        for (ConstraintViolation violation : e.getConstraintViolations()) {
-            String message = violation.getPropertyPath() + ": " + violation.getMessage();
+        for (FieldError violation : e.getFieldErrors()) {
+            String message = violation.getField() + ": " + violation.getDefaultMessage();
             ExceptionDetails details = new ExceptionDetails(date, message, request.getDescription(false));
-            errors.add(details);
+            violations.add(details);
         }
-        return new ResponseEntity(errors, HttpStatus.UNPROCESSABLE_ENTITY);
-    }
 
+        System.out.println(violations);
+        return new ResponseEntity(violations, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
 }
