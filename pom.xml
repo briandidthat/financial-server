@@ -8,9 +8,9 @@
         <version>2.6.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.toogroovy</groupId>
+    <groupId>com.briandidthat</groupId>
     <artifactId>price-server</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <name>price-server</name>
     <description>Demo project for Spring Boot</description>
     <properties>
