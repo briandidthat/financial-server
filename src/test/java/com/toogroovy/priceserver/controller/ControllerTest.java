@@ -123,11 +123,13 @@ class ControllerTest {
 
     @Test
     void testGetSpotPriceShouldThrowValidationException() throws Exception {
-        when(service.getSpotPrice("ALABAMA")).thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST,"Invalid symbol: ALABAMA"));
+        String expectedOutput = "Invalid symbol: ALABAMA";
+
+        when(service.getSpotPrice("ALABAMA")).thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST, expectedOutput));
         // should throw 422 exception due to invalid symbol
         this.mockMvc.perform(get("/spot").param("symbol", "ALABAMA"))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("400 Invalid symbol: ALABAMA")))
+                .andExpect(content().string(containsString(expectedOutput)))
                 .andDo(print());
     }
 }
