@@ -1,0 +1,134 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v1.0.4
+servers:
+  - url: http://localhost:8080
+    description: Generated server url
+paths:
+  /spot:
+    get:
+      tags:
+        - controller
+      operationId: getSpotPrice
+      parameters:
+        - name: symbol
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SpotPrice'
+  /spot/statistics:
+    get:
+      tags:
+        - controller
+      operationId: getPriceStatistics
+      parameters:
+        - name: symbol
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Statistic'
+  /spot/historical:
+    get:
+      tags:
+        - controller
+      operationId: getHistoricalSpotPrice
+      parameters:
+        - name: symbol
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SpotPrice'
+  /spot/batch:
+    get:
+      tags:
+        - controller
+      operationId: getMultipleSpotPrices
+      parameters:
+        - name: request
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/BatchRequest'
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SpotPrice'
+components:
+  schemas:
+    SpotPrice:
+      type: object
+      properties:
+        base:
+          type: string
+        currency:
+          type: string
+        amount:
+          type: string
+        date:
+          type: string
+          format: date
+    Statistic:
+      type: object
+      properties:
+        token:
+          type: string
+        priceChange:
+          type: string
+        percentChange:
+          type: string
+        timeDelta:
+          type: string
+    BatchRequest:
+      type: object
+      properties:
+        symbols:
+          maxItems: 5
+          minItems: 2
+          type: array
+          items:
+            type: string
