@@ -3,6 +3,8 @@ package com.briandidthat.priceserver.controller;
 import com.briandidthat.priceserver.domain.Cryptocurrency;
 import com.briandidthat.priceserver.domain.SpotPrice;
 import com.briandidthat.priceserver.domain.Statistic;
+import com.briandidthat.priceserver.domain.exception.BackendClientException;
+import com.briandidthat.priceserver.domain.exception.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.briandidthat.priceserver.service.CryptoService;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,7 +50,6 @@ class ControllerTest {
     @Test
     void testGetSpotPrice() throws Exception {
         String outputJson = mapper.writeValueAsString(BTC);
-
 
         when(service.getSpotPrice(Cryptocurrency.BTC)).thenReturn(BTC);
 
@@ -105,8 +106,22 @@ class ControllerTest {
                 .andDo(print());
     }
 
+    // 404
     @Test
-    void testGetBatchSpotPricesShouldThrowConstraintViolation() throws Exception {
+    void testGetSpotPriceShouldHandleResourceNotFoundException() throws Exception {
+        String expectedOutput = "Invalid symbol: ALABAMA";
+
+        when(service.getSpotPrice("ALABAMA")).thenThrow(new ResourceNotFoundException(expectedOutput));
+        // should throw 400 exception due to invalid symbol
+        this.mockMvc.perform(get("/spot").param("symbol", "ALABAMA"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(containsString(expectedOutput)))
+                .andDo(print());
+    }
+
+    // 422
+    @Test
+    void testGetBatchSpotPricesShouldHandleConstraintViolation() throws Exception {
         // should throw constraint violation due to exceeding max of 5 symbols per request
         List<String> symbols = List.of(Cryptocurrency.BTC, Cryptocurrency.BNB, Cryptocurrency.ETH, "USDC", "CAKE", "APE");
         Map<String, List<String>> body = Map.of("symbols", symbols);
@@ -120,15 +135,17 @@ class ControllerTest {
                 .andDo(print());
     }
 
+    // 500
     @Test
-    void testGetSpotPriceShouldThrowValidationException() throws Exception {
-        String expectedOutput = "Invalid symbol: ALABAMA";
+    void testGetSpotPriceShouldHandleBackendClientException() throws Exception {
+        String expectedOutput = "SocketTimeoutException: Cannot connect";
 
-        when(service.getSpotPrice("ALABAMA")).thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST, expectedOutput));
-        // should throw 422 exception due to invalid symbol
-        this.mockMvc.perform(get("/spot").param("symbol", "ALABAMA"))
-                .andExpect(status().isBadRequest())
+        when(service.getSpotPrice(Cryptocurrency.ETH)).thenThrow(new BackendClientException(expectedOutput));
+        // should throw 500 exception due to backend issue
+        this.mockMvc.perform(get("/spot").param("symbol", Cryptocurrency.ETH))
+                .andExpect(status().isInternalServerError())
                 .andExpect(content().string(containsString(expectedOutput)))
                 .andDo(print());
     }
+
 }

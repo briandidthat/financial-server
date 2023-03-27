@@ -18,13 +18,6 @@ import java.util.List;
 
 @RestControllerAdvice
 public class ControllerExceptionHandler {
-
-    @ExceptionHandler(HttpClientErrorException.class)
-    public ResponseEntity<Error> handleHttpClientException(Exception e, WebRequest request) {
-        ExceptionDetails details = new ExceptionDetails(LocalDateTime.now(), e.getMessage(), request.getDescription(false));
-        return new ResponseEntity(details, HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Error> handleResourceNotFoundException(Exception e, WebRequest request) {
         ExceptionDetails details = new ExceptionDetails(LocalDateTime.now(), e.getMessage(), request.getDescription(false));

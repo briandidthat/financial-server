@@ -4,6 +4,7 @@ import com.briandidthat.priceserver.domain.SpotPrice;
 import com.briandidthat.priceserver.domain.Statistic;
 import com.briandidthat.priceserver.domain.Token;
 import com.briandidthat.priceserver.domain.exception.BackendClientException;
+import com.briandidthat.priceserver.domain.exception.ResourceNotFoundException;
 import com.briandidthat.priceserver.util.RequestUtilities;
 import com.briandidthat.priceserver.util.StatisticsUtilities;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -57,7 +58,7 @@ public class CryptoService {
         symbol = symbol.toUpperCase();
 
         if (!RequestUtilities.validateSymbol(symbol, availableTokens))
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid symbol: " + symbol);
+            throw new ResourceNotFoundException("Invalid symbol: " + symbol);
 
         try {
             logger.info("Fetching current price for {}", symbol);
@@ -157,8 +158,8 @@ public class CryptoService {
             boolean retry = true;
             int retryCount = 0;
 
-            // continue to retry until we update the available tokens or fail 5 times in which case
-            // we will wait till the next request or next day
+            // continue to retry until we update the available tokens or fail 5 times
+            // in which case we will wait till the next request or next day
             while (retry) {
                 List<Token> tokens = getAvailableTokens();
                 if (tokens != null) {
