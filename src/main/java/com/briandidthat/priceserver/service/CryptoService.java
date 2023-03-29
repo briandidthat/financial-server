@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class CryptoService {
+    private static final String DATA = "data";
     private static final Logger logger = LoggerFactory.getLogger(CryptoService.class);
     private static final ObjectMapper mapper = new ObjectMapper();
     private volatile List<Token> availableTokens;
@@ -46,7 +47,7 @@ public class CryptoService {
         try {
             final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/currencies/crypto", String.class);
             final Map<String, Token[]> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
-            final Token[] tokens = result.get("data");
+            final Token[] tokens = result.get(DATA);
             return Arrays.asList(tokens);
         } catch (Exception e) {
             logger.error("Unable to retrieve token list");
@@ -65,7 +66,7 @@ public class CryptoService {
             final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/prices/{symbol}-USD/spot",
                     String.class, Map.of("symbol", symbol));
             final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
-            final SpotPrice spotPrice = result.get("data");
+            final SpotPrice spotPrice = result.get(DATA);
             spotPrice.setDate(LocalDate.now());
 
             logger.info("Fetched {} spot price. Response: {}", symbol, spotPrice.getAmount());
@@ -87,7 +88,7 @@ public class CryptoService {
             final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/prices/{symbol}-USD/spot?date={date}",
                     String.class, Map.of("symbol", symbol, "date", date.toString()));
             final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
-            final SpotPrice spotPrice = result.get("data");
+            final SpotPrice spotPrice = result.get(DATA);
             spotPrice.setDate(date);
 
             logger.info("Fetched historical spot price for {}. Response: {}", symbol, spotPrice.getAmount());
