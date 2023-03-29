@@ -9,10 +9,16 @@ jobs:
     steps:
       # Checkout the code as the first step.
       - checkout
-      # Use mvn clean install to test and build the jar file
+      # Use mvn clean install to test and build the jar filed
       - run:
           name: Build
           command: mvn clean install
+      # Build and push the latest docker image to dockerhub
+      - run:
+          name: Build and push Docker image
+          command: docker build -t $DOCKER_USERNAME/price-server .
+            echo $DOCKER_KEY | docker login -u $DOCKER_USERNAME --password-stdin
+            docker push $DOCKER_USERNAME/price-server
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
