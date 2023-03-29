@@ -14,6 +14,10 @@ jobs:
           name: Build
           command: mvn clean install
       # Build and push the latest docker image to dockerhub
+  deploy-to-docker:
+    docker:
+      - image: docker:17.05.0-ce-git
+    steps:
       - run:
           name: Build and push Docker image
           command: |
@@ -27,3 +31,4 @@ workflows:
   price-server:
     jobs:
       - test-then-build
+      - deploy-to-docker
