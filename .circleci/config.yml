@@ -16,7 +16,8 @@ jobs:
       # Build and push the latest docker image to dockerhub
       - run:
           name: Build and push Docker image
-          command: docker build -t $DOCKER_USERNAME/price-server .
+          command: |
+            docker build -t $DOCKER_USERNAME/price-server .
             echo $DOCKER_KEY | docker login -u $DOCKER_USERNAME --password-stdin
             docker push $DOCKER_USERNAME/price-server
 
