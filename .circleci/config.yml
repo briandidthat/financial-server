@@ -7,20 +7,25 @@ jobs:
     steps:
       # Checkout the code as the first step.
       - checkout
-      # Setup remove docker engine to run docker commands
-      - setup_remote_docker:
-          version: 20.10.14
       # Use mvn clean install to test and build the jar file
       - run:
           name: Test and Build jar
           command: mvn clean install
-      # Build and push the latest docker image to dockerhub
-      - run:
-          name: Build and Push Docker Image
-          command: |
-            docker build -t $DOCKER_USERNAME/price-server .
-            echo $DOCKER_KEY | docker login -u $DOCKER_USERNAME --password-stdin
-            docker push $DOCKER_USERNAME/price-server
+      - when:
+          condition:
+            equal: [development, <<pipeline.git.branch>>]
+          steps:
+            # Setup remove docker engine to run docker commands
+            - setup_remote_docker:
+                version: 20.10.14
+            # Build and push the latest docker image to dockerhub
+            - run:
+                name: Build and Push Docker Image
+                command: |
+                  docker build -t $DOCKER_USERNAME/price-server .
+                  echo $DOCKER_KEY | docker login -u $DOCKER_USERNAME --password-stdin
+                  docker push $DOCKER_USERNAME/price-server
+      
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
