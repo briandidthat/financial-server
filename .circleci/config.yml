@@ -1,11 +1,10 @@
 version: 2.1
 
 jobs:
-  test-build-push:
+  test-then-build:
     docker:
       - image: cimg/openjdk:17.0.5
-    steps:
-      # Checkout the code as the first step.
+    steps: # Checkout the code as the first step.
       - checkout
       # Use mvn clean install to test and build the jar file
       - run:
@@ -13,9 +12,8 @@ jobs:
           command: mvn clean install
       - when:
           condition:
-            equal: [development, <<pipeline.git.branch>>]
-          steps:
-            # Setup remove docker engine to run docker commands
+            equal: [ development, <<pipeline.git.branch>> ]
+          steps: # Setup remove docker engine to run docker commands
             - setup_remote_docker:
                 version: 20.10.14
             # Build and push the latest docker image to dockerhub
@@ -25,11 +23,11 @@ jobs:
                   docker build -t $DOCKER_USERNAME/price-server .
                   echo $DOCKER_KEY | docker login -u $DOCKER_USERNAME --password-stdin
                   docker push $DOCKER_USERNAME/price-server
-      
+
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   price-server:
     jobs:
-      - test-build-push
+      - test-then-build
