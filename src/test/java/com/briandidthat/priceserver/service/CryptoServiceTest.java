@@ -75,14 +75,12 @@ class CryptoServiceTest {
     @Test
     void testGetSpotPrice() {
         SpotPrice tickerResponse = cryptoService.getSpotPrice(Cryptocurrency.BTC);
-
         assertEquals(BTC, tickerResponse);
     }
 
     @Test
     void testGetMultipleSpotPrices() {
         List<SpotPrice> responses = cryptoService.getSpotPrices(List.of(Cryptocurrency.BTC, Cryptocurrency.BNB, Cryptocurrency.ETH));
-
         assertIterableEquals(PRICES, responses);
     }
 
@@ -97,7 +95,6 @@ class CryptoServiceTest {
         Statistic statistic = cryptoService.getPriceStatistics(Cryptocurrency.ETH, START_DATE, END_DATE);
         assertEquals("-1100.00", statistic.priceChange());
         assertEquals("-27.50", statistic.percentChange());
-        System.out.println(statistic);
         assertEquals("24 months", statistic.timeDelta());
     }
 }
