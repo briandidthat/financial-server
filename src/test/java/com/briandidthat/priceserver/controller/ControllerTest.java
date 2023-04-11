@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +35,8 @@ class ControllerTest {
     private final SpotPrice ETH = new SpotPrice(Cryptocurrency.ETH, "2900.24", "coinbase", LocalDate.now());
     private final LocalDate START_DATE = LocalDate.of(2021, 8, 1);
     private final LocalDate END_DATE = LocalDate.of(2023, 8, 1); // 730 days in between
+    private final SpotPrice HISTORICAL_ETH = new SpotPrice(Cryptocurrency.ETH, "USD", "4000.00", START_DATE);
+    private final SpotPrice HISTORICAL_BTC = new SpotPrice(Cryptocurrency.BTC, "USD", "41000.00", START_DATE);
     private final Statistic ETH_STATISTICS = new Statistic("ETH", "-1100.00", "-27.50", "730");
 
     @Autowired
@@ -60,6 +63,25 @@ class ControllerTest {
     }
 
     @Test
+    void testGetMultipleSpotPrices() throws Exception {
+        List<SpotPrice> responses = List.of(BTC, BNB, ETH);
+        List<String> symbols = List.of(Cryptocurrency.BTC, Cryptocurrency.BNB, Cryptocurrency.ETH);
+        Map<String, List<String>> body = Map.of("symbols", symbols);
+
+        when(service.getSpotPrices(symbols)).thenReturn(responses);
+
+        String inputJson = mapper.writeValueAsString(body);
+        String outputJson = mapper.writeValueAsString(responses);
+
+        this.mockMvc.perform(get("/spot/batch")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(inputJson))
+                .andExpect(status().isOk())
+                .andExpect(content().json(outputJson))
+                .andDo(print());
+    }
+
+    @Test
     void testGetHistoricalSpotPrice() throws Exception {
         String outputJson = mapper.writeValueAsString(BTC);
 
@@ -74,17 +96,17 @@ class ControllerTest {
     }
 
     @Test
-    void testGetMultipleSpotPrices() throws Exception {
-        List<SpotPrice> responses = List.of(BTC, BNB, ETH);
-        List<String> symbols = List.of(Cryptocurrency.BTC, Cryptocurrency.BNB, Cryptocurrency.ETH);
-        Map<String, List<String>> body = Map.of("symbols", symbols);
+    void testGetMultipleHistoricalSpotPrices() throws Exception {
+        Map<String, LocalDate> symbols = new HashMap<>();
+        symbols.put(Cryptocurrency.ETH, START_DATE);
+        symbols.put(Cryptocurrency.BTC, START_DATE);
+        List<SpotPrice> prices = List.of(HISTORICAL_ETH, HISTORICAL_BTC);
+        when(service.getHistoricalSpotPrices(symbols)).thenReturn(prices);
 
-        when(service.getSpotPrices(symbols)).thenReturn(responses);
+        String inputJson = mapper.writeValueAsString(symbols);
+        String outputJson = mapper.writeValueAsString(prices);
 
-        String inputJson = mapper.writeValueAsString(body);
-        String outputJson = mapper.writeValueAsString(responses);
-
-        this.mockMvc.perform(get("/spot/batch")
+        this.mockMvc.perform(get("/spot/historical/batch")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(inputJson))
                 .andExpect(status().isOk())
@@ -105,6 +127,8 @@ class ControllerTest {
                 .andExpect(content().json(outputJson))
                 .andDo(print());
     }
+
+    // Testing Error Handling Code
 
     // 404
     @Test
