@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Validated
 @RestController
@@ -24,14 +25,19 @@ public class Controller {
         return service.getSpotPrice(symbol);
     }
 
+    @GetMapping("/batch")
+    public List<SpotPrice> getMultipleSpotPrices(@RequestBody @Valid BatchRequest request) {
+        return service.getSpotPrices(request.symbols());
+    }
+
     @GetMapping("/historical")
     public SpotPrice getHistoricalSpotPrice(@RequestParam String symbol, @RequestParam LocalDate date) {
         return service.getHistoricalSpotPrice(symbol, date);
     }
 
-    @GetMapping("/batch")
-    public List<SpotPrice> getMultipleSpotPrices(@RequestBody @Valid BatchRequest request) {
-        return service.getSpotPrices(request.symbols());
+    @GetMapping("/historical/batch")
+    public List<SpotPrice> getMultipleHistoricalSpotPrices(@RequestBody Map<String, LocalDate> symbols) {
+        return service.getHistoricalSpotPrices(symbols);
     }
 
     @GetMapping("/statistics")

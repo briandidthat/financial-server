@@ -25,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -116,6 +117,11 @@ public class CryptoService {
         return CompletableFuture.supplyAsync(() -> getSpotPrice(symbol));
     }
 
+    @Async
+    private CompletableFuture<SpotPrice> getHistoricalSpotPriceAsync(String symbol, LocalDate date) {
+        return CompletableFuture.supplyAsync(() -> getHistoricalSpotPrice(symbol, date));
+    }
+
     public List<SpotPrice> getSpotPrices(List<String> symbols) {
         final List<SpotPrice> responses;
         final List<CompletableFuture<SpotPrice>> requests;
@@ -144,10 +150,37 @@ public class CryptoService {
         return responses;
     }
 
-    @Async
-    public CompletableFuture<SpotPrice> getHistoricalPriceAsync(String symbol, LocalDate date) {
-        return CompletableFuture.supplyAsync(() -> getHistoricalSpotPrice(symbol, date));
+    public List<SpotPrice> getHistoricalSpotPrices(Map<String, LocalDate> symbols) {
+        final List<SpotPrice> responses;
+        final List<CompletableFuture<SpotPrice>> requests = new ArrayList<>();
+
+        logger.info("Fetching historical prices asynchronously {}", symbols);
+
+        final Instant start = Instant.now();
+        // store list of symbols requests to be run in parallel
+        symbols.keySet().forEach((symbol) -> {
+            final LocalDate date = symbols.get(symbol);
+            requests.add(getHistoricalSpotPriceAsync(symbol, date));
+        });
+        // wait for all requests to be completed
+        CompletableFuture.allOf(requests.toArray(new CompletableFuture[0])).join();
+        // calculate the time it took for our request to be completed
+        final Instant end = Instant.now();
+        logger.info("Completed async historical spot price request in {}ms", end.minusMillis(start.toEpochMilli()).toEpochMilli());
+
+        responses = requests.stream().map(c -> {
+            SpotPrice response = null;
+            try {
+                response = c.get();
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+            }
+            return response;
+        }).collect(Collectors.toList());
+
+        return responses;
     }
+
 
     @Scheduled(cron = "0 0 0 * * *")
     @EventListener(ApplicationReadyEvent.class)

@@ -91,10 +91,15 @@ class CryptoServiceTest {
     }
 
     @Test
+    void testGetHistoricalSpotPrices() {
+    }
+
+    @Test
     void testGetPriceStatistics() {
         Statistic statistic = cryptoService.getPriceStatistics(Cryptocurrency.ETH, START_DATE, END_DATE);
         assertEquals("-1100.00", statistic.priceChange());
         assertEquals("-27.50", statistic.percentChange());
         assertEquals("24 months", statistic.timeDelta());
     }
+
 }
