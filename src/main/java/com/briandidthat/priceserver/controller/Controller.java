@@ -27,7 +27,7 @@ public class Controller {
 
     @GetMapping("/batch")
     public List<SpotPrice> getMultipleSpotPrices(@RequestBody @Valid BatchRequest request) {
-        return service.getSpotPrices(request.symbols());
+        return service.getSpotPrices(request);
     }
 
     @GetMapping("/historical")
@@ -36,8 +36,8 @@ public class Controller {
     }
 
     @GetMapping("/historical/batch")
-    public List<SpotPrice> getMultipleHistoricalSpotPrices(@RequestBody Map<String, LocalDate> symbols) {
-        return service.getHistoricalSpotPrices(symbols);
+    public List<SpotPrice> getMultipleHistoricalSpotPrices(@RequestBody @Valid BatchRequest request) {
+        return service.getHistoricalSpotPrices(request);
     }
 
     @GetMapping("/statistics")

@@ -1,5 +1,6 @@
 package com.briandidthat.priceserver.service;
 
+import com.briandidthat.priceserver.domain.BatchRequest;
 import com.briandidthat.priceserver.domain.SpotPrice;
 import com.briandidthat.priceserver.domain.Statistic;
 import com.briandidthat.priceserver.domain.Token;
@@ -47,11 +48,12 @@ public class CryptoService {
     public List<Token> getAvailableTokens() {
         try {
             final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/currencies/crypto", String.class);
-            final Map<String, Token[]> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
+            final Map<String, Token[]> result = mapper.readValue(response.getBody(), new TypeReference<>() {
+            });
             final Token[] tokens = result.get(DATA);
             return Arrays.asList(tokens);
         } catch (Exception e) {
-            logger.error("Unable to retrieve token list");
+            logger.error("Unable to retrieve token list. Reason: {}", e.getMessage());
             return null;
         }
     }
@@ -66,7 +68,8 @@ public class CryptoService {
             logger.info("Fetching current price for {}", symbol);
             final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/prices/{symbol}-USD/spot",
                     String.class, Map.of("symbol", symbol));
-            final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
+            final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {
+            });
             final SpotPrice spotPrice = result.get(DATA);
             spotPrice.setDate(LocalDate.now());
 
@@ -88,7 +91,8 @@ public class CryptoService {
             logger.info("Fetching historical price for {} on date {}", symbol, date);
             final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/prices/{symbol}-USD/spot?date={date}",
                     String.class, Map.of("symbol", symbol, "date", date.toString()));
-            final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
+            final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {
+            });
             final SpotPrice spotPrice = result.get(DATA);
             spotPrice.setDate(date);
 
@@ -122,22 +126,24 @@ public class CryptoService {
         return CompletableFuture.supplyAsync(() -> getHistoricalSpotPrice(symbol, date));
     }
 
-    public List<SpotPrice> getSpotPrices(List<String> symbols) {
+    public List<SpotPrice> getSpotPrices(BatchRequest batchRequest) {
         final List<SpotPrice> responses;
-        final List<CompletableFuture<SpotPrice>> requests;
+        final List<CompletableFuture<SpotPrice>> completableFutures = new ArrayList<>();
 
-        logger.info("Fetching prices asynchronously {}", symbols);
+        logger.info("Fetching prices asynchronously {}", batchRequest.getRequests());
 
         final Instant start = Instant.now();
         // store list of symbols requests to be run in parallel
-        requests = symbols.stream().map(this::getSpotPriceAsync).collect(Collectors.toList());
+        batchRequest.getRequests().forEach(request -> {
+            completableFutures.add(getSpotPriceAsync(request.getSymbol()));
+        });
         // wait for all requests to be completed
-        CompletableFuture.allOf(requests.toArray(new CompletableFuture[0])).join();
+        CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
         // calculate the time it took for our request to be completed
         final Instant end = Instant.now();
         logger.info("Completed async spot price request in {}ms", end.minusMillis(start.toEpochMilli()).toEpochMilli());
 
-        responses = requests.stream().map(c -> {
+        responses = completableFutures.stream().map(c -> {
             SpotPrice response = null;
             try {
                 response = c.get();
@@ -150,25 +156,24 @@ public class CryptoService {
         return responses;
     }
 
-    public List<SpotPrice> getHistoricalSpotPrices(Map<String, LocalDate> symbols) {
+    public List<SpotPrice> getHistoricalSpotPrices(BatchRequest batchRequest) {
         final List<SpotPrice> responses;
-        final List<CompletableFuture<SpotPrice>> requests = new ArrayList<>();
+        final List<CompletableFuture<SpotPrice>> completableFutures = new ArrayList<>();
 
-        logger.info("Fetching historical prices asynchronously {}", symbols);
+        logger.info("Fetching historical prices asynchronously {}", batchRequest.getRequests());
 
         final Instant start = Instant.now();
-        // store list of symbols requests to be run in parallel
-        symbols.keySet().forEach((symbol) -> {
-            final LocalDate date = symbols.get(symbol);
-            requests.add(getHistoricalSpotPriceAsync(symbol, date));
+        // store list of completableFutures to be run in parallel
+        batchRequest.getRequests().forEach((request) -> {
+            completableFutures.add(getHistoricalSpotPriceAsync(request.getSymbol(), request.getDate()));
         });
-        // wait for all requests to be completed
-        CompletableFuture.allOf(requests.toArray(new CompletableFuture[0])).join();
+        // wait for all completableFutures to be completed
+        CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
         // calculate the time it took for our request to be completed
         final Instant end = Instant.now();
         logger.info("Completed async historical spot price request in {}ms", end.minusMillis(start.toEpochMilli()).toEpochMilli());
 
-        responses = requests.stream().map(c -> {
+        responses = completableFutures.stream().map(c -> {
             SpotPrice response = null;
             try {
                 response = c.get();
@@ -180,7 +185,6 @@ public class CryptoService {
 
         return responses;
     }
-
 
     @Scheduled(cron = "0 0 0 * * *")
     @EventListener(ApplicationReadyEvent.class)

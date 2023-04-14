@@ -1,6 +1,5 @@
 package com.briandidthat.priceserver.util;
 
-import com.briandidthat.priceserver.domain.Cryptocurrency;
 import com.briandidthat.priceserver.domain.Token;
 import org.junit.jupiter.api.Test;
 
@@ -10,26 +9,23 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RequestUtilitiesTest {
-    private static final List<Token> availableTokens = List.of(
-            new Token("AVAX", "Avalanche","red", 1, 8, "crypto", "dsfas", "23df"),
-            new Token( "BTC", "Bitcoin", "orange", 2, 8, "crypto", "dsfas", "23df"),
-            new Token("BNB","Binance Coin", "gold", 3, 8, "crypto", "dsfas", "23df"));
+    List<Token> availableTokens = TestingConstants.getAvailableTokens();
 
     @Test
-    void testValidateCryptocurrency() {
-        boolean validated = RequestUtilities.validateSymbol(Cryptocurrency.AVAX, availableTokens);
+    void testValidateTestingUtilities() {
+        boolean validated = RequestUtilities.validateSymbol(TestingConstants.BTC, availableTokens);
         assertTrue(validated);
     }
 
     @Test
-    void testValidateCryptocurrencyWithInvalidSymbol() {
+    void testValidateTestingUtilitiesWithInvalidSymbol() {
         boolean validated = RequestUtilities.validateSymbol("WMEMO", availableTokens);
         assertFalse(validated);
     }
 
     @Test
     void testValidateCryptocurrencies() {
-        boolean validated = RequestUtilities.validateSymbols(List.of(Cryptocurrency.BTC, Cryptocurrency.BNB), availableTokens);
+        boolean validated = RequestUtilities.validateSymbols(List.of(TestingConstants.BTC, TestingConstants.BNB), availableTokens);
         assertTrue(validated);
     }
 
