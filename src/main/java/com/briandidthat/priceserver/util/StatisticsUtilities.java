@@ -19,11 +19,11 @@ public final class StatisticsUtilities {
     }
 
     public static Statistic buildStatistic(SpotPrice startPrice, SpotPrice endPrice) {
-        final double oldPriceDouble = Double.parseDouble(startPrice.getAmount());
-        final double currentPriceDouble = Double.parseDouble(endPrice.getAmount());
+        final double startPriceDouble = Double.parseDouble(startPrice.getAmount());
+        final double endPriceDouble = Double.parseDouble(endPrice.getAmount());
 
-        final double priceChange = currentPriceDouble - oldPriceDouble;
-        final double percentChange = ((currentPriceDouble - oldPriceDouble) / oldPriceDouble) * 100;
+        final double priceChange = endPriceDouble - startPriceDouble;
+        final double percentChange = ((endPriceDouble - startPriceDouble) / startPriceDouble) * 100;
 
         final String priceChangeString = String.format("%.2f", priceChange);
         final String percentChangeString = String.format("%.2f", percentChange);
