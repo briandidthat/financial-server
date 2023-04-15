@@ -24,8 +24,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class CryptoServiceTest {
-    private final List<SpotPrice> PRICES = List.of(TestingConstants.BTC_SPOT);
-
     @Mock
     private RestTemplate restTemplate;
     @InjectMocks
