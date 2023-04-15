@@ -59,12 +59,12 @@ class ControllerTest {
     @Test
     void testGetMultipleSpotPrices() throws Exception {
         BatchRequest batchRequest = TestingConstants.SPOT_BATCH;
-        List<SpotPrice> responses = List.of(TestingConstants.BTC_SPOT, TestingConstants.BNB_SPOT, TestingConstants.ETH_SPOT);
+        List<SpotPrice> expectedResponse = TestingConstants.SPOT_RESPONSES;
 
-        when(service.getSpotPrices(batchRequest)).thenReturn(responses);
+        when(service.getSpotPrices(batchRequest)).thenReturn(expectedResponse);
 
         String inputJson = mapper.writeValueAsString(batchRequest);
-        String outputJson = mapper.writeValueAsString(responses);
+        String outputJson = mapper.writeValueAsString(expectedResponse);
 
         this.mockMvc.perform(get("/spot/batch")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -91,12 +91,12 @@ class ControllerTest {
     @Test
     void testGetMultipleHistoricalSpotPrices() throws Exception {
         BatchRequest batchRequest = TestingConstants.HISTORICAL_BATCH;
-        List<SpotPrice> response = List.of(TestingConstants.HISTORICAL_BTC, TestingConstants.HISTORICAL_BNB, TestingConstants.HISTORICAL_ETH);
+        List<SpotPrice> expectedResponse = TestingConstants.HISTORICAL_SPOT_RESPONSES;
 
-        when(service.getHistoricalSpotPrices(batchRequest)).thenReturn(response);
+        when(service.getHistoricalSpotPrices(batchRequest)).thenReturn(expectedResponse);
 
         String inputJson = mapper.writeValueAsString(batchRequest);
-        String outputJson = mapper.writeValueAsString(response);
+        String outputJson = mapper.writeValueAsString(expectedResponse);
 
         this.mockMvc.perform(get("/spot/historical/batch")
                         .contentType(MediaType.APPLICATION_JSON)

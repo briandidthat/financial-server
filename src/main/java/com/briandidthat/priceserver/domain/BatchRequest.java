@@ -1,10 +1,11 @@
 package com.briandidthat.priceserver.domain;
 
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-public final class BatchRequest {
+public final class BatchRequest implements Serializable {
     @Size(min = 2, max = 5)
     private List<Request> requests;
 

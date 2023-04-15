@@ -1,10 +1,11 @@
 openapi: 3.0.1
 info:
-  title: OpenAPI definition
-  version: v1.0.4
+  title: Price Server
+  version: v1.0.5
+  description: Cryptocurrency Spot Price API powered by Coinbase's free API
 servers:
   - url: http://localhost:8080
-    description: Generated server url
+    description: Server generated url
 paths:
   /spot:
     get:
@@ -18,7 +19,7 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: OK
           content:
             '*/*':
@@ -48,7 +49,7 @@ paths:
             type: string
             format: date
       responses:
-        "200":
+        '200':
           description: OK
           content:
             '*/*':
@@ -72,12 +73,32 @@ paths:
             type: string
             format: date
       responses:
-        "200":
+        '200':
           description: OK
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/SpotPrice'
+  /spot/historical/batch:
+    get:
+      tags:
+        - controller
+      operationId: getMultipleHistoricalSpotPrices
+      parameters:
+        - name: request
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/BatchRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SpotPrice'
   /spot/batch:
     get:
       tags:
@@ -90,7 +111,7 @@ paths:
           schema:
             $ref: '#/components/schemas/BatchRequest'
       responses:
-        "200":
+        '200':
           description: OK
           content:
             '*/*':
@@ -101,6 +122,8 @@ paths:
 components:
   schemas:
     SpotPrice:
+      required:
+        - base
       type: object
       properties:
         base:
@@ -126,9 +149,19 @@ components:
     BatchRequest:
       type: object
       properties:
-        symbols:
+        requests:
           maxItems: 5
           minItems: 2
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/Request'
+    Request:
+      required:
+        - symbol
+      type: object
+      properties:
+        symbol:
+          type: string
+        date:
+          type: string
+          format: date
