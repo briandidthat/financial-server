@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RequestUtilitiesTest {
-    List<Token> availableTokens = TestingConstants.getAvailableTokens();
+    List<Token> availableTokens = TestingConstants.AVAILABLE_TOKENS;
 
     @Test
     void testValidateTestingUtilities() {

@@ -63,7 +63,7 @@ class CryptoServiceTest {
         when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot?date={date}", String.class, Map.of("symbol", TestingConstants.ETH, "date", TestingConstants.END_DATE.toString()))).thenReturn(ResponseEntity.ok(ethJson));
 
         ReflectionTestUtils.setField(cryptoService, "coinbaseUrl", coinbaseEndpoint);
-        ReflectionTestUtils.setField(cryptoService, "availableTokens", TestingConstants.getAvailableTokens());
+        ReflectionTestUtils.setField(cryptoService, "availableTokens", TestingConstants.AVAILABLE_TOKENS);
     }
 
     @Test
