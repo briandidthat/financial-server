@@ -36,4 +36,10 @@ public final class BatchRequest implements Serializable {
         return Objects.hash(requests);
     }
 
+    @Override
+    public String toString() {
+        return "BatchRequest{" +
+                "requests=" + requests +
+                '}';
+    }
 }
