@@ -186,6 +186,7 @@ public class CryptoService {
         return responses;
     }
 
+    // this operation will run on startup and at 12:00am everyday after
     @Scheduled(cron = "0 0 0 * * *")
     @EventListener(ApplicationReadyEvent.class)
     protected void updateAvailableTokens() {

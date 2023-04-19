@@ -50,9 +50,6 @@ public final class Request implements Serializable {
 
     @Override
     public String toString() {
-        return "Request{" +
-                "symbol='" + symbol + '\'' +
-                ", date=" + date +
-                '}';
+        return "Request{" + "symbol='" + symbol + '\'' + ", date=" + date + '}';
     }
 }
