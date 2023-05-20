@@ -105,6 +105,8 @@ public class CryptoService {
     }
 
     public Statistic getPriceStatistics(String symbol, LocalDate startDate, LocalDate endDate) {
+        symbol = symbol.toUpperCase();
+
         if (!RequestUtilities.validateSymbol(symbol, availableTokens))
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid symbol: " + symbol);
 

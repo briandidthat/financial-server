@@ -62,6 +62,4 @@ public class Controller {
         final LocalDate end = endDate == null ? LocalDate.now() : endDate;
         return service.getPriceStatistics(symbol, startDate, end);
     }
-
-
 }

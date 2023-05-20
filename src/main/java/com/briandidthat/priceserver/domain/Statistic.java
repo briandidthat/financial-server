@@ -1,10 +1,10 @@
 package com.briandidthat.priceserver.domain;
 
-public record Statistic(String token, String priceChange, String percentChange, String timeDelta) {
+public record Statistic(String symbol, String priceChange, String percentChange, String timeDelta) {
     @Override
     public String toString() {
         return "Statistic{" +
-                "token='" + token + '\'' +
+                "symbol='" + symbol + '\'' +
                 ", priceChange='" + priceChange + '\'' +
                 ", percentChange='" + percentChange + '\'' +
                 ", timeDelta='" + timeDelta + '\'' +
