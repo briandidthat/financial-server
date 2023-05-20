@@ -1,6 +1,7 @@
 package com.briandidthat.priceserver.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -10,6 +11,7 @@ import java.util.Objects;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public final class BatchRequest implements Serializable {
     @Size(min = 2, max = 5)
+    @JsonProperty("")
     private List<Request> requests;
 
     public BatchRequest() {
