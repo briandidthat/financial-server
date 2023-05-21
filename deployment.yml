@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: price-server-deployment
+  labels:
+    app: price-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: price-server
+  template:
+    metadata:
+      labels:
+        app: price-server
+    spec:
+      containers:
+      - name: price-server
+        image: briandidthat/price-server
+        ports:
+          - containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: price-server-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: price-server
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
