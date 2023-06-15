@@ -1,5 +1,6 @@
 package com.briandidthat.priceserver.service;
 
+import com.briandidthat.priceserver.controller.HealthCheckController;
 import com.briandidthat.priceserver.domain.BatchRequest;
 import com.briandidthat.priceserver.domain.SpotPrice;
 import com.briandidthat.priceserver.domain.Statistic;
@@ -188,13 +189,13 @@ public class CryptoService {
         return responses;
     }
 
-    // this operation will run on startup and at 12:00am everyday after
+    // this operation will run on startup and at 12:00am every day after
     @Scheduled(cron = "0 0 0 * * *")
     @EventListener(ApplicationReadyEvent.class)
     protected void updateAvailableTokens() {
         availableTokens = getAvailableTokens();
         if (availableTokens == null) {
-            logger.error("Error retrieving available tokens. Retrying");
+            logger.error("Error retrieving available tokens. Retrying...");
 
             boolean retry = true;
             int retryCount = 0;
@@ -205,10 +206,12 @@ public class CryptoService {
                 List<Token> tokens = getAvailableTokens();
                 if (tokens != null) {
                     availableTokens = tokens;
+                    logger.info("Successfully retrieved the available tokens on attempt # {}.", retryCount);
                     retry = false;
                 } else {
                     if (retryCount == 5) {
                         logger.info("Reached max retries {}.", retryCount);
+                        HealthCheckController.setAvailable(false);
                         return;
                     }
 
@@ -221,6 +224,7 @@ public class CryptoService {
             }
         }
 
+        HealthCheckController.setAvailable(true);
         logger.info("Updated available tokens list");
     }
 }
