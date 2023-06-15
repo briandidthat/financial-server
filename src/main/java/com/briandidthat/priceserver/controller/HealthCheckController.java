@@ -8,21 +8,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HealthCheckController {
 
-    private static Boolean available = false;
     private static final Logger logger = LoggerFactory.getLogger(HealthCheckController.class);
+    private static Boolean available = false;
 
     public static void setAvailable(boolean status) {
-        if (!status) {
-            logger.error("Application unhealthy. Shutting down...");
-        }
-        else {
-            logger.info("Application healthy. Startup completed");
-            available = true;
-        }
+        if (!status) logger.error("Application unhealthy. Setting unavailable...");
+        else logger.info("Application healthy. Startup completed");
+
+        available = status;
     }
 
     @GetMapping("/health")
-    public String isAvalailable() {
+    public String isAvailable() {
         if (!available) throw new RuntimeException();
         return "AVAILABLE";
     }
