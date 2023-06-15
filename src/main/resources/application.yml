@@ -11,6 +11,5 @@ server:
 
 apis:
   coinbase:
-#    baseUrl: "https://api.coinbase.com/v2"
-    baseUrl: "google.com"
+    baseUrl: "https://api.coinbase.com/v2"
     available: "/currencies"
