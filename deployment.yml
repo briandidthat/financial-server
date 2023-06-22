@@ -23,11 +23,12 @@ spec:
           livenessProbe:
             httpGet:
               path: /healthz
+              port: 8080
           readinessProbe:
             httpGet:
               path: /readyz
+              port: 8080
             initialDelaySeconds: 5
-
 
 ---
 apiVersion: v1
