@@ -6,9 +6,9 @@ import com.briandidthat.priceserver.domain.SpotPrice;
 import com.briandidthat.priceserver.domain.Statistic;
 import com.briandidthat.priceserver.domain.exception.BackendClientException;
 import com.briandidthat.priceserver.domain.exception.ResourceNotFoundException;
+import com.briandidthat.priceserver.service.CryptoService;
 import com.briandidthat.priceserver.util.TestingConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.briandidthat.priceserver.service.CryptoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,8 @@ import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(Controller.class)
 class ControllerTest {

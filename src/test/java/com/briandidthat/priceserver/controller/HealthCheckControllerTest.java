@@ -46,7 +46,7 @@ class HealthCheckControllerTest {
 
         this.mockMvc.perform(get("/readyz"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("READY"))
+                .andExpect(content().string("AVAILABLE"))
                 .andDo(print());
     }
 

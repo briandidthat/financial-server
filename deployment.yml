@@ -24,6 +24,10 @@ spec:
             httpGet:
               path: /healthz
               port: 8080
+              httpHeaders:
+                - name: caller
+                  value: kubernetes
+            periodSeconds: 180
           readinessProbe:
             httpGet:
               path: /readyz
