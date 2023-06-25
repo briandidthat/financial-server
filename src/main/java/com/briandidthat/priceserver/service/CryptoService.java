@@ -223,8 +223,7 @@ public class CryptoService {
                 }
             }
         }
-
+        logger.info("Updated available tokens list. Count: {}", availableTokens.size());
         HealthCheckController.setAvailable(true);
-        logger.info("Updated available tokens list");
     }
 }
