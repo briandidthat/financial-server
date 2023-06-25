@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: price-server
-          image: price-server:1.0.1
+          image: briandidthat/price-server
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
