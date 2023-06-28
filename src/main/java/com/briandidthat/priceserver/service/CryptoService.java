@@ -28,7 +28,6 @@ import org.springframework.web.client.RestTemplate;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -45,19 +44,6 @@ public class CryptoService {
     private String coinbaseUrl;
     @Autowired
     private RestTemplate restTemplate;
-
-    public List<Token> getAvailableTokens() {
-        try {
-            final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/currencies/crypto", String.class);
-            final Map<String, Token[]> result = mapper.readValue(response.getBody(), new TypeReference<>() {
-            });
-            final Token[] tokens = result.get(DATA);
-            return Arrays.asList(tokens);
-        } catch (Exception e) {
-            logger.error("Unable to retrieve token list. Reason: {}", e.getMessage());
-            return null;
-        }
-    }
 
     public SpotPrice getSpotPrice(String symbol) throws HttpClientErrorException, BackendClientException {
         symbol = symbol.toUpperCase();
@@ -187,6 +173,18 @@ public class CryptoService {
         }).collect(Collectors.toList());
 
         return responses;
+    }
+
+    protected List<Token> getAvailableTokens() {
+        try {
+            final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/currencies/crypto", String.class);
+            final Map<String, List<Token>> result = mapper.readValue(response.getBody(), new TypeReference<>() {
+            });
+            return result.get(DATA);
+        } catch (Exception e) {
+            logger.error("Unable to retrieve token list. Reason: {}", e.getMessage());
+            return null;
+        }
     }
 
     // this operation will run on startup and at 12:00am every day after
