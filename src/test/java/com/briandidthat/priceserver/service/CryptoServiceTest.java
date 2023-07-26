@@ -52,13 +52,13 @@ class CryptoServiceTest {
         final String historicalEthJson = mapper.writeValueAsString(HISTORICAL_ETH_RESPONSE);
 
 
-        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot", String.class, Map.of("symbol", TestingConstants.BTC))).thenReturn(ResponseEntity.ok(btcJson));
-        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot", String.class, Map.of("symbol", TestingConstants.BNB))).thenReturn(ResponseEntity.ok(bnbJson));
-        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot", String.class, Map.of("symbol", TestingConstants.ETH))).thenReturn(ResponseEntity.ok(ethJson));
-        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot?date={date}", String.class, Map.of("symbol", TestingConstants.BTC, "date", TestingConstants.START_DATE.toString()))).thenReturn(ResponseEntity.ok(historicalBtcJson));
-        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot?date={date}", String.class, Map.of("symbol", TestingConstants.BNB, "date", TestingConstants.START_DATE.toString()))).thenReturn(ResponseEntity.ok(historicalBnbJson));
-        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot?date={date}", String.class, Map.of("symbol", TestingConstants.ETH, "date", TestingConstants.START_DATE.toString()))).thenReturn(ResponseEntity.ok(historicalEthJson));
-        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/{symbol}-USD/spot?date={date}", String.class, Map.of("symbol", TestingConstants.ETH, "date", TestingConstants.END_DATE.toString()))).thenReturn(ResponseEntity.ok(ethJson));
+        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/" + TestingConstants.BTC + "-USD/spot", String.class)).thenReturn(ResponseEntity.ok(btcJson));
+        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/" + TestingConstants.BNB + "-USD/spot", String.class)).thenReturn(ResponseEntity.ok(bnbJson));
+        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/" + TestingConstants.ETH + "-USD/spot", String.class)).thenReturn(ResponseEntity.ok(ethJson));
+        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/" + TestingConstants.BTC + "-USD/spot?date=" + TestingConstants.START_DATE, String.class)).thenReturn(ResponseEntity.ok(historicalBtcJson));
+        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/" + TestingConstants.BNB + "-USD/spot?date=" + TestingConstants.START_DATE, String.class)).thenReturn(ResponseEntity.ok(historicalBnbJson));
+        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/" + TestingConstants.ETH + "-USD/spot?date=" + TestingConstants.START_DATE, String.class)).thenReturn(ResponseEntity.ok(historicalEthJson));
+        when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/" + TestingConstants.ETH + "-USD/spot?date=" + TestingConstants.END_DATE, String.class)).thenReturn(ResponseEntity.ok(ethJson));
 
         ReflectionTestUtils.setField(cryptoService, "coinbaseUrl", coinbaseEndpoint);
         ReflectionTestUtils.setField(cryptoService, "availableTokens", TestingConstants.AVAILABLE_TOKENS);

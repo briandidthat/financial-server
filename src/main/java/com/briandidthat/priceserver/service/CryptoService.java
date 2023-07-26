@@ -53,8 +53,8 @@ public class CryptoService {
 
         try {
             logger.info("Fetching current price for {}", symbol);
-            final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/prices/{symbol}-USD/spot",
-                    String.class, Map.of("symbol", symbol));
+            final String queryString = "/prices/" + symbol + "-USD/spot";
+            final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + queryString, String.class);
             final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {
             });
             final SpotPrice spotPrice = result.get(DATA);
@@ -76,8 +76,8 @@ public class CryptoService {
 
         try {
             logger.info("Fetching historical price for {} on date {}", symbol, date);
-            final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/prices/{symbol}-USD/spot?date={date}",
-                    String.class, Map.of("symbol", symbol, "date", date.toString()));
+            final String queryString = "/prices/" + symbol + "-USD/spot?date=" + date;
+            final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + queryString, String.class);
             final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {
             });
             final SpotPrice spotPrice = result.get(DATA);
