@@ -1,0 +1,33 @@
+version: 2.1
+
+jobs:
+  test-then-build:
+    docker:
+      - image: cimg/openjdk:17.0.5
+    steps:
+      # Checkout the code as the first step.
+      - checkout
+      # Run mvn clean install to test and build the jar file
+      - run:
+          name: Test and Build jar
+          command: mvn clean install
+      # When the development branch is successfully built, build and deploy docker image
+      - when:
+          condition:
+            equal: [ development, <<pipeline.git.branch>> ]
+          steps:
+            # Setup remote docker engine to run docker commands
+            - setup_remote_docker:
+                version: 20.10.14
+            # Build and push the latest docker image to dockerhub
+            - run:
+                name: Build and Push Docker Image
+                command: |
+                  docker build -t $DOCKER_USERNAME/price-server .
+                  echo $DOCKER_KEY | docker login -u $DOCKER_USERNAME --password-stdin
+                  docker push $DOCKER_USERNAME/price-server
+
+workflows:
+  price-server:
+    jobs:
+      - test-then-build
