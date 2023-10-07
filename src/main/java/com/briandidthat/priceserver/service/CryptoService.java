@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -187,9 +188,9 @@ public class CryptoService {
         }
     }
 
-    // this operation will run on startup and at 12:00am every day after
+    // this operation will run on startup, and at 12:00am every day after
+    @PostConstruct
     @Scheduled(cron = "0 0 0 * * *")
-    @EventListener(ApplicationReadyEvent.class)
     protected void updateAvailableTokens() {
         availableTokens = getAvailableTokens();
         if (availableTokens == null) {
