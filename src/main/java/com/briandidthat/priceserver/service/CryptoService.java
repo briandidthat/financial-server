@@ -68,8 +68,6 @@ public class CryptoService {
     }
 
     public SpotPrice getHistoricalSpotPrice(String symbol, LocalDate date) {
-        symbol = symbol.toUpperCase();
-
         if (!RequestUtilities.validateSymbol(symbol, availableTokens))
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid symbol: " + symbol);
 

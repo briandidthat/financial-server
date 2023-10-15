@@ -18,7 +18,7 @@ public final class Request implements Serializable {
     private LocalDate date;
 
     public Request(String symbol) {
-        this.symbol = symbol;
+        this.symbol = symbol.toUpperCase();
         this.date = LocalDate.now();
     }
 

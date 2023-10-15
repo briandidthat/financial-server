@@ -76,14 +76,15 @@ class ControllerTest {
 
     @Test
     void testGetHistoricalSpotPrice() throws Exception {
-        String outputJson = mapper.writeValueAsString(TestingConstants.HISTORICAL_BTC);
+        final String inputJson = mapper.writeValueAsString(TestingConstants.HISTORICAL_ETH_REQUEST);
+        String outputJson = mapper.writeValueAsString(TestingConstants.HISTORICAL_ETH);
 
-        when(service.getHistoricalSpotPrice(TestingConstants.BTC, START_DATE)).thenReturn(TestingConstants.HISTORICAL_BTC);
+        when(service.getHistoricalSpotPrice(TestingConstants.ETH, START_DATE)).thenReturn(TestingConstants.HISTORICAL_ETH);
 
         this.mockMvc.perform(get("/spot/historical")
                         .header("caller", "test")
-                        .param("symbol", TestingConstants.BTC)
-                        .param("date", START_DATE.toString()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(inputJson))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());

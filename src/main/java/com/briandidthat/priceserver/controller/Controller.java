@@ -1,6 +1,7 @@
 package com.briandidthat.priceserver.controller;
 
 import com.briandidthat.priceserver.domain.BatchRequest;
+import com.briandidthat.priceserver.domain.Request;
 import com.briandidthat.priceserver.domain.SpotPrice;
 import com.briandidthat.priceserver.domain.Statistic;
 import com.briandidthat.priceserver.service.CryptoService;
@@ -37,9 +38,9 @@ public class Controller {
     }
 
     @GetMapping("/historical")
-    public SpotPrice getHistoricalSpotPrice(@RequestHeader String caller, @RequestParam String symbol, @RequestParam LocalDate date) {
+    public SpotPrice getHistoricalSpotPrice(@RequestHeader String caller, @RequestBody Request request) {
         logger.info("Historical spot request by {}", caller);
-        return service.getHistoricalSpotPrice(symbol, date);
+        return service.getHistoricalSpotPrice(request.getSymbol(), request.getDate());
     }
 
     @GetMapping("/historical/batch")
