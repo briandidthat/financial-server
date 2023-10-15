@@ -1,12 +1,12 @@
 package com.briandidthat.priceserver.util;
 
 import com.briandidthat.priceserver.domain.Token;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.util.Assert;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public final class RequestUtilities {

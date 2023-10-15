@@ -4,13 +4,13 @@ import com.briandidthat.priceserver.domain.BatchRequest;
 import com.briandidthat.priceserver.domain.SpotPrice;
 import com.briandidthat.priceserver.domain.Statistic;
 import com.briandidthat.priceserver.service.CryptoService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 
