@@ -41,17 +41,15 @@ class ControllerTest {
     @MockBean
     private CryptoService service;
 
-    @BeforeEach
-    void setUp() {
-    }
-
     @Test
     void testGetSpotPrice() throws Exception {
         String outputJson = mapper.writeValueAsString(TestingConstants.BTC_SPOT);
 
         when(service.getSpotPrice(TestingConstants.BTC)).thenReturn(TestingConstants.BTC_SPOT);
 
-        this.mockMvc.perform(get("/spot").param("symbol", TestingConstants.BTC))
+        this.mockMvc.perform(get("/spot")
+                        .header("caller", "test")
+                        .param("symbol", TestingConstants.BTC))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
@@ -68,6 +66,7 @@ class ControllerTest {
         String outputJson = mapper.writeValueAsString(expectedResponse);
 
         this.mockMvc.perform(get("/spot/batch")
+                        .header("caller", "test")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(inputJson))
                 .andExpect(status().isOk())
@@ -82,6 +81,7 @@ class ControllerTest {
         when(service.getHistoricalSpotPrice(TestingConstants.BTC, START_DATE)).thenReturn(TestingConstants.HISTORICAL_BTC);
 
         this.mockMvc.perform(get("/spot/historical")
+                        .header("caller", "test")
                         .param("symbol", TestingConstants.BTC)
                         .param("date", START_DATE.toString()))
                 .andExpect(status().isOk())
@@ -100,6 +100,7 @@ class ControllerTest {
         String outputJson = mapper.writeValueAsString(expectedResponse);
 
         this.mockMvc.perform(get("/spot/historical/batch")
+                        .header("caller", "test")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(inputJson))
                 .andExpect(status().isOk())
@@ -114,6 +115,7 @@ class ControllerTest {
         when(service.getPriceStatistics(TestingConstants.ETH, START_DATE, END_DATE)).thenReturn(ETH_STATISTICS);
 
         this.mockMvc.perform(get("/spot/statistics")
+                        .header("caller", "test")
                         .param("symbol", TestingConstants.ETH)
                         .param("startDate", START_DATE.toString())
                         .param("endDate", END_DATE.toString()))
@@ -131,7 +133,9 @@ class ControllerTest {
 
         when(service.getSpotPrice("ALABAMA")).thenThrow(new ResourceNotFoundException(expectedOutput));
         // should throw 400 exception due to invalid symbol
-        this.mockMvc.perform(get("/spot").param("symbol", "ALABAMA"))
+        this.mockMvc.perform(get("/spot")
+                        .header("caller", "test")
+                        .param("symbol", "ALABAMA"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString(expectedOutput)))
                 .andDo(print());
@@ -146,6 +150,7 @@ class ControllerTest {
         String inputJson = mapper.writeValueAsString(request);
 
         this.mockMvc.perform(get("/spot/batch")
+                        .header("caller", "test")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(inputJson))
                 .andExpect(status().isUnprocessableEntity())
@@ -160,7 +165,9 @@ class ControllerTest {
 
         when(service.getSpotPrice(TestingConstants.ETH)).thenThrow(new BackendClientException(expectedOutput));
         // should throw 500 exception due to backend issue
-        this.mockMvc.perform(get("/spot").param("symbol", TestingConstants.ETH))
+        this.mockMvc.perform(get("/spot")
+                        .header("caller", "test")
+                        .param("symbol", TestingConstants.ETH))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string(containsString(expectedOutput)))
                 .andDo(print());

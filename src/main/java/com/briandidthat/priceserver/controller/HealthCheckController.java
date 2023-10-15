@@ -19,7 +19,7 @@ public class HealthCheckController {
 
     public static void setAvailable(boolean status) {
         if (!status) logger.error("Application unhealthy. Setting unavailable...");
-        else logger.info("Application healthy. Startup completed");
+        else logger.info("Application is healthy.");
 
         available.set(status);
     }
