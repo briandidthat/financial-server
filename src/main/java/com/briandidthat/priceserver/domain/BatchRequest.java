@@ -11,7 +11,7 @@ import java.util.Objects;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public final class BatchRequest implements Serializable {
     @Size(min = 2, max = 5)
-    @JsonProperty("")
+    @JsonProperty("requests")
     private List<Request> requests;
 
     public BatchRequest() {

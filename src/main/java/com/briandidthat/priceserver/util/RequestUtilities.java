@@ -28,11 +28,4 @@ public final class RequestUtilities {
         }
         return true;
     }
-
-    public static HttpServletRequest getCurrentRequest() {
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        Assert.state(requestAttributes != null, "Could not find current request via RequestContextHolder");
-        Assert.isInstanceOf(ServletRequestAttributes.class, requestAttributes);
-        return ((ServletRequestAttributes) requestAttributes).getRequest();
-    }
 }
