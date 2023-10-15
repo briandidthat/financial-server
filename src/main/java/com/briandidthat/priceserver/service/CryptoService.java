@@ -11,12 +11,11 @@ import com.briandidthat.priceserver.util.RequestUtilities;
 import com.briandidthat.priceserver.util.StatisticsUtilities;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -124,9 +122,7 @@ public class CryptoService {
 
         final Instant start = Instant.now();
         // store list of symbols requests to be run in parallel
-        batchRequest.getRequests().forEach(request -> {
-            completableFutures.add(getSpotPriceAsync(request.getSymbol()));
-        });
+        batchRequest.getRequests().forEach(request -> completableFutures.add(getSpotPriceAsync(request.getSymbol())));
         // wait for all requests to be completed
         CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
         // calculate the time it took for our request to be completed
@@ -154,9 +150,7 @@ public class CryptoService {
 
         final Instant start = Instant.now();
         // store list of completableFutures to be run in parallel
-        batchRequest.getRequests().forEach((request) -> {
-            completableFutures.add(getHistoricalSpotPriceAsync(request.getSymbol(), request.getDate()));
-        });
+        batchRequest.getRequests().forEach((request) -> completableFutures.add(getHistoricalSpotPriceAsync(request.getSymbol(), request.getDate())));
         // wait for all completableFutures to be completed
         CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
         // calculate the time it took for our request to be completed
