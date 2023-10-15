@@ -7,9 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
@@ -30,6 +30,12 @@ public class ControllerExceptionHandler {
         return new ResponseEntity(details, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(ServletRequestBindingException.class)
+    private ResponseEntity<Error> handleBadRequestException(Exception e, WebRequest request) {
+        ExceptionDetails details = new ExceptionDetails(LocalDateTime.now(), e.getMessage(), request.getDescription(false));
+        return new ResponseEntity(details, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     private ResponseEntity<Error> handleConstraintValidationException(MethodArgumentNotValidException e, WebRequest request) {
         List<ExceptionDetails> violations = new ArrayList<>();
@@ -41,7 +47,6 @@ public class ControllerExceptionHandler {
             violations.add(details);
         }
 
-        System.out.println(violations);
         return new ResponseEntity(violations, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }

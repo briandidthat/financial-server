@@ -41,10 +41,6 @@ class ControllerTest {
     @MockBean
     private CryptoService service;
 
-    @BeforeEach
-    void setUp() {
-    }
-
     @Test
     void testGetSpotPrice() throws Exception {
         String outputJson = mapper.writeValueAsString(TestingConstants.BTC_SPOT);
