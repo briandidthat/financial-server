@@ -130,6 +130,22 @@ class ControllerTest {
 
     // Testing Error Handling Code
 
+    // 400
+    @Test
+    void testGetSpotPriceShouldHandleBadRequestException() throws Exception {
+        String inputJson = mapper.writeValueAsString(TestingConstants.BTC_SPOT_REQUEST);
+        String expectedOutput = "Required request header 'caller' for method parameter type String is not present";
+
+        // should throw 400 exception due to missing caller header
+        this.mockMvc.perform(post("/spot")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(inputJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString(expectedOutput)))
+                .andDo(print());
+    }
+
+
     // 404
     @Test
     void testGetSpotPriceShouldHandleResourceNotFoundException() throws Exception {
