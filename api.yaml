@@ -107,7 +107,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/SpotPrice'
   /spot:
-    get:
+    post:
       tags:
         - controller
       operationId: getSpotPrice
@@ -117,11 +117,12 @@ paths:
           required: true
           schema:
             type: string
-        - name: symbol
-          in: query
-          required: true
-          schema:
-            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Request'
+        required: true
       responses:
         '200':
           description: OK
