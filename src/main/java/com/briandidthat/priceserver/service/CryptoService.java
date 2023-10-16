@@ -68,6 +68,8 @@ public class CryptoService {
     }
 
     public SpotPrice getHistoricalSpotPrice(String symbol, LocalDate date) {
+        symbol = symbol.toUpperCase();
+
         if (!RequestUtilities.validateSymbol(symbol, availableTokens))
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid symbol: " + symbol);
 
@@ -148,7 +150,7 @@ public class CryptoService {
 
         final Instant start = Instant.now();
         // store list of completableFutures to be run in parallel
-        batchRequest.getRequests().forEach((request) -> completableFutures.add(getHistoricalSpotPriceAsync(request.getSymbol(), request.getDate())));
+        batchRequest.getRequests().forEach((request) -> completableFutures.add(getHistoricalSpotPriceAsync(request.getSymbol(), request.getStartDate())));
         // wait for all completableFutures to be completed
         CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
         // calculate the time it took for our request to be completed
