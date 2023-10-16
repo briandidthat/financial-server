@@ -20,6 +20,10 @@ public final class TestingConstants {
     public static final SpotPrice BNB_SPOT = new SpotPrice(BNB, "USD", "389.22", LocalDate.now());
     public static final SpotPrice ETH_SPOT = new SpotPrice(ETH, "USD", "2900.00", LocalDate.now());
 
+    public static final Request ETH_SPOT_REQUEST = new Request(ETH);
+    public static final Request BTC_SPOT_REQUEST = new Request(BTC);
+    public static final Request BNB_SPOT_REQUEST = new Request(BNB);
+
     public static final Request HISTORICAL_ETH_REQUEST = new Request(ETH, START_DATE, END_DATE);
     public static final Request HISTORICAL_BTC_REQUEST = new Request(BTC, START_DATE, END_DATE);
     public static final Request HISTORICAL_BNB_REQUEST = new Request(BNB, START_DATE, END_DATE);

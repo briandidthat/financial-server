@@ -24,10 +24,10 @@ public class Controller {
     @Autowired
     private CryptoService service;
 
-    @GetMapping
-    public SpotPrice getSpotPrice(@RequestHeader String caller, @RequestParam String symbol) {
+    @PostMapping
+    public SpotPrice getSpotPrice(@RequestHeader String caller, @RequestBody @Valid Request request) {
         logger.info("Spot request by {}", caller);
-        return service.getSpotPrice(symbol);
+        return service.getSpotPrice(request.getSymbol());
     }
 
     @PostMapping("/historical")

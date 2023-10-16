@@ -44,13 +44,15 @@ class ControllerTest {
 
     @Test
     void testGetSpotPrice() throws Exception {
+        String inputJson = mapper.writeValueAsString(TestingConstants.BTC_SPOT_REQUEST);
         String outputJson = mapper.writeValueAsString(TestingConstants.BTC_SPOT);
 
         when(service.getSpotPrice(TestingConstants.BTC)).thenReturn(TestingConstants.BTC_SPOT);
 
-        this.mockMvc.perform(get("/spot")
+        this.mockMvc.perform(post("/spot")
                         .header("caller", "test")
-                        .param("symbol", TestingConstants.BTC))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(inputJson))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
@@ -131,13 +133,15 @@ class ControllerTest {
     // 404
     @Test
     void testGetSpotPriceShouldHandleResourceNotFoundException() throws Exception {
+        String inputJson = mapper.writeValueAsString(new Request("ALABAMA"));
         String expectedOutput = "Invalid symbol: ALABAMA";
 
         when(service.getSpotPrice("ALABAMA")).thenThrow(new ResourceNotFoundException(expectedOutput));
         // should throw 400 exception due to invalid symbol
-        this.mockMvc.perform(get("/spot")
+        this.mockMvc.perform(post("/spot")
                         .header("caller", "test")
-                        .param("symbol", "ALABAMA"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(inputJson))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString(expectedOutput)))
                 .andDo(print());
@@ -163,13 +167,15 @@ class ControllerTest {
     // 500
     @Test
     void testGetSpotPriceShouldHandleBackendClientException() throws Exception {
+        String inputJson = mapper.writeValueAsString(TestingConstants.ETH_SPOT_REQUEST);
         String expectedOutput = "SocketTimeoutException: Cannot connect";
 
         when(service.getSpotPrice(TestingConstants.ETH)).thenThrow(new BackendClientException(expectedOutput));
         // should throw 500 exception due to backend issue
-        this.mockMvc.perform(get("/spot")
+        this.mockMvc.perform(post("/spot")
                         .header("caller", "test")
-                        .param("symbol", TestingConstants.ETH))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(inputJson))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string(containsString(expectedOutput)))
                 .andDo(print());
