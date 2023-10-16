@@ -23,6 +23,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -65,7 +66,7 @@ class ControllerTest {
         String inputJson = mapper.writeValueAsString(batchRequest);
         String outputJson = mapper.writeValueAsString(expectedResponse);
 
-        this.mockMvc.perform(get("/spot/batch")
+        this.mockMvc.perform(post("/spot/batch")
                         .header("caller", "test")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(inputJson))
@@ -76,14 +77,15 @@ class ControllerTest {
 
     @Test
     void testGetHistoricalSpotPrice() throws Exception {
-        String outputJson = mapper.writeValueAsString(TestingConstants.HISTORICAL_BTC);
+        final String inputJson = mapper.writeValueAsString(TestingConstants.HISTORICAL_ETH_REQUEST);
+        String outputJson = mapper.writeValueAsString(TestingConstants.HISTORICAL_ETH);
 
-        when(service.getHistoricalSpotPrice(TestingConstants.BTC, START_DATE)).thenReturn(TestingConstants.HISTORICAL_BTC);
+        when(service.getHistoricalSpotPrice(TestingConstants.ETH, START_DATE)).thenReturn(TestingConstants.HISTORICAL_ETH);
 
-        this.mockMvc.perform(get("/spot/historical")
+        this.mockMvc.perform(post("/spot/historical")
                         .header("caller", "test")
-                        .param("symbol", TestingConstants.BTC)
-                        .param("date", START_DATE.toString()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(inputJson))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
@@ -99,7 +101,7 @@ class ControllerTest {
         String inputJson = mapper.writeValueAsString(batchRequest);
         String outputJson = mapper.writeValueAsString(expectedResponse);
 
-        this.mockMvc.perform(get("/spot/historical/batch")
+        this.mockMvc.perform(post("/spot/historical/batch")
                         .header("caller", "test")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(inputJson))
@@ -110,15 +112,15 @@ class ControllerTest {
 
     @Test
     void testGetPriceStatistics() throws Exception {
+        String inputJson = mapper.writeValueAsString(TestingConstants.HISTORICAL_ETH_REQUEST);
         String outputJson = mapper.writeValueAsString(ETH_STATISTICS);
 
         when(service.getPriceStatistics(TestingConstants.ETH, START_DATE, END_DATE)).thenReturn(ETH_STATISTICS);
 
-        this.mockMvc.perform(get("/spot/statistics")
+        this.mockMvc.perform(post("/spot/statistics")
                         .header("caller", "test")
-                        .param("symbol", TestingConstants.ETH)
-                        .param("startDate", START_DATE.toString())
-                        .param("endDate", END_DATE.toString()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(inputJson))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
@@ -143,13 +145,13 @@ class ControllerTest {
 
     // 422
     @Test
-    void testGetBatchSpotPricesShouldHandleConstraintViolation() throws Exception {
+    void testBatchSpotPricesShouldHandleConstraintViolation() throws Exception {
         // should throw constraint violation due to exceeding max of 5 symbols per request
         BatchRequest request = new BatchRequest(List.of(new Request(TestingConstants.BTC), new Request(TestingConstants.BNB),
                 new Request(TestingConstants.ETH), new Request("USDC"), new Request("CAKE"), new Request("APE")));
         String inputJson = mapper.writeValueAsString(request);
 
-        this.mockMvc.perform(get("/spot/batch")
+        this.mockMvc.perform(post("/spot/batch")
                         .header("caller", "test")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(inputJson))
