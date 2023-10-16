@@ -1,53 +1,28 @@
 openapi: 3.0.1
 info:
-  title: Price Server
-  version: v1.0.5
-  description: Cryptocurrency Spot Price API powered by Coinbase's free API
+  title: OpenAPI definition
+  version: v0
 servers:
   - url: http://localhost:8080
-    description: Server generated url
+    description: Generated server url
 paths:
-  /spot:
-    get:
-      tags:
-        - controller
-      operationId: getSpotPrice
-      parameters:
-        - name: symbol
-          in: query
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/SpotPrice'
   /spot/statistics:
-    get:
+    post:
       tags:
         - controller
       operationId: getPriceStatistics
       parameters:
-        - name: symbol
-          in: query
+        - name: caller
+          in: header
           required: true
           schema:
             type: string
-        - name: startDate
-          in: query
-          required: true
-          schema:
-            type: string
-            format: date
-        - name: endDate
-          in: query
-          required: false
-          schema:
-            type: string
-            format: date
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Request'
+        required: true
       responses:
         '200':
           description: OK
@@ -56,22 +31,22 @@ paths:
               schema:
                 $ref: '#/components/schemas/Statistic'
   /spot/historical:
-    get:
+    post:
       tags:
         - controller
       operationId: getHistoricalSpotPrice
       parameters:
-        - name: symbol
-          in: query
+        - name: caller
+          in: header
           required: true
           schema:
             type: string
-        - name: date
-          in: query
-          required: true
-          schema:
-            type: string
-            format: date
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Request'
+        required: true
       responses:
         '200':
           description: OK
@@ -80,16 +55,22 @@ paths:
               schema:
                 $ref: '#/components/schemas/SpotPrice'
   /spot/historical/batch:
-    get:
+    post:
       tags:
         - controller
       operationId: getMultipleHistoricalSpotPrices
       parameters:
-        - name: request
-          in: query
+        - name: caller
+          in: header
           required: true
           schema:
-            $ref: '#/components/schemas/BatchRequest'
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchRequest'
+        required: true
       responses:
         '200':
           description: OK
@@ -100,16 +81,22 @@ paths:
                 items:
                   $ref: '#/components/schemas/SpotPrice'
   /spot/batch:
-    get:
+    post:
       tags:
         - controller
       operationId: getMultipleSpotPrices
       parameters:
-        - name: request
-          in: query
+        - name: caller
+          in: header
           required: true
           schema:
-            $ref: '#/components/schemas/BatchRequest'
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchRequest'
+        required: true
       responses:
         '200':
           description: OK
@@ -119,8 +106,85 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/SpotPrice'
+  /spot:
+    get:
+      tags:
+        - controller
+      operationId: getSpotPrice
+      parameters:
+        - name: caller
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: symbol
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SpotPrice'
+  /readyz:
+    get:
+      tags:
+        - health-check-controller
+      operationId: isReady
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /healthz:
+    get:
+      tags:
+        - health-check-controller
+      operationId: isAvailable
+      parameters:
+        - name: caller
+          in: header
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
 components:
   schemas:
+    Request:
+      required:
+        - symbol
+      type: object
+      properties:
+        symbol:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+    Statistic:
+      type: object
+      properties:
+        symbol:
+          type: string
+        priceChange:
+          type: string
+        percentChange:
+          type: string
+        timeDelta:
+          type: string
     SpotPrice:
       required:
         - base
@@ -135,17 +199,6 @@ components:
         date:
           type: string
           format: date
-    Statistic:
-      type: object
-      properties:
-        token:
-          type: string
-        priceChange:
-          type: string
-        percentChange:
-          type: string
-        timeDelta:
-          type: string
     BatchRequest:
       type: object
       properties:
@@ -155,13 +208,3 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Request'
-    Request:
-      required:
-        - symbol
-      type: object
-      properties:
-        symbol:
-          type: string
-        date:
-          type: string
-          format: date
