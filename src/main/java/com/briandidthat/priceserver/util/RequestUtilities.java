@@ -13,7 +13,7 @@ public final class RequestUtilities {
     private RequestUtilities() {}
     public static boolean validateSymbol(String symbol, List<Token> tokens) {
         for (Token token : tokens) {
-            if (symbol.equals(token.code())) {
+            if (symbol.equalsIgnoreCase(token.code())) {
                 return true;
             }
         }
