@@ -45,8 +45,6 @@ public class CryptoService {
     private RestTemplate restTemplate;
 
     public SpotPrice getSpotPrice(String symbol) throws HttpClientErrorException, BackendClientException {
-        symbol = symbol.toUpperCase();
-
         if (!RequestUtilities.validateSymbol(symbol, availableTokens))
             throw new ResourceNotFoundException("Invalid symbol: " + symbol);
 
@@ -68,8 +66,6 @@ public class CryptoService {
     }
 
     public SpotPrice getHistoricalSpotPrice(String symbol, LocalDate date) {
-        symbol = symbol.toUpperCase();
-
         if (!RequestUtilities.validateSymbol(symbol, availableTokens))
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid symbol: " + symbol);
 
@@ -91,8 +87,6 @@ public class CryptoService {
     }
 
     public Statistic getPriceStatistics(String symbol, LocalDate startDate, LocalDate endDate) {
-        symbol = symbol.toUpperCase();
-
         if (!RequestUtilities.validateSymbol(symbol, availableTokens))
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid symbol: " + symbol);
 
