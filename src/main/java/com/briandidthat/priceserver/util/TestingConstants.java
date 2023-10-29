@@ -1,9 +1,9 @@
 package com.briandidthat.priceserver.util;
 
-import com.briandidthat.priceserver.domain.BatchRequest;
-import com.briandidthat.priceserver.domain.Request;
-import com.briandidthat.priceserver.domain.SpotPrice;
-import com.briandidthat.priceserver.domain.Token;
+import com.briandidthat.priceserver.domain.coinbase.BatchRequest;
+import com.briandidthat.priceserver.domain.coinbase.Request;
+import com.briandidthat.priceserver.domain.coinbase.SpotPrice;
+import com.briandidthat.priceserver.domain.coinbase.Token;
 
 import java.time.LocalDate;
 import java.util.List;

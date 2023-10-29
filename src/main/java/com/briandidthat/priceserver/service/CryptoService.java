@@ -1,10 +1,10 @@
 package com.briandidthat.priceserver.service;
 
 import com.briandidthat.priceserver.controller.HealthCheckController;
-import com.briandidthat.priceserver.domain.BatchRequest;
-import com.briandidthat.priceserver.domain.SpotPrice;
-import com.briandidthat.priceserver.domain.Statistic;
-import com.briandidthat.priceserver.domain.Token;
+import com.briandidthat.priceserver.domain.coinbase.BatchRequest;
+import com.briandidthat.priceserver.domain.coinbase.SpotPrice;
+import com.briandidthat.priceserver.domain.coinbase.Statistic;
+import com.briandidthat.priceserver.domain.coinbase.Token;
 import com.briandidthat.priceserver.domain.exception.BackendClientException;
 import com.briandidthat.priceserver.domain.exception.ResourceNotFoundException;
 import com.briandidthat.priceserver.util.RequestUtilities;

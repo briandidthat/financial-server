@@ -1,4 +1,4 @@
-package com.briandidthat.priceserver.domain;
+package com.briandidthat.priceserver.domain.coinbase;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

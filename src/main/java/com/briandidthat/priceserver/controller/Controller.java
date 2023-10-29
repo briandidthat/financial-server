@@ -1,9 +1,9 @@
 package com.briandidthat.priceserver.controller;
 
-import com.briandidthat.priceserver.domain.BatchRequest;
-import com.briandidthat.priceserver.domain.Request;
-import com.briandidthat.priceserver.domain.SpotPrice;
-import com.briandidthat.priceserver.domain.Statistic;
+import com.briandidthat.priceserver.domain.coinbase.BatchRequest;
+import com.briandidthat.priceserver.domain.coinbase.Request;
+import com.briandidthat.priceserver.domain.coinbase.SpotPrice;
+import com.briandidthat.priceserver.domain.coinbase.Statistic;
 import com.briandidthat.priceserver.service.CryptoService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;

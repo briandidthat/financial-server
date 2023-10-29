@@ -1,6 +1,7 @@
 package com.briandidthat.priceserver.service;
 
-import com.briandidthat.priceserver.domain.*;
+import com.briandidthat.priceserver.domain.coinbase.SpotPrice;
+import com.briandidthat.priceserver.domain.coinbase.Statistic;
 import com.briandidthat.priceserver.util.TestingConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;

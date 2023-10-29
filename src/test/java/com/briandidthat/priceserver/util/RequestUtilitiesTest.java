@@ -1,6 +1,6 @@
 package com.briandidthat.priceserver.util;
 
-import com.briandidthat.priceserver.domain.Token;
+import com.briandidthat.priceserver.domain.coinbase.Token;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

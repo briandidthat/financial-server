@@ -1,7 +1,7 @@
 package com.briandidthat.priceserver.util;
 
-import com.briandidthat.priceserver.domain.Statistic;
-import com.briandidthat.priceserver.domain.SpotPrice;
+import com.briandidthat.priceserver.domain.coinbase.Statistic;
+import com.briandidthat.priceserver.domain.coinbase.SpotPrice;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;

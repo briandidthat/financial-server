@@ -1,15 +1,14 @@
 package com.briandidthat.priceserver.controller;
 
-import com.briandidthat.priceserver.domain.BatchRequest;
-import com.briandidthat.priceserver.domain.Request;
-import com.briandidthat.priceserver.domain.SpotPrice;
-import com.briandidthat.priceserver.domain.Statistic;
+import com.briandidthat.priceserver.domain.coinbase.BatchRequest;
+import com.briandidthat.priceserver.domain.coinbase.Request;
+import com.briandidthat.priceserver.domain.coinbase.SpotPrice;
+import com.briandidthat.priceserver.domain.coinbase.Statistic;
 import com.briandidthat.priceserver.domain.exception.BackendClientException;
 import com.briandidthat.priceserver.domain.exception.ResourceNotFoundException;
 import com.briandidthat.priceserver.service.CryptoService;
 import com.briandidthat.priceserver.util.TestingConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

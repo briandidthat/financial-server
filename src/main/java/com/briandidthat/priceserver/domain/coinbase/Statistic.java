@@ -1,4 +1,4 @@
-package com.briandidthat.priceserver.domain;
+package com.briandidthat.priceserver.domain.coinbase;
 
 public record Statistic(String symbol, String priceChange, String percentChange, String timeDelta) {
     @Override
