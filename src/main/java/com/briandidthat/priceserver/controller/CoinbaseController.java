@@ -4,7 +4,7 @@ import com.briandidthat.priceserver.domain.coinbase.BatchRequest;
 import com.briandidthat.priceserver.domain.coinbase.Request;
 import com.briandidthat.priceserver.domain.coinbase.SpotPrice;
 import com.briandidthat.priceserver.domain.coinbase.Statistic;
-import com.briandidthat.priceserver.service.CryptoService;
+import com.briandidthat.priceserver.service.CoinbaseService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,12 +17,12 @@ import java.util.List;
 
 @Validated
 @RestController
-@RequestMapping("/spot")
-public class Controller {
-    private static final Logger logger = LoggerFactory.getLogger(Controller.class);
+@RequestMapping(value = "/spot")
+public class CoinbaseController {
+    private static final Logger logger = LoggerFactory.getLogger(CoinbaseController.class);
 
     @Autowired
-    private CryptoService service;
+    private CoinbaseService service;
 
     @PostMapping
     public SpotPrice getSpotPrice(@RequestHeader String caller, @RequestBody @Valid Request request) {

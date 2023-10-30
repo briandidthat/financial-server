@@ -33,9 +33,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
-public class CryptoService {
+public class CoinbaseService {
     private static final String DATA = "data";
-    private static final Logger logger = LoggerFactory.getLogger(CryptoService.class);
+    private static final Logger logger = LoggerFactory.getLogger(CoinbaseService.class);
     private static final ObjectMapper mapper = new ObjectMapper();
     private volatile List<Token> availableTokens;
 

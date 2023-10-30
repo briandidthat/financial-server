@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(HealthCheckController.class)
-class HealthCheckControllerTest {
+class HealthCheckCoinbaseControllerTest {
     private final String AVAILABLE = "AVAILABLE";
     private final String UNAVAILABLE = "UN" + AVAILABLE;
     @Autowired

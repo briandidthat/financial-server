@@ -31,6 +31,12 @@ public class ControllerExceptionHandler {
         return new ResponseEntity(details, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(ServletRequestBindingException.class)
+    private ResponseEntity<Error> handleMissingParamException(Exception e, WebRequest request) {
+        ExceptionDetails details = new ExceptionDetails(LocalDateTime.now(), e.getMessage(), request.getDescription(false));
+        return new ResponseEntity(details, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(BadRequestException.class)
     private ResponseEntity<Error> handleBadRequestException(Exception e, WebRequest request) {
         ExceptionDetails details = new ExceptionDetails(LocalDateTime.now(), e.getMessage(), request.getDescription(false));

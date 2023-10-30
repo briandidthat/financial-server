@@ -23,4 +23,9 @@ public class FredController {
     private List<Observation> getMortgageRates(@RequestParam(required = false) Map<String, Object> params) {
         return service.getObservations(FredSeriesId.AVERAGE_MORTGAGE_RATE, params);
     }
+
+    @GetMapping("/treasury-yield-10yr")
+    private List<Observation> getTenYearTreasuryYield(@RequestParam(required = false) Map<String, Object> params) {
+        return service.getObservations(FredSeriesId.TEN_YEAR_TREASURY_YIELD, params);
+    }
 }

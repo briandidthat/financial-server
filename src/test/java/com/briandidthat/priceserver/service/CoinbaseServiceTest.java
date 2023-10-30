@@ -12,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
@@ -25,11 +24,11 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class CryptoServiceTest {
+class CoinbaseServiceTest {
     @Mock
     private RestTemplate restTemplate;
     @InjectMocks
-    private CryptoService cryptoService;
+    private CoinbaseService service;
     private final ObjectMapper mapper = new ObjectMapper();
 
 
@@ -62,37 +61,37 @@ class CryptoServiceTest {
         when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/" + TestingConstants.ETH + "-USD/spot?date=" + TestingConstants.START_DATE, String.class)).thenReturn(ResponseEntity.ok(historicalEthJson));
         when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/" + TestingConstants.ETH + "-USD/spot?date=" + TestingConstants.END_DATE, String.class)).thenReturn(ResponseEntity.ok(ethJson));
 
-        ReflectionTestUtils.setField(cryptoService, "coinbaseUrl", coinbaseEndpoint);
-        ReflectionTestUtils.setField(cryptoService, "availableTokens", TestingConstants.AVAILABLE_TOKENS);
+        ReflectionTestUtils.setField(service, "coinbaseUrl", coinbaseEndpoint);
+        ReflectionTestUtils.setField(service, "availableTokens", TestingConstants.AVAILABLE_TOKENS);
     }
 
     @Test
     void testGetSpotPrice() {
-        SpotPrice tickerResponse = cryptoService.getSpotPrice(TestingConstants.BTC);
+        SpotPrice tickerResponse = service.getSpotPrice(TestingConstants.BTC);
         assertEquals(TestingConstants.BTC_SPOT, tickerResponse);
     }
 
     @Test
     void testGetMultipleSpotPrices() {
-        List<SpotPrice> responses = cryptoService.getSpotPrices(TestingConstants.SPOT_BATCH);
+        List<SpotPrice> responses = service.getSpotPrices(TestingConstants.SPOT_BATCH);
         assertIterableEquals(List.of(TestingConstants.BTC_SPOT, TestingConstants.BNB_SPOT, TestingConstants.ETH_SPOT), responses);
     }
 
     @Test
     void testGetHistoricalSpotPrice() {
-        SpotPrice response = cryptoService.getHistoricalSpotPrice(TestingConstants.ETH, TestingConstants.START_DATE);
+        SpotPrice response = service.getHistoricalSpotPrice(TestingConstants.ETH, TestingConstants.START_DATE);
         assertEquals(TestingConstants.HISTORICAL_ETH, response);
     }
 
     @Test
     void testGetHistoricalSpotPrices() {
-        List<SpotPrice> response = cryptoService.getHistoricalSpotPrices(TestingConstants.HISTORICAL_BATCH);
+        List<SpotPrice> response = service.getHistoricalSpotPrices(TestingConstants.HISTORICAL_BATCH);
         assertIterableEquals(List.of(TestingConstants.HISTORICAL_BTC, TestingConstants.HISTORICAL_BNB, TestingConstants.HISTORICAL_ETH), response);
     }
 
     @Test
     void testGetPriceStatistics() {
-        Statistic statistic = cryptoService.getPriceStatistics(TestingConstants.ETH, TestingConstants.START_DATE, TestingConstants.END_DATE);
+        Statistic statistic = service.getPriceStatistics(TestingConstants.ETH, TestingConstants.START_DATE, TestingConstants.END_DATE);
         assertEquals("-1100.00", statistic.priceChange());
         assertEquals("-27.50", statistic.percentChange());
         assertEquals("24 months", statistic.timeDelta());

@@ -6,7 +6,7 @@ import com.briandidthat.priceserver.domain.coinbase.SpotPrice;
 import com.briandidthat.priceserver.domain.coinbase.Statistic;
 import com.briandidthat.priceserver.domain.exception.BackendClientException;
 import com.briandidthat.priceserver.domain.exception.ResourceNotFoundException;
-import com.briandidthat.priceserver.service.CryptoService;
+import com.briandidthat.priceserver.service.CoinbaseService;
 import com.briandidthat.priceserver.util.TestingConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -25,8 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(Controller.class)
-class ControllerTest {
+@WebMvcTest(CoinbaseController.class)
+class CoinbaseControllerTest {
     private final Statistic ETH_STATISTICS = new Statistic("ETH", "-1100.00", "-27.50", "730");
 
     @Autowired
@@ -34,7 +34,7 @@ class ControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private CryptoService service;
+    private CoinbaseService service;
 
     @Test
     void testGetSpotPrice() throws Exception {
