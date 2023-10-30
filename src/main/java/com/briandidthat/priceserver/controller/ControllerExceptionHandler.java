@@ -1,6 +1,7 @@
 package com.briandidthat.priceserver.controller;
 
 import com.briandidthat.priceserver.domain.exception.BackendClientException;
+import com.briandidthat.priceserver.domain.exception.BadRequestException;
 import com.briandidthat.priceserver.domain.exception.ExceptionDetails;
 import com.briandidthat.priceserver.domain.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -30,7 +31,7 @@ public class ControllerExceptionHandler {
         return new ResponseEntity(details, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(ServletRequestBindingException.class)
+    @ExceptionHandler(BadRequestException.class)
     private ResponseEntity<Error> handleBadRequestException(Exception e, WebRequest request) {
         ExceptionDetails details = new ExceptionDetails(LocalDateTime.now(), e.getMessage(), request.getDescription(false));
         return new ResponseEntity(details, HttpStatus.BAD_REQUEST);

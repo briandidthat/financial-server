@@ -16,8 +16,7 @@ public final class FredResponse {
     @JsonProperty("observations")
     private List<Observation> observations;
 
-    public FredResponse() {
-    }
+    public FredResponse() {}
 
     public FredResponse(String observationStart, String observationEnd, Integer count, List<Observation> observations) {
         this.observationStart = observationStart;

@@ -13,7 +13,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(HealthCheckController.class)
 class HealthCheckControllerTest {
-
     private final String AVAILABLE = "AVAILABLE";
     private final String UNAVAILABLE = "UN" + AVAILABLE;
     @Autowired
@@ -28,35 +27,23 @@ class HealthCheckControllerTest {
     void isAvailable() throws Exception {
         HealthCheckController.setAvailable(true);
 
-        this.mockMvc.perform(get("/healthz"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(AVAILABLE))
-                .andDo(print());
+        this.mockMvc.perform(get("/healthz")).andExpect(status().isOk()).andExpect(content().string(AVAILABLE)).andDo(print());
     }
 
     @Test
     void isNotAvailable() throws Exception {
-        this.mockMvc.perform(get("/healthz"))
-                .andExpect(status().isInternalServerError())
-                .andExpect(content().string(UNAVAILABLE))
-                .andDo(print());
+        this.mockMvc.perform(get("/healthz")).andExpect(status().isInternalServerError()).andExpect(content().string(UNAVAILABLE)).andDo(print());
     }
 
     @Test
     void isReady() throws Exception {
         HealthCheckController.setAvailable(true);
 
-        this.mockMvc.perform(get("/readyz"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(AVAILABLE))
-                .andDo(print());
+        this.mockMvc.perform(get("/readyz")).andExpect(status().isOk()).andExpect(content().string(AVAILABLE)).andDo(print());
     }
 
     @Test
     void isNotReady() throws Exception {
-        this.mockMvc.perform(get("/readyz"))
-                .andExpect(status().isInternalServerError())
-                .andExpect(content().string(UNAVAILABLE))
-                .andDo(print());
+        this.mockMvc.perform(get("/readyz")).andExpect(status().isInternalServerError()).andExpect(content().string(UNAVAILABLE)).andDo(print());
     }
 }

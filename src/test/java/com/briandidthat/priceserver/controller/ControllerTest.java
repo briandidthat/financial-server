@@ -16,12 +16,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -29,9 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(Controller.class)
 class ControllerTest {
-
-    private final LocalDate START_DATE = LocalDate.of(2021, 8, 1);
-    private final LocalDate END_DATE = LocalDate.of(2023, 8, 1); // 730 days in between
     private final Statistic ETH_STATISTICS = new Statistic("ETH", "-1100.00", "-27.50", "730");
 
     @Autowired
@@ -81,7 +76,7 @@ class ControllerTest {
         final String inputJson = mapper.writeValueAsString(TestingConstants.HISTORICAL_ETH_REQUEST);
         String outputJson = mapper.writeValueAsString(TestingConstants.HISTORICAL_ETH);
 
-        when(service.getHistoricalSpotPrice(TestingConstants.ETH, START_DATE)).thenReturn(TestingConstants.HISTORICAL_ETH);
+        when(service.getHistoricalSpotPrice(TestingConstants.ETH, TestingConstants.START_DATE)).thenReturn(TestingConstants.HISTORICAL_ETH);
 
         this.mockMvc.perform(post("/spot/historical")
                         .header("caller", "test")
@@ -116,7 +111,7 @@ class ControllerTest {
         String inputJson = mapper.writeValueAsString(TestingConstants.HISTORICAL_ETH_REQUEST);
         String outputJson = mapper.writeValueAsString(ETH_STATISTICS);
 
-        when(service.getPriceStatistics(TestingConstants.ETH, START_DATE, END_DATE)).thenReturn(ETH_STATISTICS);
+        when(service.getPriceStatistics(TestingConstants.ETH, TestingConstants.START_DATE, TestingConstants.END_DATE)).thenReturn(ETH_STATISTICS);
 
         this.mockMvc.perform(post("/spot/statistics")
                         .header("caller", "test")

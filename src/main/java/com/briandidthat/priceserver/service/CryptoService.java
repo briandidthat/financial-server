@@ -6,6 +6,7 @@ import com.briandidthat.priceserver.domain.coinbase.SpotPrice;
 import com.briandidthat.priceserver.domain.coinbase.Statistic;
 import com.briandidthat.priceserver.domain.coinbase.Token;
 import com.briandidthat.priceserver.domain.exception.BackendClientException;
+import com.briandidthat.priceserver.domain.exception.BadRequestException;
 import com.briandidthat.priceserver.domain.exception.ResourceNotFoundException;
 import com.briandidthat.priceserver.util.RequestUtilities;
 import com.briandidthat.priceserver.util.StatisticsUtilities;
@@ -16,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -52,8 +52,7 @@ public class CryptoService {
             logger.info("Fetching current price for {}", symbol);
             final String queryString = "/prices/" + symbol + "-USD/spot";
             final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + queryString, String.class);
-            final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {
-            });
+            final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
             final SpotPrice spotPrice = result.get(DATA);
             spotPrice.setDate(LocalDate.now());
 
@@ -61,20 +60,19 @@ public class CryptoService {
             return spotPrice;
         } catch (Exception e) {
             logger.error("Unable to fetch {} spot price. Reason: {}", symbol, e.getMessage());
-            throw new BackendClientException(e.getMessage());
+            throw new BadRequestException(e.getMessage());
         }
     }
 
     public SpotPrice getHistoricalSpotPrice(String symbol, LocalDate date) {
         if (!RequestUtilities.validateSymbol(symbol, availableTokens))
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid symbol: " + symbol);
+            throw new ResourceNotFoundException("Invalid symbol: " + symbol);
 
         try {
             logger.info("Fetching historical price for {} on date {}", symbol, date);
             final String queryString = "/prices/" + symbol + "-USD/spot?date=" + date;
             final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + queryString, String.class);
-            final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {
-            });
+            final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
             final SpotPrice spotPrice = result.get(DATA);
             spotPrice.setDate(date);
 
@@ -82,13 +80,13 @@ public class CryptoService {
             return spotPrice;
         } catch (Exception e) {
             logger.error("Unable to fetch historical price for {}. Reason: {}", symbol, e.getMessage());
-            throw new BackendClientException(e.getMessage());
+            throw new BadRequestException(e.getMessage());
         }
     }
 
     public Statistic getPriceStatistics(String symbol, LocalDate startDate, LocalDate endDate) {
         if (!RequestUtilities.validateSymbol(symbol, availableTokens))
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Invalid symbol: " + symbol);
+            throw new ResourceNotFoundException("Invalid symbol: " + symbol);
 
         final boolean isToday = endDate.isEqual(LocalDate.now());
         final SpotPrice startPrice = getHistoricalSpotPrice(symbol, startDate);
@@ -197,7 +195,7 @@ public class CryptoService {
                     retry = false;
                 } else {
                     if (retryCount == 5) {
-                        logger.info("Reached max retries {}.", retryCount);
+                        logger.error("Reached max retries {}.", retryCount);
                         HealthCheckController.setAvailable(false);
                         return;
                     }
