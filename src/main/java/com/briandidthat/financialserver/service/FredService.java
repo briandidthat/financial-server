@@ -2,7 +2,6 @@ package com.briandidthat.financialserver.service;
 
 import com.briandidthat.financialserver.domain.exception.BadRequestException;
 import com.briandidthat.financialserver.domain.fred.FredResponse;
-import com.briandidthat.financialserver.domain.fred.Observation;
 import com.briandidthat.financialserver.util.RequestUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,9 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Service
 public class FredService {
@@ -26,12 +24,13 @@ public class FredService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public List<Observation> getObservations(String seriesId, Map<String, Object> params) {
-        params.putAll(Map.of("series_id", seriesId, "file_type", "json", "api_key", fredApiKey));
+    public FredResponse getObservations(String seriesId, LinkedHashMap<String, Object> params) {
+        params.put("series_id", seriesId);
+        params.put("file_type", "json");
+        params.put("api_key", fredApiKey);
         final String url = RequestUtilities.formatQueryString(fredBaseUrl + "/series/observations", params);
         try {
-            final FredResponse response = restTemplate.getForObject(url, FredResponse.class);
-            return Objects.requireNonNull(response).getObservations();
+            return restTemplate.getForObject(url, FredResponse.class);
         } catch (Exception e) {
             logger.error(e.getMessage());
             throw new BadRequestException(e.getMessage());
