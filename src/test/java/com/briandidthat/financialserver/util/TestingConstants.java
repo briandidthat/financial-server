@@ -4,6 +4,8 @@ import com.briandidthat.financialserver.domain.coinbase.BatchRequest;
 import com.briandidthat.financialserver.domain.coinbase.Request;
 import com.briandidthat.financialserver.domain.coinbase.SpotPrice;
 import com.briandidthat.financialserver.domain.coinbase.Token;
+import com.briandidthat.financialserver.domain.fred.FredResponse;
+import com.briandidthat.financialserver.domain.fred.Observation;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -42,5 +44,14 @@ public final class TestingConstants {
             new Token("BTC", "Bitcoin", "blue", 1, 8, "crypto", "dsfas", "23df"),
             new Token("BNB", "Binance Coin", "gold", 3, 8, "crypto", "dsfas", "23df"),
             new Token("ETH", "Ethereum", "orange", 2, 8, "crypto", "dsfas", "23df"));
+
+
+
+    // FRED CONSTANTS
+
+    public static final FredResponse MORTGAGE_RATE_RESPONSE = new FredResponse("07/12/2023", "08/12/2023", 2, List.of(
+            new Observation("07/12/2023", "07/13/2023", "07/12/2023", "6.76"),
+            new Observation("07/12/2023", "07/14/2023", "07/13/2023", "6.78")));
+
 
 }

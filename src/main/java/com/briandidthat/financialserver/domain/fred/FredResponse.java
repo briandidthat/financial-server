@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
+import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public final class FredResponse {
@@ -39,5 +40,19 @@ public final class FredResponse {
 
     public List<Observation> getObservations() {
         return observations;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FredResponse that = (FredResponse) o;
+        return Objects.equals(observationStart, that.observationStart) && Objects.equals(observationEnd, that.observationEnd)
+                && Objects.equals(count, that.count) && Objects.equals(observations, that.observations);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(observationStart, observationEnd, count, observations);
     }
 }

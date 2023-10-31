@@ -43,7 +43,6 @@ class CoinbaseServiceTest {
         final Map<String, SpotPrice> HISTORICAL_BNB_RESPONSE = Map.of("data", TestingConstants.HISTORICAL_BNB);
         final Map<String, SpotPrice> HISTORICAL_ETH_RESPONSE = Map.of("data", TestingConstants.HISTORICAL_ETH);
 
-
         final String btcJson = mapper.writeValueAsString(BTC_RESPONSE);
         final String bnbJson = mapper.writeValueAsString(BNB_RESPONSE);
         final String ethJson = mapper.writeValueAsString(ETH_RESPONSE);
@@ -51,7 +50,6 @@ class CoinbaseServiceTest {
         final String historicalBtcJson = mapper.writeValueAsString(HISTORICAL_BTC_RESPONSE);
         final String historicalBnbJson = mapper.writeValueAsString(HISTORICAL_BNB_RESPONSE);
         final String historicalEthJson = mapper.writeValueAsString(HISTORICAL_ETH_RESPONSE);
-
 
         when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/" + TestingConstants.BTC + "-USD/spot", String.class)).thenReturn(ResponseEntity.ok(btcJson));
         when(restTemplate.getForEntity(coinbaseEndpoint + "/prices/" + TestingConstants.BNB + "-USD/spot", String.class)).thenReturn(ResponseEntity.ok(bnbJson));

@@ -2,9 +2,10 @@ package com.briandidthat.financialserver.util;
 
 import com.briandidthat.financialserver.domain.coinbase.Token;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class RequestUtilities {
     private RequestUtilities() {
@@ -30,16 +31,16 @@ public final class RequestUtilities {
 
     public static String formatQueryString(String url, Map<String, Object> params) {
         final StringBuilder builder = new StringBuilder(url + "?");
-        final Set<Map.Entry<String, Object>> entrySet = params.entrySet();
-        int count = 0;
+        final AtomicInteger count = new AtomicInteger();
+        final int length = params.size();
 
-        for (Map.Entry<String, Object> key : entrySet) {
-            String currentParam = key.getKey() + "=" + key.getValue();
+        params.forEach((key, value) -> {
+            String currentParam = key + "=" + value;
             builder.append(currentParam);
-            count++;
-            if (count < entrySet.size())
+            count.getAndIncrement();
+            if (count.get() < length)
                 builder.append("&");
-        }
+        });
         return builder.toString();
     }
 }

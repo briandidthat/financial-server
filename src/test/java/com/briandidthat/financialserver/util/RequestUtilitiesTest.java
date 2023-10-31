@@ -3,10 +3,10 @@ package com.briandidthat.financialserver.util;
 import com.briandidthat.financialserver.domain.coinbase.Token;
 import org.junit.jupiter.api.Test;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class RequestUtilitiesTest {
     List<Token> availableTokens = TestingConstants.AVAILABLE_TOKENS;
@@ -35,4 +35,15 @@ class RequestUtilitiesTest {
         assertFalse(validated);
     }
 
+    @Test
+    void formatQueryString() {
+        final String baseUrl = "https://dummyurl.com/base";
+        final String expectedQueryString = baseUrl + "?param1=param1&param2=param2";
+        final LinkedHashMap<String, Object> params = new LinkedHashMap<>();
+        params.put("param1", "param1");
+        params.put("param2", "param2");
+
+        String queryString = RequestUtilities.formatQueryString(baseUrl, params);
+        assertEquals(expectedQueryString, queryString);
+    }
 }

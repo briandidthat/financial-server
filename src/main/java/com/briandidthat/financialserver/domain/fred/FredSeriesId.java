@@ -1,6 +1,9 @@
 package com.briandidthat.financialserver.domain.fred;
 
+import com.briandidthat.financialserver.domain.exception.ResourceNotFoundException;
+
 import java.util.HashMap;
+import java.util.Map;
 
 public final class FredSeriesId {
     public static final String CORE_CPI = "CPILFESL";
@@ -13,5 +16,25 @@ public final class FredSeriesId {
     public static final String TEN_YEAR_TREASURY_YIELD = "DGS10";
     public static final String UNEMPLOYMENT_RATE = "U2RATE";
     public static final String FEDERAL_FUNDS_RATE = "FEDFUNDS";
-    public static HashMap<String, String> operations;
+    private static final Map<String, String> operations = new HashMap<>();
+
+    static {
+        operations.put("coreCpi", CORE_CPI);
+        operations.put("stickyCpi", STICKY_CPI);
+        operations.put("totalPublicDebt", TOTAL_PUBLIC_DEBT);
+        operations.put("averageMortgageRate", AVERAGE_MORTGAGE_RATE);
+        operations.put("debtToGdp", DEBT_TO_GDP);
+        operations.put("oneYearTreasuryYield", ONE_YEAR_TREASURY_YIELD);
+        operations.put("fiveYearTreasuryYield", FIVE_YEAR_TREASURY_YIELD);
+        operations.put("tenYearTreasuryYield", TEN_YEAR_TREASURY_YIELD);
+        operations.put("unemploymentRate", UNEMPLOYMENT_RATE);
+        operations.put("federalFundsRate", FEDERAL_FUNDS_RATE);
+    }
+
+
+    public static String getSeriesId(String key) {
+        final String seriesId = operations.getOrDefault(key, null);
+        if (seriesId == null) throw new ResourceNotFoundException("Invalid series id.");
+        return seriesId;
+    }
 }
