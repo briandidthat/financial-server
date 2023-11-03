@@ -1,5 +1,6 @@
 package com.briandidthat.financialserver.domain.fred;
 
+import com.briandidthat.financialserver.domain.exception.BadRequestException;
 import com.briandidthat.financialserver.domain.exception.ResourceNotFoundException;
 
 import java.util.HashMap;
@@ -31,10 +32,10 @@ public final class FredSeriesId {
         operations.put("federalFundsRate", FEDERAL_FUNDS_RATE);
     }
 
-
-    public static String getSeriesId(String key) {
+    public static String getSeriesId(String key) throws ResourceNotFoundException {
         final String seriesId = operations.getOrDefault(key, null);
-        if (seriesId == null) throw new ResourceNotFoundException("Invalid series id.");
+        if (seriesId == null)
+            throw new BadRequestException("Invalid series id. Available operations: " + operations.keySet());
         return seriesId;
     }
 }

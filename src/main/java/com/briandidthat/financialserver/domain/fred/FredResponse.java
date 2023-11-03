@@ -3,6 +3,7 @@ package com.briandidthat.financialserver.domain.fred;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -54,5 +55,15 @@ public final class FredResponse {
     @Override
     public int hashCode() {
         return Objects.hash(observationStart, observationEnd, count, observations);
+    }
+
+    @Override
+    public String toString() {
+        return "FredResponse{" +
+                "observationStart='" + observationStart + '\'' +
+                ", observationEnd='" + observationEnd + '\'' +
+                ", count=" + count +
+                ", observations=" + observations +
+                '}';
     }
 }
