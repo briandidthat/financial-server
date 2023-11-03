@@ -17,7 +17,7 @@ import java.util.List;
 
 @Validated
 @RestController
-@RequestMapping(value = "/spot")
+@RequestMapping(value = "/coinbase/spot")
 public class CoinbaseController {
     private static final Logger logger = LoggerFactory.getLogger(CoinbaseController.class);
 
