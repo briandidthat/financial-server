@@ -17,3 +17,4 @@ apis:
     apiKey: ${FRED_API_KEY}
   twelve:
     baseUrl: https://api.twelvedata.com
+    apiKey: ${TWELVE_API_KEY}
