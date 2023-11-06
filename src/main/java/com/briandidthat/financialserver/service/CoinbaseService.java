@@ -52,7 +52,8 @@ public class CoinbaseService {
             logger.info("Fetching current price for {}", symbol);
             final String queryString = "/prices/" + symbol + "-USD/spot";
             final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + queryString, String.class);
-            final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
+            final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {
+            });
             final SpotPrice spotPrice = result.get(DATA);
             spotPrice.setDate(LocalDate.now());
 
@@ -72,7 +73,8 @@ public class CoinbaseService {
             logger.info("Fetching historical price for {} on date {}", symbol, date);
             final String queryString = "/prices/" + symbol + "-USD/spot?date=" + date;
             final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + queryString, String.class);
-            final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
+            final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {
+            });
             final SpotPrice spotPrice = result.get(DATA);
             spotPrice.setDate(date);
 
@@ -162,7 +164,7 @@ public class CoinbaseService {
         return responses;
     }
 
-    protected List<Token> getAvailableTokens() {
+    private List<Token> getAvailableTokens() {
         try {
             final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/currencies/crypto", String.class);
             final Map<String, List<Token>> result = mapper.readValue(response.getBody(), new TypeReference<>() {

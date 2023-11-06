@@ -25,8 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(CoinbaseController.class)
-class CoinbaseControllerTest {
+@WebMvcTest(CryptoController.class)
+class CryptoControllerTest {
     private final Statistic ETH_STATISTICS = new Statistic("ETH", "-1100.00", "-27.50", "730");
 
     @Autowired
@@ -43,7 +43,7 @@ class CoinbaseControllerTest {
 
         when(service.getSpotPrice(TestingConstants.BTC)).thenReturn(TestingConstants.BTC_SPOT);
 
-        this.mockMvc.perform(post("/coinbase/spot")
+        this.mockMvc.perform(post("/crypto/spot")
                         .header("caller", "test")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(inputJson))
@@ -62,7 +62,7 @@ class CoinbaseControllerTest {
         String inputJson = mapper.writeValueAsString(batchRequest);
         String outputJson = mapper.writeValueAsString(expectedResponse);
 
-        this.mockMvc.perform(post("/coinbase/spot/batch")
+        this.mockMvc.perform(post("/crypto/spot/batch")
                         .header("caller", "test")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(inputJson))
@@ -78,7 +78,7 @@ class CoinbaseControllerTest {
 
         when(service.getHistoricalSpotPrice(TestingConstants.ETH, TestingConstants.START_DATE)).thenReturn(TestingConstants.HISTORICAL_ETH);
 
-        this.mockMvc.perform(post("/coinbase/spot/historical")
+        this.mockMvc.perform(post("/crypto/spot/historical")
                         .header("caller", "test")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(inputJson))
@@ -97,7 +97,7 @@ class CoinbaseControllerTest {
         String inputJson = mapper.writeValueAsString(batchRequest);
         String outputJson = mapper.writeValueAsString(expectedResponse);
 
-        this.mockMvc.perform(post("/coinbase/spot/historical/batch")
+        this.mockMvc.perform(post("/crypto/spot/historical/batch")
                         .header("caller", "test")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(inputJson))
@@ -113,7 +113,7 @@ class CoinbaseControllerTest {
 
         when(service.getPriceStatistics(TestingConstants.ETH, TestingConstants.START_DATE, TestingConstants.END_DATE)).thenReturn(ETH_STATISTICS);
 
-        this.mockMvc.perform(post("/coinbase/spot/statistics")
+        this.mockMvc.perform(post("/crypto/spot/statistics")
                         .header("caller", "test")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(inputJson))
@@ -131,7 +131,7 @@ class CoinbaseControllerTest {
         String expectedOutput = "Required request header 'caller' for method parameter type String is not present";
 
         // should throw 400 exception due to missing caller header
-        this.mockMvc.perform(post("/coinbase/spot")
+        this.mockMvc.perform(post("/crypto/spot")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(inputJson))
                 .andExpect(status().isBadRequest())
@@ -148,7 +148,7 @@ class CoinbaseControllerTest {
 
         when(service.getSpotPrice("ALABAMA")).thenThrow(new ResourceNotFoundException(expectedOutput));
         // should throw 400 exception due to invalid symbol
-        this.mockMvc.perform(post("/coinbase/spot")
+        this.mockMvc.perform(post("/crypto/spot")
                         .header("caller", "test")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(inputJson))
@@ -165,7 +165,7 @@ class CoinbaseControllerTest {
                 new Request(TestingConstants.ETH), new Request("USDC"), new Request("CAKE"), new Request("APE")));
         String inputJson = mapper.writeValueAsString(request);
 
-        this.mockMvc.perform(post("/coinbase/spot/batch")
+        this.mockMvc.perform(post("/crypto/spot/batch")
                         .header("caller", "test")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(inputJson))
@@ -182,7 +182,7 @@ class CoinbaseControllerTest {
 
         when(service.getSpotPrice(TestingConstants.ETH)).thenThrow(new BackendClientException(expectedOutput));
         // should throw 500 exception due to backend issue
-        this.mockMvc.perform(post("/coinbase/spot")
+        this.mockMvc.perform(post("/crypto/spot")
                         .header("caller", "test")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(inputJson))

@@ -1,6 +1,7 @@
 package com.briandidthat.financialserver.util;
 
 import com.briandidthat.financialserver.domain.coinbase.Token;
+import com.briandidthat.financialserver.domain.twelve.StockDetails;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,6 +28,15 @@ public final class RequestUtilities {
             }
         }
         return true;
+    }
+
+    public static boolean validateStockSymbol(String symbol, List<StockDetails> stocks) {
+        for (StockDetails stock : stocks) {
+            if (symbol.equalsIgnoreCase(stock.symbol())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static String formatQueryString(String url, Map<String, Object> params) {

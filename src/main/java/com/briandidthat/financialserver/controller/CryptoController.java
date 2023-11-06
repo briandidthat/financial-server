@@ -17,9 +17,9 @@ import java.util.List;
 
 @Validated
 @RestController
-@RequestMapping(value = "/coinbase/spot")
-public class CoinbaseController {
-    private static final Logger logger = LoggerFactory.getLogger(CoinbaseController.class);
+@RequestMapping(value = "/crypto/spot")
+public class CryptoController {
+    private static final Logger logger = LoggerFactory.getLogger(CryptoController.class);
 
     @Autowired
     private CoinbaseService service;
