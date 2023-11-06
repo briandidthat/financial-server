@@ -8,10 +8,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 @Service
 public class FredService {
@@ -31,11 +31,9 @@ public class FredService {
         final String url = RequestUtilities.formatQueryString(fredBaseUrl + "/series/observations", params);
         try {
             return restTemplate.getForObject(url, FredResponse.class);
-        } catch (Exception e) {
+        } catch (RestClientException e) {
             logger.error(e.getMessage());
             throw new BadRequestException(e.getMessage());
         }
     }
-
-
 }
