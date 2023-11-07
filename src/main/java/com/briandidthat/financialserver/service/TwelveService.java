@@ -99,5 +99,6 @@ public class TwelveService {
                 }
             }
         }
+        logger.info("Updated available stocks list. Count: {}", availableStocks.size());
     }
 }
