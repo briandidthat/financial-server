@@ -1,6 +1,5 @@
 package com.briandidthat.financialserver.service;
 
-import com.briandidthat.financialserver.controller.HealthCheckController;
 import com.briandidthat.financialserver.domain.exception.BadRequestException;
 import com.briandidthat.financialserver.domain.exception.ResourceNotFoundException;
 import com.briandidthat.financialserver.domain.twelve.StockDetails;
@@ -100,7 +99,7 @@ public class TwelveService {
                 }
             }
         }
-        StartupManager.registerResult(TwelveService.class.getName(),true);
         logger.info("Updated available stocks list. Count: {}", availableStocks.size());
+        StartupManager.registerResult(TwelveService.class.getName(),true);
     }
 }

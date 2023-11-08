@@ -210,7 +210,7 @@ public class CoinbaseService {
                 }
             }
         }
-        StartupManager.registerResult(CoinbaseService.class.getName(), true);
         logger.info("Updated available tokens list. Count: {}", availableTokens.size());
+        StartupManager.registerResult(CoinbaseService.class.getName(), true);
     }
 }
