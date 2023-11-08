@@ -1,6 +1,5 @@
 package com.briandidthat.financialserver.service;
 
-import com.briandidthat.financialserver.controller.HealthCheckController;
 import com.briandidthat.financialserver.domain.coinbase.BatchRequest;
 import com.briandidthat.financialserver.domain.coinbase.SpotPrice;
 import com.briandidthat.financialserver.domain.coinbase.Statistic;
@@ -9,6 +8,7 @@ import com.briandidthat.financialserver.domain.exception.BackendClientException;
 import com.briandidthat.financialserver.domain.exception.BadRequestException;
 import com.briandidthat.financialserver.domain.exception.ResourceNotFoundException;
 import com.briandidthat.financialserver.util.RequestUtilities;
+import com.briandidthat.financialserver.util.StartupManager;
 import com.briandidthat.financialserver.util.StatisticsUtilities;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -198,7 +198,7 @@ public class CoinbaseService {
                 } else {
                     if (retryCount == 5) {
                         logger.error("Reached max retries {}.", retryCount);
-                        HealthCheckController.setAvailable(false);
+                        StartupManager.registerResult(CoinbaseService.class.getName(),false);
                         return;
                     }
 
@@ -210,7 +210,7 @@ public class CoinbaseService {
                 }
             }
         }
+        StartupManager.registerResult(CoinbaseService.class.getName(), true);
         logger.info("Updated available tokens list. Count: {}", availableTokens.size());
-        HealthCheckController.setAvailable(true);
     }
 }

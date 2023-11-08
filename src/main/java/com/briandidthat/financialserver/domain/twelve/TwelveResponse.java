@@ -13,7 +13,6 @@ public final class TwelveResponse {
     public String price;
 
     public TwelveResponse() {}
-
     public TwelveResponse(String symbol, String price) {
         this.symbol = symbol;
         this.price = price;
