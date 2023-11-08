@@ -7,6 +7,7 @@ import com.briandidthat.financialserver.domain.twelve.StockDetails;
 import com.briandidthat.financialserver.domain.twelve.TwelveResponse;
 import com.briandidthat.financialserver.domain.twelve.TwelveStocksResponse;
 import com.briandidthat.financialserver.util.RequestUtilities;
+import com.briandidthat.financialserver.util.StartupManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
@@ -36,11 +37,11 @@ public class TwelveService {
 
     public TwelveResponse getStockPrice(String symbol) {
         if (!RequestUtilities.validateStockSymbol(symbol, availableStocks))
-            throw new ResourceNotFoundException("Invalid symbol: {}" + symbol);
+            throw new ResourceNotFoundException("Invalid symbol: " + symbol);
 
         final Map<String, Object> params = new LinkedHashMap<>();
         params.put("symbol", symbol);
-        params.put("apiKey", twelveApiKey);
+        params.put("apikey", twelveApiKey);
         try {
             logger.info("Fetching current price for {}", symbol);
             final String url = RequestUtilities.formatQueryString(twelveBaseUrl + "/price", params);
@@ -87,7 +88,7 @@ public class TwelveService {
                 } else {
                     if (retryCount == 5) {
                         logger.info("Reached max retries. Count {}", retryCount);
-                        HealthCheckController.setAvailable(false);
+                        StartupManager.registerResult(TwelveService.class.getName(), false);
                         return;
                     }
 
@@ -99,6 +100,7 @@ public class TwelveService {
                 }
             }
         }
+        StartupManager.registerResult(TwelveService.class.getName(),true);
         logger.info("Updated available stocks list. Count: {}", availableStocks.size());
     }
 }
