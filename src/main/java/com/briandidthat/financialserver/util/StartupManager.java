@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class StartupManager {
     private static final Logger logger = LoggerFactory.getLogger(StartupManager.class);
-    private static final int expectedTestCount = 2;
+    private static final int expectedTestCount = 2; // Since we have two backends to test (Coinbase, Twelve Data)
     private static int successfulCount = 0;
 
     public static void registerResult(String clazz, boolean status) {
