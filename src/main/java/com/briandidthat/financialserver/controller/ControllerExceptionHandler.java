@@ -4,6 +4,7 @@ import com.briandidthat.financialserver.domain.exception.BackendClientException;
 import com.briandidthat.financialserver.domain.exception.BadRequestException;
 import com.briandidthat.financialserver.domain.exception.ExceptionDetails;
 import com.briandidthat.financialserver.domain.exception.ResourceNotFoundException;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -39,6 +40,12 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(BadRequestException.class)
     private ResponseEntity<Error> handleBadRequestException(Exception e, WebRequest request) {
+        ExceptionDetails details = new ExceptionDetails(LocalDateTime.now(), e.getMessage(), request.getDescription(false));
+        return new ResponseEntity(details, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    private ResponseEntity<Error> handleConstrainViolationException(Exception e, WebRequest request) {
         ExceptionDetails details = new ExceptionDetails(LocalDateTime.now(), e.getMessage(), request.getDescription(false));
         return new ResponseEntity(details, HttpStatus.BAD_REQUEST);
     }
