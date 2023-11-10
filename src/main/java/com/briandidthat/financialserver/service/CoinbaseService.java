@@ -178,7 +178,7 @@ public class CoinbaseService {
 
     // this operation will run on startup, and at 12:00am every day after
     @PostConstruct
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 0 0 * * MON")
     protected void updateAvailableTokens() {
         availableTokens = getAvailableTokens();
         if (availableTokens == null) {

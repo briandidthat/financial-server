@@ -68,7 +68,7 @@ public class TwelveService {
     }
 
     @PostConstruct
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 0 0 * * MON")
     protected void updateAvailableStocks() {
         availableStocks = getAvailableStocks();
         if (availableStocks == null) {
