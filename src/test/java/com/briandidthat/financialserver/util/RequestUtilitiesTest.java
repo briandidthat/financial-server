@@ -1,6 +1,5 @@
 package com.briandidthat.financialserver.util;
 
-import com.briandidthat.financialserver.domain.coinbase.Token;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashMap;
@@ -10,7 +9,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RequestUtilitiesTest {
-    final List<Token> availableTokens = TestingConstants.AVAILABLE_TOKENS;
+    final Map<String, Boolean> availableTokens = TestingConstants.AVAILABLE_TOKENS;
     final Map<String, Boolean> availableStocks = Map.of("AAPL", true, "GOOG", true);
 
     @Test
