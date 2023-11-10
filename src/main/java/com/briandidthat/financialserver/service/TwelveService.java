@@ -24,7 +24,7 @@ import java.util.*;
 @Service
 public class TwelveService {
     private static final Logger logger = LoggerFactory.getLogger(TwelveService.class);
-    private volatile Map<String, Boolean> availableSymbols;
+    private volatile Map<String, Boolean> availableStocks;
     @Value("${apis.twelve.baseUrl}")
     private String twelveBaseUrl;
     @Value("${apis.twelve.apiKey}")
@@ -35,7 +35,7 @@ public class TwelveService {
     private ObjectMapper mapper;
 
     public TwelveResponse getStockPrice(String symbol) {
-        if (!RequestUtilities.validateStockSymbol(symbol, availableSymbols))
+        if (!RequestUtilities.validateStockSymbol(symbol, availableStocks))
             throw new ResourceNotFoundException("Invalid symbol: " + symbol);
 
         final Map<String, Object> params = new LinkedHashMap<>();
@@ -54,7 +54,7 @@ public class TwelveService {
     }
 
     public List<TwelveResponse> getMultipleStockPrices(List<String> symbols) {
-        if (!RequestUtilities.validateStockSymbols(symbols, availableSymbols))
+        if (!RequestUtilities.validateStockSymbols(symbols, availableStocks))
             throw new ResourceNotFoundException("Invalid symbols: " + symbols);
 
         final Map<String, Object> params = new LinkedHashMap<>();
@@ -94,8 +94,8 @@ public class TwelveService {
     @PostConstruct
     @Scheduled(cron = "0 0 0 * * MON")
     protected void updateAvailableStocks() {
-        List<StockDetails> availableStocks = getAvailableStocks();
-        if (availableStocks == null) {
+        List<StockDetails> stocks = getAvailableStocks();
+        if (stocks == null) {
             logger.error("Error retrieving available stocks. Retrying...");
 
             boolean retry = true;
@@ -103,7 +103,7 @@ public class TwelveService {
 
             // continue to retry until we reach a maximum retry of 5 in which case the application is deemed unhealthy
             while (retry) {
-                availableStocks = getAvailableStocks();
+                stocks = getAvailableStocks();
                 if (availableStocks != null) {
                     logger.info("Successfully retrieved the available tokens on retry #{}", retryCount);
                     retry = false;
@@ -115,18 +115,18 @@ public class TwelveService {
                     }
 
                     retryCount++;
-                    availableStocks = getAvailableStocks();
+                    stocks = getAvailableStocks();
                     if (availableStocks != null) {
                         retry = false;
                     }
                 }
             }
         }
-        final Map<String, Boolean> stocks = new HashMap<>();
-        for (StockDetails details : availableStocks) {
-            stocks.put(details.symbol().toUpperCase(), true);
+        final Map<String, Boolean> symbols = new HashMap<>();
+        for (StockDetails details : stocks) {
+            symbols.put(details.symbol().toUpperCase(), true);
         }
-        availableSymbols = stocks;
+        availableStocks = symbols;
         logger.info("Updated available stocks list. Count: {}", availableStocks.size());
         StartupManager.registerResult(TwelveService.class.getName(),true);
     }

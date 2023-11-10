@@ -1,7 +1,5 @@
 package com.briandidthat.financialserver.util;
 
-import com.briandidthat.financialserver.domain.coinbase.Token;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -10,16 +8,11 @@ public final class RequestUtilities {
     private RequestUtilities() {
     }
 
-    public static boolean validateSymbol(String symbol, List<Token> tokens) {
-        for (Token token : tokens) {
-            if (symbol.equalsIgnoreCase(token.code())) {
-                return true;
-            }
-        }
-        return false;
+    public static boolean validateSymbol(String symbol, Map<String, Boolean> tokens) {
+        return tokens.getOrDefault(symbol, false);
     }
 
-    public static boolean validateSymbols(List<String> symbols, List<Token> tokens) {
+    public static boolean validateSymbols(List<String> symbols, Map<String, Boolean> tokens) {
         for (String symbol : symbols) {
             if (!validateSymbol(symbol, tokens)) {
                 return false;
