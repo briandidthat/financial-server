@@ -6,8 +6,11 @@ import com.briandidthat.financialserver.domain.coinbase.SpotPrice;
 import com.briandidthat.financialserver.domain.coinbase.Token;
 import com.briandidthat.financialserver.domain.fred.FredResponse;
 import com.briandidthat.financialserver.domain.fred.Observation;
+import com.briandidthat.financialserver.domain.twelve.StockDetails;
+import com.briandidthat.financialserver.domain.twelve.TwelveResponse;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public final class TestingConstants {
@@ -54,4 +57,12 @@ public final class TestingConstants {
             new Observation("07/12/2023", "07/14/2023", "07/13/2023", "6.78")));
 
 
+
+    // TWELVE CONSTANTS
+
+    public static final List<StockDetails> AVAILABLE_STOCKS = List.of(
+            new StockDetails("AAPL", "apple", "USD", "NASDAQ", "IDK", "USA", "Common Stock"),
+            new StockDetails("BRKB", "berkshire hathaway b", "USD", "NASDAQ", "IDK", "USA", "Common Stock"));
+
+    public static final TwelveResponse APPLE_PRICE_RESPONSE = new TwelveResponse("AAPL", "108.50");
 }
