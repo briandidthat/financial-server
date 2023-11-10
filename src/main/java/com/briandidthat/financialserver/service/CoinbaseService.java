@@ -27,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -37,8 +38,7 @@ public class CoinbaseService {
     private static final String DATA = "data";
     private static final Logger logger = LoggerFactory.getLogger(CoinbaseService.class);
     private static final ObjectMapper mapper = new ObjectMapper();
-    private volatile List<Token> availableTokens;
-
+    private volatile Map<String, Boolean> availableTokens;
     @Value("${apis.coinbase.baseUrl}")
     private String coinbaseUrl;
     @Autowired
@@ -167,8 +167,7 @@ public class CoinbaseService {
     private List<Token> getAvailableTokens() {
         try {
             final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/currencies/crypto", String.class);
-            final Map<String, List<Token>> result = mapper.readValue(response.getBody(), new TypeReference<>() {
-            });
+            final Map<String, List<Token>> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
             return result.get(DATA);
         } catch (Exception e) {
             logger.error("Unable to retrieve token list. Reason: {}", e.getMessage());
@@ -180,8 +179,8 @@ public class CoinbaseService {
     @PostConstruct
     @Scheduled(cron = "0 0 0 * * MON")
     protected void updateAvailableTokens() {
-        availableTokens = getAvailableTokens();
-        if (availableTokens == null) {
+        List<Token> tokens = getAvailableTokens();
+        if (tokens == null) {
             logger.error("Error retrieving available tokens. Retrying...");
 
             boolean retry = true;
@@ -190,9 +189,8 @@ public class CoinbaseService {
             // continue to retry until we update the available tokens or fail 5 times
             // in which case we will wait till the next request or next day
             while (retry) {
-                List<Token> tokens = getAvailableTokens();
+                tokens = getAvailableTokens();
                 if (tokens != null) {
-                    availableTokens = tokens;
                     logger.info("Successfully retrieved the available tokens on attempt # {}.", retryCount);
                     retry = false;
                 } else {
@@ -210,7 +208,12 @@ public class CoinbaseService {
                 }
             }
         }
-        logger.info("Updated available tokens list. Count: {}", availableTokens.size());
+        final Map<String, Boolean> symbols = new HashMap<>();
+        for (Token token : tokens) {
+            symbols.put(token.name().toUpperCase(), true);
+        }
+        availableTokens = symbols;
+        logger.info("Updated available tokens list. Count: {}", tokens.size());
         StartupManager.registerResult(CoinbaseService.class.getName(), true);
     }
 }

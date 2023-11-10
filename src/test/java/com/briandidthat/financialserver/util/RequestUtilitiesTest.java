@@ -1,15 +1,16 @@
 package com.briandidthat.financialserver.util;
 
-import com.briandidthat.financialserver.domain.coinbase.Token;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class RequestUtilitiesTest {
-    List<Token> availableTokens = TestingConstants.AVAILABLE_TOKENS;
+    final Map<String, Boolean> availableTokens = TestingConstants.AVAILABLE_TOKENS;
+    final Map<String, Boolean> availableStocks = Map.of("AAPL", true, "GOOG", true);
 
     @Test
     void testValidateTestingUtilities() {
@@ -45,5 +46,29 @@ class RequestUtilitiesTest {
 
         String queryString = RequestUtilities.formatQueryString(baseUrl, params);
         assertEquals(expectedQueryString, queryString);
+    }
+
+    @Test
+    void testValidateStock() {
+        boolean validated = RequestUtilities.validateStockSymbol("AAPL", availableStocks);
+        assertTrue(validated);
+    }
+
+    @Test
+    void testValidateStockWithInvalidSymbol() {
+        boolean validated = RequestUtilities.validateStockSymbol("NVDA", availableStocks);
+        assertFalse(validated);
+    }
+
+    @Test
+    void testValidateStocks() {
+        boolean validated = RequestUtilities.validateStockSymbols(List.of("AAPL", "GOOG"), availableStocks);
+        assertTrue(validated);
+    }
+
+    @Test
+    void testValidateStocksWithInvalidSymbols() {
+        boolean validated = RequestUtilities.validateStockSymbols(List.of("NVDA", "AAPL"), availableStocks);
+        assertFalse(validated);
     }
 }
