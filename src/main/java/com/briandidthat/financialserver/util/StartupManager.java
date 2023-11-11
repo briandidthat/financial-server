@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 public class StartupManager {
     private static final Logger logger = LoggerFactory.getLogger(StartupManager.class);
-    private static final int expectedTestCount = 2; // Since we have two backends to test (Coinbase, Twelve Data)
+    private static final int expectedTaskCount = 2; // Since we have two backends to test (Coinbase, Twelve Data)
     private static final AtomicInteger successfulCount = new AtomicInteger();
 
     public static synchronized void registerResult(String clazz, boolean status) {
@@ -21,11 +21,12 @@ public class StartupManager {
             return;
         }
         successfulCount.getAndIncrement();
-        logger.info("${} test was successful.", clazz);
+        logger.info("${} task was successful.", clazz);
 
-        if (successfulCount.get() == expectedTestCount) {
+        if (successfulCount.get() == expectedTaskCount) {
             logger.info("Application is healthy.");
             HealthCheckController.setAvailable(true);
+            successfulCount.set(0);
         }
     }
 }

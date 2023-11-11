@@ -71,7 +71,7 @@ class CoinbaseServiceTest {
 
     @Test
     void testGetMultipleSpotPrices() {
-        List<SpotPrice> responses = service.getSpotPrices(TestingConstants.SPOT_BATCH);
+        List<SpotPrice> responses = service.getSpotPrices(TestingConstants.TOKENS);
         assertIterableEquals(List.of(TestingConstants.BTC_SPOT, TestingConstants.BNB_SPOT, TestingConstants.ETH_SPOT), responses);
     }
 

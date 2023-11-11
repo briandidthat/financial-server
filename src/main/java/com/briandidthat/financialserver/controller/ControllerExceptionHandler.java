@@ -47,11 +47,11 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     private ResponseEntity<Error> handleConstrainViolationException(Exception e, WebRequest request) {
         ExceptionDetails details = new ExceptionDetails(LocalDateTime.now(), e.getMessage(), request.getDescription(false));
-        return new ResponseEntity(details, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(details, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    private ResponseEntity<Error> handleConstraintValidationException(MethodArgumentNotValidException e, WebRequest request) {
+    private ResponseEntity<Error> handleMethodArgumentNotValidException(MethodArgumentNotValidException e, WebRequest request) {
         List<ExceptionDetails> violations = new ArrayList<>();
         LocalDateTime date = LocalDateTime.now();
 

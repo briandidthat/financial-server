@@ -41,6 +41,7 @@ public final class TestingConstants {
     public static final List<SpotPrice> SPOT_RESPONSES = List.of(BTC_SPOT, BNB_SPOT, ETH_SPOT);
     public static final List<SpotPrice> HISTORICAL_SPOT_RESPONSES = List.of(HISTORICAL_BTC, HISTORICAL_BNB, HISTORICAL_ETH);
 
+    public static final List<String> TOKENS = List.of(TestingConstants.BTC, TestingConstants.BNB, TestingConstants.ETH);
     public static final Map<String, Boolean> AVAILABLE_TOKENS = Map.of("BTC", true, "BNB", true, "ETH", true);
 
     // FRED CONSTANTS

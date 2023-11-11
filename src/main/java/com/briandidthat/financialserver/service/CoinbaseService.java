@@ -103,15 +103,15 @@ public class CoinbaseService {
         return CompletableFuture.supplyAsync(() -> getHistoricalSpotPrice(symbol, date));
     }
 
-    public List<SpotPrice> getSpotPrices(BatchRequest batchRequest) {
+    public List<SpotPrice> getSpotPrices(List<String> symbols) {
         final List<SpotPrice> responses;
         final List<CompletableFuture<SpotPrice>> completableFutures = new ArrayList<>();
 
-        logger.info("Fetching prices asynchronously {}", batchRequest.getRequests());
+        logger.info("Fetching prices asynchronously {}", symbols);
 
         final Instant start = Instant.now();
         // store list of symbols requests to be run in parallel
-        batchRequest.getRequests().forEach(request -> completableFutures.add(getSpotPriceAsync(request.getSymbol())));
+        symbols.forEach(symbol -> completableFutures.add(getSpotPriceAsync(symbol)));
         // wait for all requests to be completed
         CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
         // calculate the time it took for our request to be completed

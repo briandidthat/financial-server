@@ -1,17 +1,18 @@
 package com.briandidthat.financialserver.controller;
 
 import com.briandidthat.financialserver.domain.coinbase.BatchRequest;
-import com.briandidthat.financialserver.domain.coinbase.Request;
 import com.briandidthat.financialserver.domain.coinbase.SpotPrice;
 import com.briandidthat.financialserver.domain.coinbase.Statistic;
 import com.briandidthat.financialserver.service.CoinbaseService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -24,31 +25,34 @@ public class CryptoController {
     @Autowired
     private CoinbaseService service;
 
-    @PostMapping
-    public SpotPrice getSpotPrice(@RequestHeader String caller, @RequestBody @Valid Request request) {
+    @GetMapping
+    public SpotPrice getSpotPrice(@RequestHeader String caller, @RequestParam String symbol) {
         logger.info("Spot request by {}", caller);
-        return service.getSpotPrice(request.getSymbol());
+        return service.getSpotPrice(symbol);
     }
 
-    @PostMapping("/historical")
-    public SpotPrice getHistoricalSpotPrice(@RequestHeader String caller, @RequestBody @Valid Request request) {
+    @GetMapping("/historical")
+    public SpotPrice getHistoricalSpotPrice(@RequestHeader String caller, @RequestParam String symbol, @RequestParam LocalDate date) {
         logger.info("Historical spot request by {}", caller);
-        return service.getHistoricalSpotPrice(request.getSymbol(), request.getStartDate());
+        return service.getHistoricalSpotPrice(symbol, date);
     }
 
-    @PostMapping("/statistics")
-    public Statistic getPriceStatistics(@RequestHeader String caller, @RequestBody @Valid Request request) {
+    @GetMapping("/statistics")
+    public Statistic getPriceStatistics(@RequestHeader String caller,
+                                        @RequestParam String symbol,
+                                        @RequestParam LocalDate startDate,
+                                        @RequestParam LocalDate endDate) {
         logger.info("Spot statistics request by {}", caller);
-        return service.getPriceStatistics(request.getSymbol(), request.getStartDate(), request.getEndDate());
+        return service.getPriceStatistics(symbol, startDate, endDate);
     }
 
-    @PostMapping("/batch")
-    public List<SpotPrice> getMultipleSpotPrices(@RequestHeader String caller, @RequestBody @Valid BatchRequest request) {
+    @GetMapping("/batch")
+    public List<SpotPrice> getMultipleSpotPrices(@RequestHeader String caller, @RequestParam @Size(min = 2, max = 5) List<String> symbols) {
         logger.info("Batch spot request by {}", caller);
-        return service.getSpotPrices(request);
+        return service.getSpotPrices(symbols);
     }
 
-    @PostMapping("/historical/batch")
+    @PostMapping("/batch/historical")
     public List<SpotPrice> getMultipleHistoricalSpotPrices(@RequestHeader String caller, @RequestBody @Valid BatchRequest request) {
         logger.info("Batch historical spot request by {}", caller);
         return service.getHistoricalSpotPrices(request);
