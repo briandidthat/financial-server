@@ -1,6 +1,6 @@
 package com.briandidthat.financialserver.controller;
 
-import com.briandidthat.financialserver.domain.twelve.TwelveResponse;
+import com.briandidthat.financialserver.domain.twelve.StockPriceResponse;
 import com.briandidthat.financialserver.service.TwelveService;
 import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +21,12 @@ public class StockController {
     private TwelveService service;
 
     @GetMapping
-    public TwelveResponse getStockPrice(@RequestParam String symbol) {
+    public StockPriceResponse getStockPrice(@RequestParam String symbol) {
         return service.getStockPrice(symbol);
     }
 
     @GetMapping("/batch")
-    public List<TwelveResponse> getBatchStockPrice(@RequestParam @Size(min= 1, max = 5) List<String> symbols) {
+    public List<StockPriceResponse> getBatchStockPrice(@RequestParam @Size(min= 1, max = 5) List<String> symbols) {
         return service.getMultipleStockPrices(symbols);
     }
 

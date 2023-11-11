@@ -3,14 +3,11 @@ package com.briandidthat.financialserver.util;
 import com.briandidthat.financialserver.domain.coinbase.BatchRequest;
 import com.briandidthat.financialserver.domain.coinbase.Request;
 import com.briandidthat.financialserver.domain.coinbase.SpotPrice;
-import com.briandidthat.financialserver.domain.coinbase.Token;
 import com.briandidthat.financialserver.domain.fred.FredResponse;
 import com.briandidthat.financialserver.domain.fred.Observation;
-import com.briandidthat.financialserver.domain.twelve.StockDetails;
-import com.briandidthat.financialserver.domain.twelve.TwelveResponse;
+import com.briandidthat.financialserver.domain.twelve.StockPriceResponse;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -44,11 +41,7 @@ public final class TestingConstants {
     public static final List<SpotPrice> SPOT_RESPONSES = List.of(BTC_SPOT, BNB_SPOT, ETH_SPOT);
     public static final List<SpotPrice> HISTORICAL_SPOT_RESPONSES = List.of(HISTORICAL_BTC, HISTORICAL_BNB, HISTORICAL_ETH);
 
-//    public static final List<Token> AVAILABLE_TOKENS = List.of(
-//            new Token("BTC", "Bitcoin", "blue", 1, 8, "crypto", "dsfas", "23df"),
-//            new Token("BNB", "Binance Coin", "gold", 3, 8, "crypto", "dsfas", "23df"),
-//            new Token("ETH", "Ethereum", "orange", 2, 8, "crypto", "dsfas", "23df"));
-
+    public static final List<String> TOKENS = List.of(TestingConstants.BTC, TestingConstants.BNB, TestingConstants.ETH);
     public static final Map<String, Boolean> AVAILABLE_TOKENS = Map.of("BTC", true, "BNB", true, "ETH", true);
 
     // FRED CONSTANTS
@@ -58,14 +51,9 @@ public final class TestingConstants {
             new Observation("07/12/2023", "07/14/2023", "07/13/2023", "6.78")));
 
 
-
-    // TWELVE CONSTANTS
-
-//    public static final List<StockDetails> AVAILABLE_STOCKS = List.of(
-//            new StockDetails("AAPL", "apple", "USD", "NASDAQ", "IDK", "USA", "Common Stock"),
-//            new StockDetails("BRKB", "berkshire hathaway b", "USD", "NASDAQ", "IDK", "USA", "Common Stock"));
+    // TWELVE DATA CONSTANTS
 
     public static final Map<String, Boolean> AVAILABLE_STOCKS = Map.of("AAPL", true, "BRKB", true, "GOOG", true);
 
-    public static final TwelveResponse APPLE_PRICE_RESPONSE = new TwelveResponse("AAPL", "108.50");
+    public static final StockPriceResponse APPLE_PRICE_RESPONSE = new StockPriceResponse("AAPL", "108.50");
 }

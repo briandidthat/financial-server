@@ -6,14 +6,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public final class TwelveResponse {
+public final class StockPriceResponse {
 
     public String symbol;
     @JsonProperty("price")
     public String price;
 
-    public TwelveResponse() {}
-    public TwelveResponse(String symbol, String price) {
+    public StockPriceResponse() {}
+    public StockPriceResponse(String symbol, String price) {
         this.symbol = symbol;
         this.price = price;
     }
@@ -38,7 +38,7 @@ public final class TwelveResponse {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TwelveResponse response = (TwelveResponse) o;
+        StockPriceResponse response = (StockPriceResponse) o;
         return Objects.equals(symbol, response.symbol) && Objects.equals(price, response.price);
     }
 

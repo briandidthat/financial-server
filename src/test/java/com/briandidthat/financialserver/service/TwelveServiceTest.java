@@ -1,9 +1,8 @@
 package com.briandidthat.financialserver.service;
 
-import com.briandidthat.financialserver.domain.twelve.TwelveResponse;
+import com.briandidthat.financialserver.domain.twelve.StockPriceResponse;
 import com.briandidthat.financialserver.util.RequestUtilities;
 import com.briandidthat.financialserver.util.TestingConstants;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
@@ -40,7 +38,7 @@ class TwelveServiceTest {
         params.put("apikey", mockApiKey);
         final String URL = RequestUtilities.formatQueryString(twelveBaseUrl + "/price", params);
 
-        when(restTemplate.getForObject(URL, TwelveResponse.class)).thenReturn(TestingConstants.APPLE_PRICE_RESPONSE);
+        when(restTemplate.getForObject(URL, StockPriceResponse.class)).thenReturn(TestingConstants.APPLE_PRICE_RESPONSE);
 
         ReflectionTestUtils.setField(service, "twelveBaseUrl", twelveBaseUrl);
         ReflectionTestUtils.setField(service, "twelveApiKey", mockApiKey);
@@ -49,7 +47,7 @@ class TwelveServiceTest {
 
     @Test
     void getStockPrice() {
-        TwelveResponse response = service.getStockPrice("AAPL");
+        StockPriceResponse response = service.getStockPrice("AAPL");
         assertEquals(TestingConstants.APPLE_PRICE_RESPONSE, response);
     }
 }
