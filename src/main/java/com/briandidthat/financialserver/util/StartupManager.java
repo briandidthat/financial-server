@@ -5,27 +5,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 @Component
 public class StartupManager {
     private static final Logger logger = LoggerFactory.getLogger(StartupManager.class);
     private static final int expectedTestCount = 2; // Since we have two backends to test (Coinbase, Twelve Data)
-    private static int successfulCount = 0;
+    private static final AtomicInteger successfulCount = new AtomicInteger();
 
-    public static void registerResult(String clazz, boolean status) {
+    public static synchronized void registerResult(String clazz, boolean status) {
         if (!status) {
+            logger.info("{} was unable to connect to the backend.", clazz);
             // if we are unable to reach the backend services, set health to false so kubernetes could restart
             HealthCheckController.setAvailable(false);
-            logger.info("{} was unable to connect to the backend.", clazz);
             return;
         }
+        successfulCount.getAndIncrement();
+        logger.info("${} test was successful.", clazz);
 
-        successfulCount++;
-        if (successfulCount == expectedTestCount) {
+        if (successfulCount.get() == expectedTestCount) {
             logger.info("Application is healthy.");
             HealthCheckController.setAvailable(true);
-            // reset the count to 0 if we have successfully started up the application
-            successfulCount = 0;
         }
     }
-
 }

@@ -1,5 +1,7 @@
 package com.briandidthat.financialserver.util;
 
+import com.briandidthat.financialserver.domain.exception.ResourceNotFoundException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashMap;
@@ -20,8 +22,7 @@ class RequestUtilitiesTest {
 
     @Test
     void testValidateTestingUtilitiesWithInvalidSymbol() {
-        boolean validated = RequestUtilities.validateSymbol("WMEMO", availableTokens);
-        assertFalse(validated);
+        Assertions.assertThrows(ResourceNotFoundException.class, ()->RequestUtilities.validateSymbol("WMEMO", availableTokens));
     }
 
     @Test
@@ -32,8 +33,7 @@ class RequestUtilitiesTest {
 
     @Test
     void testValidateCryptocurrenciesWithInvalidSymbols() {
-        boolean validated = RequestUtilities.validateSymbols(List.of("WMEMO", "MIM"), availableTokens);
-        assertFalse(validated);
+        Assertions.assertThrows(ResourceNotFoundException.class, ()-> RequestUtilities.validateSymbols(List.of("WMEMO", "MIM"), availableTokens));
     }
 
     @Test
@@ -50,25 +50,23 @@ class RequestUtilitiesTest {
 
     @Test
     void testValidateStock() {
-        boolean validated = RequestUtilities.validateStockSymbol("AAPL", availableStocks);
+        boolean validated = RequestUtilities.validateSymbol("AAPL", availableStocks);
         assertTrue(validated);
     }
 
     @Test
     void testValidateStockWithInvalidSymbol() {
-        boolean validated = RequestUtilities.validateStockSymbol("NVDA", availableStocks);
-        assertFalse(validated);
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> RequestUtilities.validateSymbol("NVDA", availableStocks));
     }
 
     @Test
     void testValidateStocks() {
-        boolean validated = RequestUtilities.validateStockSymbols(List.of("AAPL", "GOOG"), availableStocks);
+        boolean validated = RequestUtilities.validateSymbols(List.of("AAPL", "GOOG"), availableStocks);
         assertTrue(validated);
     }
 
     @Test
     void testValidateStocksWithInvalidSymbols() {
-        boolean validated = RequestUtilities.validateStockSymbols(List.of("NVDA", "AAPL"), availableStocks);
-        assertFalse(validated);
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> RequestUtilities.validateSymbols(List.of("NVDA", "AAPL"), availableStocks));
     }
 }

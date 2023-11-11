@@ -4,7 +4,6 @@ import com.briandidthat.financialserver.domain.coinbase.BatchRequest;
 import com.briandidthat.financialserver.domain.coinbase.SpotPrice;
 import com.briandidthat.financialserver.domain.coinbase.Statistic;
 import com.briandidthat.financialserver.domain.coinbase.Token;
-import com.briandidthat.financialserver.domain.exception.BackendClientException;
 import com.briandidthat.financialserver.domain.exception.BadRequestException;
 import com.briandidthat.financialserver.domain.exception.ResourceNotFoundException;
 import com.briandidthat.financialserver.util.RequestUtilities;
@@ -21,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
@@ -44,9 +42,8 @@ public class CoinbaseService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public SpotPrice getSpotPrice(String symbol) throws HttpClientErrorException, BackendClientException {
-        if (!RequestUtilities.validateSymbol(symbol, availableTokens))
-            throw new ResourceNotFoundException("Invalid symbol: " + symbol);
+    public SpotPrice getSpotPrice(String symbol) {
+        RequestUtilities.validateSymbol(symbol, availableTokens);
 
         try {
             logger.info("Fetching current price for {}", symbol);
@@ -66,8 +63,7 @@ public class CoinbaseService {
     }
 
     public SpotPrice getHistoricalSpotPrice(String symbol, LocalDate date) {
-        if (!RequestUtilities.validateSymbol(symbol, availableTokens))
-            throw new ResourceNotFoundException("Invalid symbol: " + symbol);
+        RequestUtilities.validateSymbol(symbol, availableTokens);
 
         try {
             logger.info("Fetching historical price for {} on date {}", symbol, date);
@@ -87,8 +83,7 @@ public class CoinbaseService {
     }
 
     public Statistic getPriceStatistics(String symbol, LocalDate startDate, LocalDate endDate) {
-        if (!RequestUtilities.validateSymbol(symbol, availableTokens))
-            throw new ResourceNotFoundException("Invalid symbol: " + symbol);
+        RequestUtilities.validateSymbol(symbol, availableTokens);
 
         final boolean isToday = endDate.isEqual(LocalDate.now());
         final SpotPrice startPrice = getHistoricalSpotPrice(symbol, startDate);
@@ -185,7 +180,6 @@ public class CoinbaseService {
 
             boolean retry = true;
             int retryCount = 0;
-
             // continue to retry until we update the available tokens or fail 5 times
             // in which case we will wait till the next request or next day
             while (retry) {

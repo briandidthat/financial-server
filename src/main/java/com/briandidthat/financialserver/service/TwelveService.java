@@ -1,10 +1,9 @@
 package com.briandidthat.financialserver.service;
 
 import com.briandidthat.financialserver.domain.exception.BadRequestException;
-import com.briandidthat.financialserver.domain.exception.ResourceNotFoundException;
 import com.briandidthat.financialserver.domain.twelve.StockDetails;
-import com.briandidthat.financialserver.domain.twelve.TwelveResponse;
-import com.briandidthat.financialserver.domain.twelve.TwelveStocksResponse;
+import com.briandidthat.financialserver.domain.twelve.StockPriceResponse;
+import com.briandidthat.financialserver.domain.twelve.StockListResponse;
 import com.briandidthat.financialserver.util.RequestUtilities;
 import com.briandidthat.financialserver.util.StartupManager;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -34,9 +33,8 @@ public class TwelveService {
     @Autowired
     private ObjectMapper mapper;
 
-    public TwelveResponse getStockPrice(String symbol) {
-        if (!RequestUtilities.validateStockSymbol(symbol, availableStocks))
-            throw new ResourceNotFoundException("Invalid symbol: " + symbol);
+    public StockPriceResponse getStockPrice(String symbol) {
+        RequestUtilities.validateSymbol(symbol, availableStocks);
 
         final Map<String, Object> params = new LinkedHashMap<>();
         params.put("symbol", symbol);
@@ -44,7 +42,7 @@ public class TwelveService {
         try {
             logger.info("Fetching current price for {}", symbol);
             final String url = RequestUtilities.formatQueryString(twelveBaseUrl + "/price", params);
-            final TwelveResponse response = restTemplate.getForObject(url, TwelveResponse.class);
+            final StockPriceResponse response = restTemplate.getForObject(url, StockPriceResponse.class);
             response.setSymbol(symbol);
             return response;
         } catch (Exception e) {
@@ -53,9 +51,8 @@ public class TwelveService {
         }
     }
 
-    public List<TwelveResponse> getMultipleStockPrices(List<String> symbols) {
-        if (!RequestUtilities.validateStockSymbols(symbols, availableStocks))
-            throw new ResourceNotFoundException("Invalid symbols: " + symbols);
+    public List<StockPriceResponse> getMultipleStockPrices(List<String> symbols) {
+        RequestUtilities.validateSymbols(symbols, availableStocks);
 
         final Map<String, Object> params = new LinkedHashMap<>();
         params.put("symbol", String.join(",", symbols));
@@ -65,11 +62,11 @@ public class TwelveService {
             final String url = RequestUtilities.formatQueryString(twelveBaseUrl + "/price", params);
             final ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
             final Map<String, Map<String, String>> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
-            final List<TwelveResponse> results = new ArrayList<>();
+            final List<StockPriceResponse> results = new ArrayList<>();
             symbols.forEach(s -> {
                 final Map<String, String> stock = result.get(s);
-                final TwelveResponse twelveResponse = new TwelveResponse(s, stock.get("price"));
-                results.add(twelveResponse);
+                final StockPriceResponse stockPriceResponse = new StockPriceResponse(s, stock.get("price"));
+                results.add(stockPriceResponse);
             });
             return results;
         } catch (Exception e) {
@@ -83,7 +80,7 @@ public class TwelveService {
         params.put("type", "common stock");
         try {
             final String url = RequestUtilities.formatQueryString(twelveBaseUrl + "/stocks", params);
-            final TwelveStocksResponse response = restTemplate.getForObject(url, TwelveStocksResponse.class);
+            final StockListResponse response = restTemplate.getForObject(url, StockListResponse.class);
             return response.stocks();
         } catch (Exception e) {
             logger.info(e.getMessage());
@@ -92,7 +89,7 @@ public class TwelveService {
     }
 
     @PostConstruct
-    @Scheduled(cron = "0 0 0 * * MON")
+    @Scheduled(cron = "0 0 9 * * MON") // run every monday at 9AM
     protected void updateAvailableStocks() {
         List<StockDetails> stocks = getAvailableStocks();
         if (stocks == null) {
@@ -100,7 +97,6 @@ public class TwelveService {
 
             boolean retry = true;
             int retryCount = 0;
-
             // continue to retry until we reach a maximum retry of 5 in which case the application is deemed unhealthy
             while (retry) {
                 stocks = getAvailableStocks();

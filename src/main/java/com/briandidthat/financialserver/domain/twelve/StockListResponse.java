@@ -6,4 +6,4 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record TwelveStocksResponse(@JsonProperty("data") List<StockDetails> stocks, @JsonProperty("status") String status) { }
+public record StockListResponse(@JsonProperty("data") List<StockDetails> stocks, @JsonProperty("status") String status) { }
