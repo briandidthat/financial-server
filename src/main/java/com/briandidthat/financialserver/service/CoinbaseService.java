@@ -190,7 +190,7 @@ public class CoinbaseService {
                 } else {
                     if (retryCount == 5) {
                         logger.error("Reached max retries {}.", retryCount);
-                        StartupManager.registerResult(CoinbaseService.class.getName(), false);
+                        StartupManager.registerResult(this.getClass(), false);
                         return;
                     }
 
@@ -208,6 +208,6 @@ public class CoinbaseService {
         }
         availableTokens = symbols;
         logger.info("Updated available tokens list. Count: {}", tokens.size());
-        StartupManager.registerResult(CoinbaseService.class.getName(), true);
+        StartupManager.registerResult(this.getClass(), true);
     }
 }

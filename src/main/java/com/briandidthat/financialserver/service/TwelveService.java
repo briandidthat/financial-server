@@ -107,7 +107,7 @@ public class TwelveService {
                 } else {
                     if (retryCount == 5) {
                         logger.info("Reached max retries. Count {}", retryCount);
-                        StartupManager.registerResult(TwelveService.class.getName(), false);
+                        StartupManager.registerResult(this.getClass(), false);
                         return;
                     }
 
@@ -125,6 +125,6 @@ public class TwelveService {
         }
         availableStocks = symbols;
         logger.info("Updated available stocks list. Count: {}", availableStocks.size());
-        StartupManager.registerResult(TwelveService.class.getName(), true);
+        StartupManager.registerResult(this.getClass(), true);
     }
 }
