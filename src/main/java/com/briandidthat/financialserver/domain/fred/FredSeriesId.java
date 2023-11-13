@@ -35,7 +35,7 @@ public final class FredSeriesId {
     public static String getSeriesId(String key) throws ResourceNotFoundException {
         final String seriesId = operations.getOrDefault(key, null);
         if (seriesId == null)
-            throw new BadRequestException("Invalid series id. Available operations: " + operations.keySet());
+            throw new ResourceNotFoundException("Invalid series id. Available operations: " + operations.keySet());
         return seriesId;
     }
 }

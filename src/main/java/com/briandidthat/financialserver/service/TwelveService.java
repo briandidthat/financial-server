@@ -2,13 +2,14 @@ package com.briandidthat.financialserver.service;
 
 import com.briandidthat.financialserver.domain.exception.BadRequestException;
 import com.briandidthat.financialserver.domain.twelve.StockDetails;
-import com.briandidthat.financialserver.domain.twelve.StockPriceResponse;
 import com.briandidthat.financialserver.domain.twelve.StockListResponse;
+import com.briandidthat.financialserver.domain.twelve.StockPriceResponse;
 import com.briandidthat.financialserver.util.RequestUtilities;
 import com.briandidthat.financialserver.util.StartupManager;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
+import jakarta.validation.constraints.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,8 @@ import java.util.*;
 
 @Service
 public class TwelveService {
-    private static final Logger logger = LoggerFactory.getLogger(TwelveService.class);
+    private final Logger logger = LoggerFactory.getLogger(TwelveService.class);
+    private final ObjectMapper mapper = new ObjectMapper();
     private volatile Map<String, Boolean> availableStocks;
     @Value("${apis.twelve.baseUrl}")
     private String twelveBaseUrl;
@@ -30,8 +32,6 @@ public class TwelveService {
     private String twelveApiKey;
     @Autowired
     private RestTemplate restTemplate;
-    @Autowired
-    private ObjectMapper mapper;
 
     public StockPriceResponse getStockPrice(String symbol) {
         RequestUtilities.validateSymbol(symbol, availableStocks);
@@ -51,7 +51,7 @@ public class TwelveService {
         }
     }
 
-    public List<StockPriceResponse> getMultipleStockPrices(List<String> symbols) {
+    public List<StockPriceResponse> getMultipleStockPrices(@Size(min = 2, max = 5) List<String> symbols) {
         RequestUtilities.validateSymbols(symbols, availableStocks);
 
         final Map<String, Object> params = new LinkedHashMap<>();
@@ -61,7 +61,8 @@ public class TwelveService {
             logger.info("Fetching current price for {}", symbols);
             final String url = RequestUtilities.formatQueryString(twelveBaseUrl + "/price", params);
             final ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            final Map<String, Map<String, String>> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
+            final Map<String, Map<String, String>> result = mapper.readValue(response.getBody(), new TypeReference<>() {
+            });
             final List<StockPriceResponse> results = new ArrayList<>();
             symbols.forEach(s -> {
                 final Map<String, String> stock = result.get(s);
@@ -124,6 +125,6 @@ public class TwelveService {
         }
         availableStocks = symbols;
         logger.info("Updated available stocks list. Count: {}", availableStocks.size());
-        StartupManager.registerResult(TwelveService.class.getName(),true);
+        StartupManager.registerResult(TwelveService.class.getName(), true);
     }
 }
