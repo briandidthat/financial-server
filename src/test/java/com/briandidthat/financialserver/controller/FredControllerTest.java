@@ -44,7 +44,7 @@ class FredControllerTest {
     @Test
     void getObservationsShouldHandleOperationNotFound() throws Exception {
         this.mockMvc.perform(get("/fred/observations/{operation}","randomOperation"))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("Invalid series id. Available operations:")))
                 .andDo(print());
     }

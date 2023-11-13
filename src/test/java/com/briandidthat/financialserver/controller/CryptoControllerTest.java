@@ -151,7 +151,12 @@ class CryptoControllerTest {
 
         when(service.getSpotPrice("ALABAMA")).thenThrow(new ResourceNotFoundException(expectedOutput));
         // should throw 400 exception due to invalid symbol
-        this.mockMvc.perform(get("/crypto/spot").param("symbol", "ALABAMA").header("caller", "test")).andExpect(status().isNotFound()).andExpect(content().string(containsString(expectedOutput))).andDo(print());
+        this.mockMvc.perform(get("/crypto/spot")
+                .param("symbol", "ALABAMA")
+                .header("caller", "test"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(containsString(expectedOutput)))
+                .andDo(print());
     }
 
     // 422

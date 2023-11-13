@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.briandidthat</groupId>
     <artifactId>financial-server</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
     <name>financial-server</name>
     <description>Demo project for Spring Boot</description>
     <properties>
@@ -65,6 +65,11 @@
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
             <version>2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.2.0</version>
         </dependency>
     </dependencies>
 

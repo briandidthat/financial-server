@@ -5,7 +5,6 @@ import com.briandidthat.financialserver.domain.coinbase.SpotPrice;
 import com.briandidthat.financialserver.domain.coinbase.Statistic;
 import com.briandidthat.financialserver.domain.coinbase.Token;
 import com.briandidthat.financialserver.domain.exception.BadRequestException;
-import com.briandidthat.financialserver.domain.exception.ResourceNotFoundException;
 import com.briandidthat.financialserver.util.RequestUtilities;
 import com.briandidthat.financialserver.util.StartupManager;
 import com.briandidthat.financialserver.util.StatisticsUtilities;
@@ -33,9 +32,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class CoinbaseService {
-    private static final String DATA = "data";
-    private static final Logger logger = LoggerFactory.getLogger(CoinbaseService.class);
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private final String DATA = "data";
+    private final Logger logger = LoggerFactory.getLogger(CoinbaseService.class);
+    private final ObjectMapper mapper = new ObjectMapper();
     private volatile Map<String, Boolean> availableTokens;
     @Value("${apis.coinbase.baseUrl}")
     private String coinbaseUrl;
@@ -162,7 +161,8 @@ public class CoinbaseService {
     private List<Token> getAvailableTokens() {
         try {
             final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/currencies/crypto", String.class);
-            final Map<String, List<Token>> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
+            final Map<String, List<Token>> result = mapper.readValue(response.getBody(), new TypeReference<>() {
+            });
             return result.get(DATA);
         } catch (Exception e) {
             logger.error("Unable to retrieve token list. Reason: {}", e.getMessage());
@@ -190,7 +190,7 @@ public class CoinbaseService {
                 } else {
                     if (retryCount == 5) {
                         logger.error("Reached max retries {}.", retryCount);
-                        StartupManager.registerResult(CoinbaseService.class.getName(),false);
+                        StartupManager.registerResult(CoinbaseService.class.getName(), false);
                         return;
                     }
 
