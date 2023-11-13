@@ -13,9 +13,9 @@ public class StartupManager {
     private static final int expectedTaskCount = 2; // Since we have two backends to test (Coinbase, Twelve Data)
     private static final AtomicInteger successfulCount = new AtomicInteger();
 
-    public static synchronized void registerResult(String clazz, boolean status) {
+    public static synchronized void registerResult(Class clazz, boolean status) {
         if (!status) {
-            logger.info("{} was unable to connect to the backend.", clazz);
+            logger.info("{} was unable to connect to the backend.", clazz.getSimpleName());
             // if we are unable to reach the backend services, set health to false so kubernetes could restart
             HealthCheckController.setAvailable(false);
             return;
