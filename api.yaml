@@ -6,47 +6,22 @@ servers:
   - url: http://localhost:8080
     description: Generated server url
 paths:
-  /spot/statistics:
-    post:
+  /crypto/spot:
+    get:
       tags:
-        - controller
-      operationId: getPriceStatistics
+        - crypto-controller
+      operationId: getSpotPrice
       parameters:
         - name: caller
           in: header
           required: true
           schema:
             type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Request'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/Statistic'
-  /spot/historical:
-    post:
-      tags:
-        - controller
-      operationId: getHistoricalSpotPrice
-      parameters:
-        - name: caller
-          in: header
+        - name: symbol
+          in: query
           required: true
           schema:
             type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Request'
-        required: true
       responses:
         '200':
           description: OK
@@ -54,10 +29,105 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/SpotPrice'
-  /spot/historical/batch:
+  /crypto/spot/statistics:
+    get:
+      tags:
+        - crypto-controller
+      operationId: getPriceStatistics
+      parameters:
+        - name: caller
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: symbol
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Statistic'
+  /crypto/spot/historical:
+    get:
+      tags:
+        - crypto-controller
+      operationId: getHistoricalSpotPrice
+      parameters:
+        - name: caller
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: symbol
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SpotPrice'
+  /crypto/spot/batch:
+    get:
+      tags:
+        - crypto-controller
+      operationId: getMultipleSpotPrices
+      parameters:
+        - name: caller
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: symbols
+          in: query
+          required: true
+          schema:
+            maxItems: 5
+            minItems: 2
+            type: array
+            items:
+              maxLength: 5
+              minLength: 2
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SpotPrice'
+  /crypto/spot/batch/historical:
     post:
       tags:
-        - controller
+        - crypto-controller
       operationId: getMultipleHistoricalSpotPrices
       parameters:
         - name: caller
@@ -80,23 +150,41 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/SpotPrice'
-  /spot/batch:
-    post:
+  /stocks:
+    get:
       tags:
-        - controller
-      operationId: getMultipleSpotPrices
+        - stock-controller
+      operationId: getStockPrice
       parameters:
-        - name: caller
-          in: header
+        - name: symbol
+          in: query
           required: true
           schema:
             type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BatchRequest'
-        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/StockPriceResponse'
+  /stocks/batch:
+    get:
+      tags:
+        - stock-controller
+      operationId: getBatchStockPrice
+      parameters:
+        - name: symbols
+          in: query
+          required: true
+          schema:
+            maxItems: 5
+            minItems: 1
+            type: array
+            items:
+              maxLength: 5
+              minLength: 1
+              type: string
       responses:
         '200':
           description: OK
@@ -105,31 +193,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/SpotPrice'
-  /spot:
-    post:
-      tags:
-        - controller
-      operationId: getSpotPrice
-      parameters:
-        - name: caller
-          in: header
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Request'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/SpotPrice'
+                  $ref: '#/components/schemas/StockPriceResponse'
   /readyz:
     get:
       tags:
@@ -160,8 +224,36 @@ paths:
             '*/*':
               schema:
                 type: string
+  /fred/observations/{operation}:
+    get:
+      tags:
+        - fred-controller
+      operationId: getObservations
+      parameters:
+        - name: operation
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/FredResponse'
+
 components:
   schemas:
+    BatchRequest:
+      type: object
+      properties:
+        requests:
+          maxItems: 5
+          minItems: 2
+          type: array
+          items:
+            $ref: '#/components/schemas/Request'
     Request:
       required:
         - symbol
@@ -175,17 +267,6 @@ components:
         endDate:
           type: string
           format: date
-    Statistic:
-      type: object
-      properties:
-        symbol:
-          type: string
-        priceChange:
-          type: string
-        percentChange:
-          type: string
-        timeDelta:
-          type: string
     SpotPrice:
       required:
         - base
@@ -200,12 +281,46 @@ components:
         date:
           type: string
           format: date
-    BatchRequest:
+    StockPriceResponse:
       type: object
       properties:
-        requests:
-          maxItems: 5
-          minItems: 2
+        symbol:
+          type: string
+        price:
+          type: string
+    FredResponse:
+      type: object
+      properties:
+        observation_start:
+          type: string
+        observation_end:
+          type: string
+        count:
+          type: integer
+          format: int32
+        observations:
           type: array
           items:
-            $ref: '#/components/schemas/Request'
+            $ref: '#/components/schemas/Observation'
+    Observation:
+      type: object
+      properties:
+        realtime_start:
+          type: string
+        realtime_end:
+          type: string
+        date:
+          type: string
+        value:
+          type: string
+    Statistic:
+      type: object
+      properties:
+        symbol:
+          type: string
+        priceChange:
+          type: string
+        percentChange:
+          type: string
+        timeDelta:
+          type: string
