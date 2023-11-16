@@ -161,48 +161,37 @@ public class CoinbaseService {
     private List<Token> getAvailableTokens() {
         try {
             final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/currencies/crypto", String.class);
-            final Map<String, List<Token>> result = mapper.readValue(response.getBody(), new TypeReference<>() {
-            });
+            final Map<String, List<Token>> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
             return result.get(DATA);
         } catch (Exception e) {
             logger.error("Unable to retrieve token list. Reason: {}", e.getMessage());
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
-    // this operation will run on startup, and at 12:00am every day after
+    // this operation will run on startup, and at 3pm every Monday
     @PostConstruct
-    @Scheduled(cron = "0 0 0 * * MON")
+    @Scheduled(cron = "0 0 15 * * MON")
     protected void updateAvailableTokens() {
-        List<Token> tokens = getAvailableTokens();
-        if (tokens == null) {
-            logger.error("Error retrieving available tokens. Retrying...");
-
-            boolean retry = true;
-            int retryCount = 0;
-            // continue to retry until we update the available tokens or fail 5 times
-            // in which case we will wait till the next request or next day
-            while (retry) {
+        List<Token> tokens = new ArrayList<>();
+        final Map<String, Boolean> symbols = new HashMap<>();
+        boolean retry = true;
+        int retryCount = 0;
+        // continue to retry until we update the available tokens or fail 5 times
+        // in which case we will shut down the application since it is unhealthy
+        while (retry) {
+            try {
                 tokens = getAvailableTokens();
-                if (tokens != null) {
-                    logger.info("Successfully retrieved the available tokens on attempt # {}.", retryCount);
-                    retry = false;
-                } else {
-                    if (retryCount == 5) {
-                        logger.error("Reached max retries {}.", retryCount);
-                        StartupManager.registerResult(this.getClass(), false);
-                        return;
-                    }
-
-                    retryCount++;
-                    tokens = getAvailableTokens();
-                    if (tokens != null) {
-                        retry = false;
-                    }
+                retry = false;
+            } catch (Exception e) {
+                retryCount++;
+                if (retryCount == 5) {
+                    logger.error("Reached max retries. Count: {}.", retryCount);
+                    StartupManager.registerResult(this.getClass(), false);
+                    return;
                 }
             }
         }
-        final Map<String, Boolean> symbols = new HashMap<>();
         for (Token token : tokens) {
             symbols.put(token.name().toUpperCase(), true);
         }
