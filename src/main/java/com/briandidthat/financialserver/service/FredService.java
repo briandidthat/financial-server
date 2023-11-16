@@ -30,6 +30,7 @@ public class FredService {
         params.put("api_key", fredApiKey);
         final String url = RequestUtilities.formatQueryString(fredBaseUrl + "/series/observations", params);
         try {
+            logger.info("Fetching observations for {}", seriesId);
             return restTemplate.getForObject(url, FredResponse.class);
         } catch (RestClientException e) {
             logger.error(e.getMessage());

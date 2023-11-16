@@ -9,7 +9,7 @@ import java.time.temporal.ChronoUnit;
 public final class StatisticsUtilities {
     private StatisticsUtilities() {}
 
-    private static String formateDateString(LocalDate startDate, LocalDate endDate) {
+    private static String formatDateString(LocalDate startDate, LocalDate endDate) {
         final long timeDelta = ChronoUnit.DAYS.between(startDate, endDate);
         if (timeDelta < 365) {
             return timeDelta + " days";
@@ -27,8 +27,8 @@ public final class StatisticsUtilities {
 
         final String priceChangeString = String.format("%.2f", priceChange);
         final String percentChangeString = String.format("%.2f", percentChange);
-        final String timeDeltaString = formateDateString(startPrice.getDate(), endPrice.getDate());
+        final String timeDeltaString = formatDateString(startPrice.getDate(), endPrice.getDate());
 
-        return new Statistic(startPrice.getBase(), priceChangeString, percentChangeString, timeDeltaString);
+        return new Statistic(startPrice.getSymbol(), priceChangeString, percentChangeString, timeDeltaString);
     }
 }

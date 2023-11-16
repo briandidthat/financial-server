@@ -68,8 +68,7 @@ public class CoinbaseService {
             logger.info("Fetching historical price for {} on date {}", symbol, date);
             final String queryString = "/prices/" + symbol + "-USD/spot?date=" + date;
             final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + queryString, String.class);
-            final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {
-            });
+            final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
             final SpotPrice spotPrice = result.get(DATA);
             spotPrice.setDate(date);
 
@@ -193,7 +192,7 @@ public class CoinbaseService {
             }
         }
         for (Token token : tokens) {
-            symbols.put(token.name().toUpperCase(), true);
+            symbols.put(token.symbol().toUpperCase(), true);
         }
         availableTokens = symbols;
         logger.info("Updated available tokens list. Count: {}", tokens.size());

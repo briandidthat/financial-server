@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record Token(@JsonProperty("code") String code, @JsonProperty("name") String name,
+public record Token(@JsonProperty("code") String symbol, @JsonProperty("name") String name,
                     @JsonProperty("color") String color, @JsonProperty("sort_index") Integer sortIndex,
                     @JsonProperty("exponent") Integer exponent, @JsonProperty("type") String type,
                     @JsonProperty("address_regex") String addressRegex,
@@ -14,7 +14,7 @@ public record Token(@JsonProperty("code") String code, @JsonProperty("name") Str
     @Override
     public String toString() {
         return "Token{" +
-                "code='" + code + '\'' +
+                "symbol='" + symbol + '\'' +
                 ", name='" + name + '\'' +
                 ", color='" + color + '\'' +
                 ", sortIndex=" + sortIndex +

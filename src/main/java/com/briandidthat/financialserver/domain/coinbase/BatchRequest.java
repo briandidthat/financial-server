@@ -40,8 +40,6 @@ public final class BatchRequest implements Serializable {
 
     @Override
     public String toString() {
-        return "BatchRequest{" +
-                "requests=" + requests +
-                '}';
+        return "BatchRequest{" + "requests=" + requests + '}';
     }
 }
