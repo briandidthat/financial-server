@@ -61,8 +61,7 @@ public class Request implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Request request = (Request) o;
-        return Objects.equals(symbol, request.symbol) && Objects.equals(startDate, request.startDate)
-                && Objects.equals(endDate, request.endDate);
+        return Objects.equals(symbol, request.symbol) && Objects.equals(startDate, request.startDate) && Objects.equals(endDate, request.endDate);
     }
 
     @Override
