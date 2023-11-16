@@ -5,7 +5,7 @@ jobs:
     docker:
       - image: cimg/openjdk:17.0.5
     steps:
-      # Checkout the symbol as the first step.
+      # Checkout the code as the first step.
       - checkout
       # Run mvn clean install to test and build the jar file
       - run:
