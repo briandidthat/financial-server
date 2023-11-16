@@ -84,42 +84,34 @@ public class TwelveService {
             final StockListResponse response = restTemplate.getForObject(url, StockListResponse.class);
             return response.stocks();
         } catch (Exception e) {
-            logger.info(e.getMessage());
-            return null;
+            logger.error("Unable to retrieve stock list. Reason: {}", e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
+    // this operation will run on startup, and at 3pm every Monday
     @PostConstruct
-    @Scheduled(cron = "0 0 9 * * MON") // run every monday at 9AM
+    @Scheduled(cron = "0 0 15 * * MON")
     protected void updateAvailableStocks() {
-        List<StockDetails> stocks = getAvailableStocks();
-        if (stocks == null) {
-            logger.error("Error retrieving available stocks. Retrying...");
-
-            boolean retry = true;
-            int retryCount = 0;
-            // continue to retry until we reach a maximum retry of 5 in which case the application is deemed unhealthy
-            while (retry) {
+        final Map<String, Boolean> symbols = new HashMap<>();
+        List<StockDetails> stocks = new ArrayList<>();
+        boolean retry = true;
+        int retryCount = 0;
+        // continue to retry until we update the available tokens or fail 5 times
+        // in which case we will shut down the application since it is unhealthy
+        while (retry) {
+            try {
                 stocks = getAvailableStocks();
-                if (availableStocks != null) {
-                    logger.info("Successfully retrieved the available tokens on retry #{}", retryCount);
-                    retry = false;
-                } else {
-                    if (retryCount == 5) {
-                        logger.info("Reached max retries. Count {}", retryCount);
-                        StartupManager.registerResult(this.getClass(), false);
-                        return;
-                    }
-
-                    retryCount++;
-                    stocks = getAvailableStocks();
-                    if (availableStocks != null) {
-                        retry = false;
-                    }
+                retry = false;
+            } catch (Exception e) {
+                retryCount++;
+                if (retryCount == 5) {
+                    logger.info("Reached max retries. Count: {}", retryCount);
+                    StartupManager.registerResult(this.getClass(), false);
+                    return;
                 }
             }
         }
-        final Map<String, Boolean> symbols = new HashMap<>();
         for (StockDetails details : stocks) {
             symbols.put(details.symbol().toUpperCase(), true);
         }

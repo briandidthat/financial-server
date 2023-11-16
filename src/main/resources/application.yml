@@ -16,5 +16,5 @@ apis:
     baseUrl: https://api.stlouisfed.org/fred
     apiKey: ${FRED_API_KEY}
   twelve:
-    baseUrl: https://api.twelvedata.com
+    baseUrl: https://api.twelvedata.comfsdgsgfgs
     apiKey: ${TWELVE_API_KEY}
