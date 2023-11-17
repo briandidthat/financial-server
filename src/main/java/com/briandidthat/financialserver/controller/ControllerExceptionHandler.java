@@ -23,13 +23,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     private ResponseEntity<Error> handleResourceNotFoundException(Exception e, WebRequest request) {
         ExceptionDetails details = new ExceptionDetails(LocalDateTime.now(), e.getMessage(), request.getDescription(false));
-        return new ResponseEntity(details, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(BackendClientException.class)
-    private ResponseEntity<Error> handleInternalServerError(Exception e, WebRequest request) {
-        ExceptionDetails details = new ExceptionDetails(LocalDateTime.now(), e.getMessage(), request.getDescription(false));
-        return new ResponseEntity(details, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity(details, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ServletRequestBindingException.class)
@@ -62,5 +56,11 @@ public class ControllerExceptionHandler {
         }
 
         return new ResponseEntity(violations, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(BackendClientException.class)
+    private ResponseEntity<Error> handleInternalServerError(Exception e, WebRequest request) {
+        ExceptionDetails details = new ExceptionDetails(LocalDateTime.now(), e.getMessage(), request.getDescription(false));
+        return new ResponseEntity(details, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

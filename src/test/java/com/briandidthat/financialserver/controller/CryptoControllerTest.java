@@ -4,6 +4,7 @@ import com.briandidthat.financialserver.domain.coinbase.BatchRequest;
 import com.briandidthat.financialserver.domain.coinbase.SpotPrice;
 import com.briandidthat.financialserver.domain.coinbase.Statistic;
 import com.briandidthat.financialserver.domain.exception.BackendClientException;
+import com.briandidthat.financialserver.domain.exception.BadRequestException;
 import com.briandidthat.financialserver.domain.exception.ResourceNotFoundException;
 import com.briandidthat.financialserver.service.CoinbaseService;
 import com.briandidthat.financialserver.util.TestingConstants;
@@ -29,8 +30,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(CryptoController.class)
 class CryptoControllerTest {
-    private final Statistic ETH_STATISTICS = new Statistic("ETH", "-1100.00", "-27.50", "730");
-
     @Autowired
     private ObjectMapper mapper;
     @Autowired
@@ -112,9 +111,9 @@ class CryptoControllerTest {
 
     @Test
     void testGetPriceStatistics() throws Exception {
-        String outputJson = mapper.writeValueAsString(ETH_STATISTICS);
+        String outputJson = mapper.writeValueAsString(TestingConstants.ETH_STATISTICS);
 
-        when(service.getPriceStatistics(TestingConstants.ETH, TestingConstants.START_DATE, TestingConstants.END_DATE)).thenReturn(ETH_STATISTICS);
+        when(service.getPriceStatistics(TestingConstants.ETH, TestingConstants.START_DATE, TestingConstants.END_DATE)).thenReturn(TestingConstants.ETH_STATISTICS);
 
         final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("symbol", TestingConstants.ETH);
@@ -144,17 +143,17 @@ class CryptoControllerTest {
                 .andDo(print());
     }
 
-    // 404
+    // 400
     @Test
     void testGetSpotPriceShouldHandleResourceNotFoundException() throws Exception {
         String expectedOutput = "Invalid symbol: ALABAMA";
 
-        when(service.getSpotPrice("ALABAMA")).thenThrow(new ResourceNotFoundException(expectedOutput));
+        when(service.getSpotPrice("ALABAMA")).thenThrow(new BadRequestException(expectedOutput));
         // should throw 400 exception due to invalid symbol
         this.mockMvc.perform(get("/crypto/spot")
                 .param("symbol", "ALABAMA")
                 .header("caller", "test"))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isBadRequest())
                 .andExpect(content().string(containsString(expectedOutput)))
                 .andDo(print());
     }
