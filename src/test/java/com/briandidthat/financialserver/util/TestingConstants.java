@@ -3,6 +3,7 @@ package com.briandidthat.financialserver.util;
 import com.briandidthat.financialserver.domain.coinbase.BatchRequest;
 import com.briandidthat.financialserver.domain.coinbase.Request;
 import com.briandidthat.financialserver.domain.coinbase.SpotPrice;
+import com.briandidthat.financialserver.domain.coinbase.Statistic;
 import com.briandidthat.financialserver.domain.fred.FredResponse;
 import com.briandidthat.financialserver.domain.fred.Observation;
 import com.briandidthat.financialserver.domain.twelve.StockPriceResponse;
@@ -43,6 +44,8 @@ public final class TestingConstants {
 
     public static final List<String> TOKENS = List.of(TestingConstants.BTC, TestingConstants.BNB, TestingConstants.ETH);
     public static final Map<String, Boolean> AVAILABLE_TOKENS = Map.of("BTC", true, "BNB", true, "ETH", true);
+
+    public static final Statistic ETH_STATISTICS = new Statistic("ETH", "-1100.00", "-27.50", "730");
 
     // FRED CONSTANTS
 

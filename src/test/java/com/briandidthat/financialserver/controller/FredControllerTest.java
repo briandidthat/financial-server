@@ -1,5 +1,6 @@
 package com.briandidthat.financialserver.controller;
 
+import com.briandidthat.financialserver.domain.exception.ResourceNotFoundException;
 import com.briandidthat.financialserver.domain.fred.FredSeriesId;
 import com.briandidthat.financialserver.service.FredService;
 import com.briandidthat.financialserver.util.TestingConstants;
@@ -43,9 +44,13 @@ class FredControllerTest {
     // 400 error
     @Test
     void getObservationsShouldHandleOperationNotFound() throws Exception {
+        final String expectedOutput = "Invalid series id. Available operations:";
+
+        when(service.getObservations("randomOperation", new LinkedHashMap<>())).thenThrow(new ResourceNotFoundException(expectedOutput));
+
         this.mockMvc.perform(get("/fred/observations/{operation}","randomOperation"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string(containsString("Invalid series id. Available operations:")))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString(expectedOutput)))
                 .andDo(print());
     }
 }
