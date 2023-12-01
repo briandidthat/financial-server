@@ -44,6 +44,7 @@ public class TwelveService {
             final String url = RequestUtilities.formatQueryString(twelveBaseUrl + "/price", params);
             final StockPriceResponse response = restTemplate.getForObject(url, StockPriceResponse.class);
             response.setSymbol(symbol);
+            logger.info("Fetched current price for {}. Price: {}", symbol, response.getPrice());
             return response;
         } catch (Exception e) {
             logger.error(e.getMessage());
