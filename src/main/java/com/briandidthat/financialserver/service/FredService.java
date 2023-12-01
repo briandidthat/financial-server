@@ -15,7 +15,7 @@ import java.util.LinkedHashMap;
 
 @Service
 public class FredService {
-    private static final Logger logger = LoggerFactory.getLogger(FredService.class);
+    private static final Logger logger = LoggerFactory.getLogger("FredService");
 
     @Value("${apis.fred.baseUrl}")
     private String fredBaseUrl;

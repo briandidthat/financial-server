@@ -11,6 +11,7 @@ import com.briandidthat.financialserver.util.StatisticsUtilities;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
+import net.logstash.logback.marker.Markers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ import java.util.stream.Collectors;
 @Service
 public class CoinbaseService {
     private final String DATA = "data";
-    private final Logger logger = LoggerFactory.getLogger(CoinbaseService.class);
+    private final Logger logger = LoggerFactory.getLogger("CoinbaseService");
     private final ObjectMapper mapper = new ObjectMapper();
     private volatile Map<String, Boolean> availableTokens;
     @Value("${apis.coinbase.baseUrl}")
@@ -45,7 +46,7 @@ public class CoinbaseService {
         RequestUtilities.validateSymbol(symbol, availableTokens);
 
         try {
-            logger.info("Fetching current price for {}", symbol);
+            logger.info(Markers.append("symbol", symbol), "Fetching current price");
             final String queryString = "/prices/" + symbol + "-USD/spot";
             final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + queryString, String.class);
             final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {
@@ -53,7 +54,7 @@ public class CoinbaseService {
             final SpotPrice spotPrice = result.get(DATA);
             spotPrice.setDate(LocalDate.now());
 
-            logger.info("Fetched {} spot price. Response: {}", symbol, spotPrice.getAmount());
+            logger.info(Markers.append("spotPrice", spotPrice), "Fetched spot price");
             return spotPrice;
         } catch (Exception e) {
             logger.error("Unable to fetch {} spot price. Reason: {}", symbol, e.getMessage());
@@ -65,14 +66,15 @@ public class CoinbaseService {
         RequestUtilities.validateSymbol(symbol, availableTokens);
 
         try {
-            logger.info("Fetching historical price for {} on date {}", symbol, date);
+            final Map<String, Object> logEntries = Map.of("symbol", symbol, "date", date);
+            logger.info(Markers.appendEntries(logEntries), "Fetching historical spot price");
             final String queryString = "/prices/" + symbol + "-USD/spot?date=" + date;
             final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + queryString, String.class);
             final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
             final SpotPrice spotPrice = result.get(DATA);
             spotPrice.setDate(date);
 
-            logger.info("Fetched historical spot price for {}. Response: {}", symbol, spotPrice.getAmount());
+            logger.info(Markers.append("spotPrice", spotPrice), "Fetched historical spot price");
             return spotPrice;
         } catch (Exception e) {
             logger.error("Unable to fetch historical price for {}. Reason: {}", symbol, e.getMessage());
@@ -105,7 +107,7 @@ public class CoinbaseService {
         final List<SpotPrice> responses;
         final List<CompletableFuture<SpotPrice>> completableFutures = new ArrayList<>();
 
-        logger.info("Fetching prices asynchronously {}", symbols);
+        logger.info(Markers.append("symbols", symbols), "Fetching prices asynchronously");
 
         final Instant start = Instant.now();
         // store list of symbols requests to be run in parallel
@@ -114,7 +116,6 @@ public class CoinbaseService {
         CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
         // calculate the time it took for our request to be completed
         final Instant end = Instant.now();
-        logger.info("Completed async spot price request in {}ms", end.minusMillis(start.toEpochMilli()).toEpochMilli());
 
         responses = completableFutures.stream().map(c -> {
             SpotPrice response = null;
@@ -125,6 +126,12 @@ public class CoinbaseService {
             }
             return response;
         }).collect(Collectors.toList());
+
+        final Map<String, Object> logEntries = new HashMap<>();
+        logEntries.put("runtime", end.minusMillis(start.toEpochMilli()).toEpochMilli());
+        logEntries.put("spotPrices", responses);
+
+        logger.info(Markers.appendEntries(logEntries), "Completed async spot price request");
 
         return responses;
     }
