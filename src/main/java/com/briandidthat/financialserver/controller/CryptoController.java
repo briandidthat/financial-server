@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/crypto/spot")
 public class CryptoController {
-    private static final Logger logger = LoggerFactory.getLogger(CryptoController.class);
+    private static final Logger logger = LoggerFactory.getLogger("CryptoController");
 
     @Autowired
     private CoinbaseService service;

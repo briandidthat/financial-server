@@ -23,7 +23,7 @@ import java.util.*;
 
 @Service
 public class TwelveService {
-    private final Logger logger = LoggerFactory.getLogger(TwelveService.class);
+    private final Logger logger = LoggerFactory.getLogger("TwelveService");
     private final ObjectMapper mapper = new ObjectMapper();
     private volatile Map<String, Boolean> availableStocks;
     @Value("${apis.twelve.baseUrl}")

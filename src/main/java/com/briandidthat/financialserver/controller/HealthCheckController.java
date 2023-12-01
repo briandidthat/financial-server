@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @RestController
 public class HealthCheckController {
-    private static final Logger logger = LoggerFactory.getLogger(HealthCheckController.class);
+    private static final Logger logger = LoggerFactory.getLogger("HealthCheckController");
     private static final AtomicBoolean available = new AtomicBoolean(false);
     private final String AVAILABLE = "AVAILABLE";
     private final String UNAVAILABLE = "UNAVAILABLE";

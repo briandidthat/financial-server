@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class StartupManager {
-    private static final Logger logger = LoggerFactory.getLogger(StartupManager.class);
+    private static final Logger logger = LoggerFactory.getLogger("StartupManager");
     private static final int expectedTaskCount = 2; // Since we have two backends to test (Coinbase, Twelve Data)
     private static final AtomicInteger successfulCount = new AtomicInteger();
 
