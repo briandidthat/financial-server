@@ -28,7 +28,7 @@ public class StockController {
 
     @GetMapping("/batch")
     public List<StockPriceResponse> getBatchStockPrice(@RequestParam @Size(min= 1, max = 5) List<String> symbols, @RequestHeader(required = false) String caller) {
-        logger.info("Batch stock price by {}", caller);
+        logger.info("Batch stock price request by {}", caller);
         return service.getMultipleStockPrices(symbols);
     }
 
