@@ -35,7 +35,8 @@ class FredControllerTest {
 
         when(service.getObservations(FredSeriesId.AVERAGE_MORTGAGE_RATE, new LinkedHashMap<>())).thenReturn(TestingConstants.MORTGAGE_RATE_RESPONSE);
 
-        this.mockMvc.perform(get("/fred/observations/{operation}","averageMortgageRate"))
+        this.mockMvc.perform(get("/fred/observations/{operation}","averageMortgageRate")
+                .header("caller", "test"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
@@ -48,7 +49,8 @@ class FredControllerTest {
 
         when(service.getObservations("randomOperation", new LinkedHashMap<>())).thenThrow(new ResourceNotFoundException(expectedOutput));
 
-        this.mockMvc.perform(get("/fred/observations/{operation}","randomOperation"))
+        this.mockMvc.perform(get("/fred/observations/{operation}","randomOperation")
+                .header("caller", "test"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(containsString(expectedOutput)))
                 .andDo(print());

@@ -36,7 +36,8 @@ class StockControllerTest {
         when(service.getStockPrice("AAPL")).thenReturn(TestingConstants.APPLE_PRICE_RESPONSE);
 
         this.mockMvc.perform(get("/stocks")
-                .param("symbol", "AAPL"))
+                .param("symbol", "AAPL")
+                .header("caller", "test"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
@@ -49,7 +50,8 @@ class StockControllerTest {
         when(service.getMultipleStockPrices(List.of("AAPL", "GOOG"))).thenReturn(TestingConstants.BATCH_STOCK_RESPONSE);
 
         this.mockMvc.perform(get("/stocks/batch")
-                .param("symbols", "AAPL", "GOOG"))
+                .param("symbols", "AAPL", "GOOG")
+                .header("caller", "test"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
@@ -62,7 +64,8 @@ class StockControllerTest {
         when(service.getStockPrice("ALABAMA")).thenThrow(new ResourceNotFoundException(expectedOutput));
 
         this.mockMvc.perform(get("/stocks")
-                .param("symbol", "ALABAMA"))
+                .param("symbol", "ALABAMA")
+                .header("caller", "test"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(containsString(expectedOutput)))
                 .andDo(print());
@@ -74,7 +77,8 @@ class StockControllerTest {
         final String expectedOutput = "symbols: size must be between 1 and 5";
 
         this.mockMvc.perform(get("/stocks/batch")
-                .param("symbols", "AAPL,GOOG,VOO,TSLA,NVDA,VIX"))
+                .param("symbols", "AAPL,GOOG,VOO,TSLA,NVDA,VIX")
+                .header("caller", "test"))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().string(containsString(expectedOutput)))
                 .andDo(print());
