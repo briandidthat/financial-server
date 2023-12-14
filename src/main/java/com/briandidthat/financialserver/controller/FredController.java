@@ -19,9 +19,10 @@ public class FredController {
     private FredService service;
 
     @GetMapping("/observations/{operation}")
-    public FredResponse getObservations(@PathVariable String operation, @RequestParam(required = false) LinkedHashMap<String, Object> params, @RequestHeader(required = false) String caller) {
+    public FredResponse getObservations(@RequestHeader String apiKey, @RequestHeader(required = false) String caller,
+                                        @PathVariable String operation, @RequestParam(required = false) LinkedHashMap<String, Object> params) {
         logger.info("Observation request by {}", caller);
         final String seriesId = FredSeriesId.getSeriesId(operation);
-        return service.getObservations(seriesId, params);
+        return service.getObservations(apiKey, seriesId, params);
     }
 }

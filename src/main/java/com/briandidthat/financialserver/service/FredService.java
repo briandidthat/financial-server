@@ -19,15 +19,13 @@ public class FredService {
 
     @Value("${apis.fred.baseUrl}")
     private String fredBaseUrl;
-    @Value("${apis.fred.apiKey}")
-    private String fredApiKey;
     @Autowired
     private RestTemplate restTemplate;
 
-    public FredResponse getObservations(String seriesId, LinkedHashMap<String, Object> params) {
+    public FredResponse getObservations(String apiKey, String seriesId, LinkedHashMap<String, Object> params) {
         params.put("series_id", seriesId);
         params.put("file_type", "json");
-        params.put("api_key", fredApiKey);
+        params.put("api_key", apiKey);
         final String url = RequestUtilities.formatQueryString(fredBaseUrl + "/series/observations", params);
         try {
             logger.info("Fetching observations for {}", seriesId);

@@ -33,11 +33,12 @@ class StockControllerTest {
     void getStockPrice() throws Exception {
         final String outputJson = mapper.writeValueAsString(TestingConstants.APPLE_PRICE_RESPONSE);
 
-        when(service.getStockPrice("AAPL")).thenReturn(TestingConstants.APPLE_PRICE_RESPONSE);
+        when(service.getStockPrice(TestingConstants.TEST_API_KEY,"AAPL")).thenReturn(TestingConstants.APPLE_PRICE_RESPONSE);
 
         this.mockMvc.perform(get("/stocks")
                 .param("symbol", "AAPL")
-                .header("caller", "test"))
+                .header("caller", "test")
+                .header("apiKey", TestingConstants.TEST_API_KEY))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
@@ -47,11 +48,12 @@ class StockControllerTest {
     void getBatchStockPrice() throws Exception {
         final String outputJson = mapper.writeValueAsString(TestingConstants.BATCH_STOCK_RESPONSE);
 
-        when(service.getMultipleStockPrices(List.of("AAPL", "GOOG"))).thenReturn(TestingConstants.BATCH_STOCK_RESPONSE);
+        when(service.getMultipleStockPrices(TestingConstants.TEST_API_KEY, List.of("AAPL", "GOOG"))).thenReturn(TestingConstants.BATCH_STOCK_RESPONSE);
 
         this.mockMvc.perform(get("/stocks/batch")
                 .param("symbols", "AAPL", "GOOG")
-                .header("caller", "test"))
+                .header("caller", "test")
+                .header("apiKey", TestingConstants.TEST_API_KEY))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
@@ -61,11 +63,12 @@ class StockControllerTest {
     void testGetStockPriceShouldHandleResourceNotFoundException() throws Exception {
         final String expectedOutput = "Invalid symbol: ALABAMA";
 
-        when(service.getStockPrice("ALABAMA")).thenThrow(new ResourceNotFoundException(expectedOutput));
+        when(service.getStockPrice(TestingConstants.TEST_API_KEY,"ALABAMA")).thenThrow(new ResourceNotFoundException(expectedOutput));
 
         this.mockMvc.perform(get("/stocks")
                 .param("symbol", "ALABAMA")
-                .header("caller", "test"))
+                .header("caller", "test")
+                .header("apiKey", TestingConstants.TEST_API_KEY))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(containsString(expectedOutput)))
                 .andDo(print());
@@ -78,7 +81,8 @@ class StockControllerTest {
 
         this.mockMvc.perform(get("/stocks/batch")
                 .param("symbols", "AAPL,GOOG,VOO,TSLA,NVDA,VIX")
-                .header("caller", "test"))
+                .header("caller", "test")
+                .header("apiKey", TestingConstants.TEST_API_KEY))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().string(containsString(expectedOutput)))
                 .andDo(print());

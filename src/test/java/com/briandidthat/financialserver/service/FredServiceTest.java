@@ -33,23 +33,21 @@ class FredServiceTest {
     @BeforeEach
     void setUp() {
         final String fredBaseUrl = "https://api.stlouisfed.org/fred";
-        final String fredApiKey = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         final LinkedHashMap<String, Object> params = new LinkedHashMap<>();
         params.put("series_id", FredSeriesId.AVERAGE_MORTGAGE_RATE);
         params.put("file_type", "json");
-        params.put("api_key", fredApiKey);
+        params.put("api_key", TestingConstants.TEST_API_KEY);
 
         final String queryString = RequestUtilities.formatQueryString(fredBaseUrl + "/series/observations", params);
 
         ReflectionTestUtils.setField(service, "fredBaseUrl", fredBaseUrl);
-        ReflectionTestUtils.setField(service, "fredApiKey", fredApiKey);
 
         when(restTemplate.getForObject(queryString, FredResponse.class)).thenReturn(TestingConstants.MORTGAGE_RATE_RESPONSE);
     }
 
     @Test
     void getObservationsForMortgage() {
-        FredResponse response = service.getObservations(FredSeriesId.AVERAGE_MORTGAGE_RATE, new LinkedHashMap<>());
+        FredResponse response = service.getObservations(TestingConstants.TEST_API_KEY, FredSeriesId.AVERAGE_MORTGAGE_RATE, new LinkedHashMap<>());
         assertEquals(TestingConstants.MORTGAGE_RATE_RESPONSE, response);
     }
 }
