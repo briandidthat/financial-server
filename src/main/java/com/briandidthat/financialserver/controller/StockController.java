@@ -21,15 +21,17 @@ public class StockController {
     private TwelveService service;
 
     @GetMapping
-    public StockPriceResponse getStockPrice(@RequestParam String symbol, @RequestHeader(required = false) String caller) {
+    public StockPriceResponse getStockPrice(@RequestHeader String apiKey, @RequestHeader(required = false) String caller,
+                                            @RequestParam String symbol) {
         logger.info("Stock price request by {}", caller);
-        return service.getStockPrice(symbol);
+        return service.getStockPrice(apiKey, symbol);
     }
 
     @GetMapping("/batch")
-    public List<StockPriceResponse> getBatchStockPrice(@RequestParam @Size(min= 1, max = 5) List<String> symbols, @RequestHeader(required = false) String caller) {
+    public List<StockPriceResponse> getBatchStockPrice(@RequestHeader String apiKey, @RequestHeader(required = false) String caller,
+                                                       @RequestParam @Size(min= 1, max = 5) List<String> symbols) {
         logger.info("Batch stock price request by {}", caller);
-        return service.getMultipleStockPrices(symbols);
+        return service.getMultipleStockPrices(apiKey, symbols);
     }
 
 }

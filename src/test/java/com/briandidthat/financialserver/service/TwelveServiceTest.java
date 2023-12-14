@@ -38,17 +38,16 @@ class TwelveServiceTest {
     @BeforeEach
     void setUp() throws Exception {
         final String twelveBaseUrl = "https://api.twelvedata.com";
-        final String mockApiKey = "ABCDEFG";
 
         // params for single stock price request
         final Map<String, Object> params = new LinkedHashMap<>();
         params.put("symbol", "AAPL");
-        params.put("apikey", mockApiKey);
+        params.put("apikey", TestingConstants.TEST_API_KEY);
 
         // params for multiple stock price request
         final Map<String, Object> batchParams = new LinkedHashMap<>();
         batchParams.put("symbol", "AAPL,GOOG");
-        batchParams.put("apikey", mockApiKey);
+        batchParams.put("apikey", TestingConstants.TEST_API_KEY);
 
         // URLs for test requests
         final String URL = RequestUtilities.formatQueryString(twelveBaseUrl + "/price", params);
@@ -63,19 +62,18 @@ class TwelveServiceTest {
         when(restTemplate.getForEntity(batchUrl, String.class)).thenReturn(ResponseEntity.ok(batchResponse));
 
         ReflectionTestUtils.setField(service, "twelveBaseUrl", twelveBaseUrl);
-        ReflectionTestUtils.setField(service, "twelveApiKey", mockApiKey);
         ReflectionTestUtils.setField(service, "availableStocks", TestingConstants.AVAILABLE_STOCKS);
     }
 
     @Test
     void getStockPrice() {
-        StockPriceResponse response = service.getStockPrice("AAPL");
+        StockPriceResponse response = service.getStockPrice(TestingConstants.TEST_API_KEY, "AAPL");
         assertEquals(TestingConstants.APPLE_PRICE_RESPONSE, response);
     }
 
     @Test
     void testGetMultipleStockPrices() {
-        List<StockPriceResponse> response = service.getMultipleStockPrices(List.of("AAPL", "GOOG"));
+        List<StockPriceResponse> response = service.getMultipleStockPrices(TestingConstants.TEST_API_KEY, List.of("AAPL", "GOOG"));
         assertEquals(TestingConstants.BATCH_STOCK_RESPONSE, response);
     }
 }

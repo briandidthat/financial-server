@@ -14,7 +14,5 @@ apis:
     baseUrl: https://api.coinbase.com/v2
   fred:
     baseUrl: https://api.stlouisfed.org/fred
-    apiKey: ${FRED_API_KEY}
   twelve:
     baseUrl: https://api.twelvedata.com
-    apiKey: ${TWELVE_API_KEY}

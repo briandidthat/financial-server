@@ -28,17 +28,15 @@ public class TwelveService {
     private volatile Map<String, Boolean> availableStocks;
     @Value("${apis.twelve.baseUrl}")
     private String twelveBaseUrl;
-    @Value("${apis.twelve.apiKey}")
-    private String twelveApiKey;
     @Autowired
     private RestTemplate restTemplate;
 
-    public StockPriceResponse getStockPrice(String symbol) {
+    public StockPriceResponse getStockPrice(String apiKey, String symbol) {
         RequestUtilities.validateSymbol(symbol, availableStocks);
 
         final Map<String, Object> params = new LinkedHashMap<>();
         params.put("symbol", symbol);
-        params.put("apikey", twelveApiKey);
+        params.put("apikey", apiKey);
         try {
             logger.info("Fetching current price for {}", symbol);
             final String url = RequestUtilities.formatQueryString(twelveBaseUrl + "/price", params);
@@ -52,12 +50,12 @@ public class TwelveService {
         }
     }
 
-    public List<StockPriceResponse> getMultipleStockPrices(@Size(min = 2, max = 5) List<String> symbols) {
+    public List<StockPriceResponse> getMultipleStockPrices(String apiKey, @Size(min = 2, max = 5) List<String> symbols) {
         RequestUtilities.validateSymbols(symbols, availableStocks);
 
         final Map<String, Object> params = new LinkedHashMap<>();
         params.put("symbol", String.join(",", symbols));
-        params.put("apikey", twelveApiKey);
+        params.put("apikey", apiKey);
         try {
             logger.info("Fetching current price for {}", symbols);
             final String url = RequestUtilities.formatQueryString(twelveBaseUrl + "/price", params);

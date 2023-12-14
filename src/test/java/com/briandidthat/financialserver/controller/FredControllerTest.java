@@ -33,10 +33,12 @@ class FredControllerTest {
     void getObservations() throws Exception {
         String outputJson = mapper.writeValueAsString(TestingConstants.MORTGAGE_RATE_RESPONSE);
 
-        when(service.getObservations(FredSeriesId.AVERAGE_MORTGAGE_RATE, new LinkedHashMap<>())).thenReturn(TestingConstants.MORTGAGE_RATE_RESPONSE);
+        when(service.getObservations(TestingConstants.TEST_API_KEY, FredSeriesId.AVERAGE_MORTGAGE_RATE, new LinkedHashMap<>()))
+                .thenReturn(TestingConstants.MORTGAGE_RATE_RESPONSE);
 
         this.mockMvc.perform(get("/fred/observations/{operation}","averageMortgageRate")
-                .header("caller", "test"))
+                .header("caller", "test")
+                .header("apiKey", TestingConstants.TEST_API_KEY))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
@@ -47,10 +49,12 @@ class FredControllerTest {
     void getObservationsShouldHandleOperationNotFound() throws Exception {
         final String expectedOutput = "Invalid series id. Available operations:";
 
-        when(service.getObservations("randomOperation", new LinkedHashMap<>())).thenThrow(new ResourceNotFoundException(expectedOutput));
+        when(service.getObservations(TestingConstants.TEST_API_KEY,"randomOperation", new LinkedHashMap<>()))
+                .thenThrow(new ResourceNotFoundException(expectedOutput));
 
         this.mockMvc.perform(get("/fred/observations/{operation}","randomOperation")
-                .header("caller", "test"))
+                .header("caller", "test")
+                .header("apiKey", TestingConstants.TEST_API_KEY))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(containsString(expectedOutput)))
                 .andDo(print());

@@ -2,10 +2,8 @@ package com.briandidthat.financialserver.controller;
 
 import com.briandidthat.financialserver.domain.coinbase.BatchRequest;
 import com.briandidthat.financialserver.domain.coinbase.SpotPrice;
-import com.briandidthat.financialserver.domain.coinbase.Statistic;
 import com.briandidthat.financialserver.domain.exception.BackendClientException;
 import com.briandidthat.financialserver.domain.exception.BadRequestException;
-import com.briandidthat.financialserver.domain.exception.ResourceNotFoundException;
 import com.briandidthat.financialserver.service.CoinbaseService;
 import com.briandidthat.financialserver.util.TestingConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
