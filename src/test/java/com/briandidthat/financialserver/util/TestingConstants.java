@@ -44,6 +44,7 @@ public final class TestingConstants {
             new Observation("07/12/2023", "07/13/2023", "07/12/2023", "6.76"),
             new Observation("07/12/2023", "07/14/2023", "07/13/2023", "6.78")));
 
+    public static final Observation CURRENT_MORTGAGE_RATE = new Observation("07/12/2023", "07/13/2023", "07/12/2023", "6.76");
 
     // TWELVE DATA CONSTANTS
 

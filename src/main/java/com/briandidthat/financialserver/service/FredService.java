@@ -2,6 +2,7 @@ package com.briandidthat.financialserver.service;
 
 import com.briandidthat.financialserver.domain.exception.BadRequestException;
 import com.briandidthat.financialserver.domain.fred.FredResponse;
+import com.briandidthat.financialserver.domain.fred.Observation;
 import com.briandidthat.financialserver.util.RequestUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,14 +26,21 @@ public class FredService {
     public FredResponse getObservations(String apiKey, String seriesId, LinkedHashMap<String, Object> params) {
         params.put("series_id", seriesId);
         params.put("file_type", "json");
+        params.put("sort_order", "desc");
         params.put("api_key", apiKey);
         final String url = RequestUtilities.formatQueryString(fredBaseUrl + "/series/observations", params);
+
         try {
-            logger.info("Fetching observations for {}", seriesId);
+            logger.debug("Fetching observations for {}", seriesId);
             return restTemplate.getForObject(url, FredResponse.class);
         } catch (RestClientException e) {
             logger.error(e.getMessage());
             throw new BadRequestException(e.getMessage());
         }
+    }
+
+    public Observation getMostRecentObservation(String apiKey, String seriesId) {
+        final FredResponse response = getObservations(apiKey, seriesId, new LinkedHashMap<>());
+        return response.getObservations().get(0);
     }
 }

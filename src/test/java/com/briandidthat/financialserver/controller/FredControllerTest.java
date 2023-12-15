@@ -44,6 +44,21 @@ class FredControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    void getMostRecentObservation() throws Exception {
+        String outputJson = mapper.writeValueAsString(TestingConstants.CURRENT_MORTGAGE_RATE);
+
+        when(service.getMostRecentObservation(TestingConstants.TEST_API_KEY, FredSeriesId.AVERAGE_MORTGAGE_RATE))
+                .thenReturn(TestingConstants.CURRENT_MORTGAGE_RATE);
+
+        this.mockMvc.perform(get("/fred/observations/current/{operation}","averageMortgageRate")
+                .header("caller", "test")
+                .header("apiKey", TestingConstants.TEST_API_KEY))
+                .andExpect(status().isOk())
+                .andExpect(content().json(outputJson))
+                .andDo(print());
+    }
+
     // 400 error
     @Test
     void getObservationsShouldHandleOperationNotFound() throws Exception {
@@ -59,4 +74,5 @@ class FredControllerTest {
                 .andExpect(content().string(containsString(expectedOutput)))
                 .andDo(print());
     }
+
 }

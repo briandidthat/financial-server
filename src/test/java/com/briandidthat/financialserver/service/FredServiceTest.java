@@ -2,6 +2,7 @@ package com.briandidthat.financialserver.service;
 
 import com.briandidthat.financialserver.domain.fred.FredResponse;
 import com.briandidthat.financialserver.domain.fred.FredSeriesId;
+import com.briandidthat.financialserver.domain.fred.Observation;
 import com.briandidthat.financialserver.util.RequestUtilities;
 import com.briandidthat.financialserver.util.TestingConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,7 +25,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class FredServiceTest {
-    private final ObjectMapper mapper = new ObjectMapper();
     @Mock
     private RestTemplate restTemplate;
     @InjectMocks
@@ -36,6 +36,7 @@ class FredServiceTest {
         final LinkedHashMap<String, Object> params = new LinkedHashMap<>();
         params.put("series_id", FredSeriesId.AVERAGE_MORTGAGE_RATE);
         params.put("file_type", "json");
+        params.put("sort_order", "desc");
         params.put("api_key", TestingConstants.TEST_API_KEY);
 
         final String queryString = RequestUtilities.formatQueryString(fredBaseUrl + "/series/observations", params);
@@ -49,5 +50,11 @@ class FredServiceTest {
     void getObservationsForMortgage() {
         FredResponse response = service.getObservations(TestingConstants.TEST_API_KEY, FredSeriesId.AVERAGE_MORTGAGE_RATE, new LinkedHashMap<>());
         assertEquals(TestingConstants.MORTGAGE_RATE_RESPONSE, response);
+    }
+
+    @Test
+    void getMostRecentObservation() {
+        Observation response = service.getMostRecentObservation(TestingConstants.TEST_API_KEY, FredSeriesId.AVERAGE_MORTGAGE_RATE);
+        assertEquals(TestingConstants.CURRENT_MORTGAGE_RATE, response);
     }
 }
