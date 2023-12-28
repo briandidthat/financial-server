@@ -2,6 +2,7 @@ package com.briandidthat.financialserver.service;
 
 import com.briandidthat.financialserver.domain.coinbase.SpotPrice;
 import com.briandidthat.financialserver.domain.coinbase.Statistic;
+import com.briandidthat.financialserver.util.RequestUtilities;
 import com.briandidthat.financialserver.util.TestingConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;

@@ -27,15 +27,18 @@ public final class RequestUtilities {
     public static String formatQueryString(String url, Map<String, Object> params) {
         final int length = params.size();
         final AtomicInteger count = new AtomicInteger();
-        final StringBuilder builder = new StringBuilder(url + "?");
+        final StringBuilder builder = new StringBuilder(url);
 
-        params.forEach((key, value) -> {
-            String currentParam = key + "=" + value;
-            builder.append(currentParam);
-            count.getAndIncrement();
-            if (count.get() < length)
-                builder.append("&");
-        });
+        if (!params.isEmpty()) {
+            builder.append("?");
+            params.forEach((key, value) -> {
+                String currentParam = key + "=" + value;
+                builder.append(currentParam);
+                count.getAndIncrement();
+                if (count.get() < length)
+                    builder.append("&");
+            });
+        }
         return builder.toString();
     }
 }
