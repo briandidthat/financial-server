@@ -29,6 +29,7 @@ public final class StatisticsUtilities {
         final String percentChangeString = String.format("%.2f", percentChange);
         final String timeDeltaString = formatDateString(startPrice.getDate(), endPrice.getDate());
 
-        return new Statistic(startPrice.getSymbol(), priceChangeString, percentChangeString, timeDeltaString);
+        return new Statistic(startPrice.getSymbol(), startPrice.getAmount(), endPrice.getAmount(),
+                priceChangeString, percentChangeString, timeDeltaString);
     }
 }

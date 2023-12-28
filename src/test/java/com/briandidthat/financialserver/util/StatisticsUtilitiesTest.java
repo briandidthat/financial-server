@@ -14,7 +14,7 @@ class StatisticsUtilitiesTest {
         SpotPrice historicalEth = new SpotPrice(TestingConstants.ETH, "USD", "4000", TestingConstants.START_DATE);
         SpotPrice currentEth = new SpotPrice(TestingConstants.ETH, "USD", "3000", TestingConstants.END_DATE);
 
-        final Statistic expected = new Statistic(TestingConstants.ETH, "-1000.00", "-25.00", "24 months");
+        final Statistic expected = new Statistic(TestingConstants.ETH, historicalEth.getAmount(), currentEth.getAmount(), "-1000.00", "-25.00", "24 months");
 
         Statistic statistic = StatisticsUtilities.buildStatistic(historicalEth, currentEth);
         assertEquals(expected, statistic);

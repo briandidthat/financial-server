@@ -36,7 +36,7 @@ public final class TestingConstants {
     public static final List<String> TOKENS = List.of(TestingConstants.BTC, TestingConstants.BNB, TestingConstants.ETH);
     public static final Map<String, Boolean> AVAILABLE_TOKENS = Map.of("BTC", true, "BNB", true, "ETH", true);
 
-    public static final Statistic ETH_STATISTICS = new Statistic("ETH", "-1100.00", "-27.50", "730");
+    public static final Statistic ETH_STATISTICS = new Statistic("ETH", HISTORICAL_ETH.getAmount(),ETH_SPOT.getAmount(),"-1100.00", "-27.50", "730");
 
     // FRED CONSTANTS
 
