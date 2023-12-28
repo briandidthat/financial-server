@@ -30,6 +30,6 @@ public final class StatisticsUtilities {
         final String timeDeltaString = formatDateString(startPrice.getDate(), endPrice.getDate());
 
         return new Statistic(startPrice.getSymbol(), startPrice.getAmount(), endPrice.getAmount(),
-                priceChangeString, percentChangeString, timeDeltaString);
+                priceChangeString, percentChangeString, startPrice.getDate(), endPrice.getDate(), timeDeltaString);
     }
 }
