@@ -2,7 +2,6 @@ package com.briandidthat.financialserver.service;
 
 import com.briandidthat.financialserver.domain.coinbase.SpotPrice;
 import com.briandidthat.financialserver.domain.coinbase.Statistic;
-import com.briandidthat.financialserver.util.RequestUtilities;
 import com.briandidthat.financialserver.util.TestingConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -93,7 +92,7 @@ class CoinbaseServiceTest {
         Statistic statistic = service.getPriceStatistics(TestingConstants.ETH, TestingConstants.START_DATE, TestingConstants.END_DATE);
         assertEquals("-1100.00", statistic.priceChange());
         assertEquals("-27.50", statistic.percentChange());
-        assertEquals("24 months", statistic.timeDelta());
+        assertEquals("24 months", statistic.timeFrame());
     }
 
 }

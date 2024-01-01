@@ -3,7 +3,7 @@ package com.briandidthat.financialserver.domain.coinbase;
 import java.time.LocalDate;
 
 public record Statistic(String symbol, String startPrice, String endPrice, String priceChange,
-                        String percentChange, LocalDate startDate, LocalDate endDate, String timeDelta) {
+                        String percentChange, LocalDate startDate, LocalDate endDate, String timeFrame) {
     @Override
     public String toString() {
         return "Statistic{" +
@@ -14,7 +14,7 @@ public record Statistic(String symbol, String startPrice, String endPrice, Strin
                 ", percentChange='" + percentChange + '\'' +
                 ", startDate=" + startDate +
                 ", endDate='" + endDate + '\'' +
-                ", timeDelta='" + timeDelta + '\'' +
+                ", timeFrame='" + timeFrame + '\'' +
                 '}';
     }
 }

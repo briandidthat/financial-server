@@ -10,9 +10,9 @@ public final class StatisticsUtilities {
     private StatisticsUtilities() {}
 
     private static String formatDateString(LocalDate startDate, LocalDate endDate) {
-        final long timeDelta = ChronoUnit.DAYS.between(startDate, endDate);
-        if (timeDelta < 365) {
-            return timeDelta + " days";
+        final long timeFrame = ChronoUnit.DAYS.between(startDate, endDate);
+        if (timeFrame < 365) {
+            return timeFrame + " days";
         } else {
             return ChronoUnit.MONTHS.between(startDate, endDate) + " months";
         }
@@ -27,9 +27,9 @@ public final class StatisticsUtilities {
 
         final String priceChangeString = String.format("%.2f", priceChange);
         final String percentChangeString = String.format("%.2f", percentChange);
-        final String timeDeltaString = formatDateString(startPrice.getDate(), endPrice.getDate());
+        final String timeFrameString = formatDateString(startPrice.getDate(), endPrice.getDate());
 
         return new Statistic(startPrice.getSymbol(), startPrice.getAmount(), endPrice.getAmount(),
-                priceChangeString, percentChangeString, startPrice.getDate(), endPrice.getDate(), timeDeltaString);
+                priceChangeString, percentChangeString, startPrice.getDate(), endPrice.getDate(), timeFrameString);
     }
 }
