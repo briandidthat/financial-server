@@ -1,6 +1,6 @@
 spring:
   application:
-    name: price-server
+    name: financial-server
   mvc:
     format:
       date: iso
@@ -11,5 +11,8 @@ server:
 
 apis:
   coinbase:
-    baseUrl: "https://api.coinbase.com/v2"
-    available: "/currencies"
+    baseUrl: https://api.coinbase.com/v2
+  fred:
+    baseUrl: https://api.stlouisfed.org/fred
+  twelve:
+    baseUrl: https://api.twelvedata.com

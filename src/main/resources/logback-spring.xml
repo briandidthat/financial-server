@@ -1,0 +1,21 @@
+<configuration>
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <fieldNames>
+                <timestamp>Time</timestamp>
+                <thread>Thread</thread>
+                <logger>Logger</logger>
+                <version>[ignore]</version>
+                <levelValue>[ignore]</levelValue>
+            </fieldNames>
+            <timeZone>EST</timeZone>
+            <timestampPattern>yyy/MM/dd HH:mm:ss:SSS</timestampPattern>
+        </encoder>
+    </appender>
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="stdout"/>
+    </appender>
+    <root level="info">
+        <appender-ref ref="ASYNC" />
+    </root>
+</configuration>

@@ -1,18 +1,198 @@
 openapi: 3.0.1
 info:
-  title: Price Server
-  version: v1.0.5
-  description: Cryptocurrency Spot Price API powered by Coinbase's free API
+  title: OpenAPI definition
+  version: v0
 servers:
   - url: http://localhost:8080
-    description: Server generated url
+    description: Generated server url
 paths:
-  /spot:
+  /crypto/spot/batch/historical:
+    post:
+      tags:
+        - crypto-controller
+      operationId: getMultipleHistoricalSpotPrices
+      parameters:
+        - name: caller
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SpotPrice'
+  /stocks:
     get:
       tags:
-        - controller
+        - stock-controller
+      operationId: getStockPrice
+      parameters:
+        - name: apiKey
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: caller
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: symbol
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/StockPriceResponse'
+  /stocks/batch:
+    get:
+      tags:
+        - stock-controller
+      operationId: getBatchStockPrice
+      parameters:
+        - name: apiKey
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: caller
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: symbols
+          in: query
+          required: true
+          schema:
+            maxItems: 5
+            minItems: 1
+            type: array
+            items:
+              maxLength: 5
+              minLength: 1
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StockPriceResponse'
+  /readyz:
+    get:
+      tags:
+        - health-check-controller
+      operationId: isReady
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /healthz:
+    get:
+      tags:
+        - health-check-controller
+      operationId: isAvailable
+      parameters:
+        - name: caller
+          in: header
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /fred/observations/{operation}:
+    get:
+      tags:
+        - fred-controller
+      operationId: getObservations
+      parameters:
+        - name: apiKey
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: caller
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: operation
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/FredResponse'
+  /fred/observations/current/{operation}:
+    get:
+      tags:
+        - fred-controller
+      operationId: getMostRecentObservation
+      parameters:
+        - name: apiKey
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: caller
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: operation
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Observation'
+  /crypto/spot:
+    get:
+      tags:
+        - crypto-controller
       operationId: getSpotPrice
       parameters:
+        - name: caller
+          in: header
+          required: true
+          schema:
+            type: string
         - name: symbol
           in: query
           required: true
@@ -25,12 +205,17 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/SpotPrice'
-  /spot/statistics:
+  /crypto/spot/statistics:
     get:
       tags:
-        - controller
+        - crypto-controller
       operationId: getPriceStatistics
       parameters:
+        - name: caller
+          in: header
+          required: true
+          schema:
+            type: string
         - name: symbol
           in: query
           required: true
@@ -44,7 +229,7 @@ paths:
             format: date
         - name: endDate
           in: query
-          required: false
+          required: true
           schema:
             type: string
             format: date
@@ -55,12 +240,17 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/Statistic'
-  /spot/historical:
+  /crypto/spot/historical:
     get:
       tags:
-        - controller
+        - crypto-controller
       operationId: getHistoricalSpotPrice
       parameters:
+        - name: caller
+          in: header
+          required: true
+          schema:
+            type: string
         - name: symbol
           in: query
           required: true
@@ -79,37 +269,28 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/SpotPrice'
-  /spot/historical/batch:
+  /crypto/spot/batch:
     get:
       tags:
-        - controller
-      operationId: getMultipleHistoricalSpotPrices
-      parameters:
-        - name: request
-          in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/BatchRequest'
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SpotPrice'
-  /spot/batch:
-    get:
-      tags:
-        - controller
+        - crypto-controller
       operationId: getMultipleSpotPrices
       parameters:
-        - name: request
+        - name: caller
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: symbols
           in: query
           required: true
           schema:
-            $ref: '#/components/schemas/BatchRequest'
+            maxItems: 5
+            minItems: 2
+            type: array
+            items:
+              maxLength: 5
+              minLength: 2
+              type: string
       responses:
         '200':
           description: OK
@@ -121,31 +302,6 @@ paths:
                   $ref: '#/components/schemas/SpotPrice'
 components:
   schemas:
-    SpotPrice:
-      required:
-        - base
-      type: object
-      properties:
-        base:
-          type: string
-        currency:
-          type: string
-        amount:
-          type: string
-        date:
-          type: string
-          format: date
-    Statistic:
-      type: object
-      properties:
-        token:
-          type: string
-        priceChange:
-          type: string
-        percentChange:
-          type: string
-        timeDelta:
-          type: string
     BatchRequest:
       type: object
       properties:
@@ -162,6 +318,69 @@ components:
       properties:
         symbol:
           type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+    SpotPrice:
+      required:
+        - base
+        - symbol
+      type: object
+      properties:
+        currency:
+          type: string
+        amount:
+          type: string
         date:
           type: string
           format: date
+        symbol:
+          type: string
+        base:
+          type: string
+    StockPriceResponse:
+      type: object
+      properties:
+        symbol:
+          type: string
+        price:
+          type: string
+    FredResponse:
+      type: object
+      properties:
+        observation_start:
+          type: string
+        observation_end:
+          type: string
+        count:
+          type: integer
+          format: int32
+        observations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Observation'
+    Observation:
+      type: object
+      properties:
+        realtime_start:
+          type: string
+        realtime_end:
+          type: string
+        date:
+          type: string
+        value:
+          type: string
+    Statistic:
+      type: object
+      properties:
+        symbol:
+          type: string
+        priceChange:
+          type: string
+        percentChange:
+          type: string
+        timeDelta:
+          type: string
