@@ -23,9 +23,9 @@ jobs:
             - run:
                 name: Build and Push Docker Image
                 command: |
-                  docker build -t $DOCKER_USERNAME/econ-server:development .
                   echo $DOCKER_KEY | docker login -u $DOCKER_USERNAME --password-stdin
-                  docker push $DOCKER_USERNAME/econ-server:development
+                  docker buildx create newbuilder
+                  docker buildx build --builder newbuilder --platform linux/amd64,linux/arm64,linux/arm/v7 --tag briandidthat/econ-server:development --push .
       - when:
           condition:
             equal: [ main, <<pipeline.git.branch>> ]
