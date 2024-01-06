@@ -23,9 +23,9 @@ jobs:
             - run:
                 name: Build and Push Docker Image
                 command: |
-                  docker build -t $DOCKER_USERNAME/financial-server .
+                  docker build -t $DOCKER_USERNAME/econ-server .
                   echo $DOCKER_KEY | docker login -u $DOCKER_USERNAME --password-stdin
-                  docker push $DOCKER_USERNAME/financial-server
+                  docker push $DOCKER_USERNAME/econ-server
 
 workflows:
   financial-server:
