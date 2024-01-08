@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: econ-server
+  name: econ-server-deployment
   labels:
     app: econ-server
 spec:
