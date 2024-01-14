@@ -5,7 +5,6 @@ import com.briandidthat.econserver.domain.fred.FredSeriesId;
 import com.briandidthat.econserver.domain.fred.Observation;
 import com.briandidthat.econserver.util.RequestUtilities;
 import com.briandidthat.econserver.util.TestingConstants;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,7 +53,7 @@ class FredServiceTest {
 
     @Test
     void getMostRecentObservation() {
-        Observation response = service.getMostRecentObservation(TestingConstants.TEST_API_KEY, FredSeriesId.AVERAGE_MORTGAGE_RATE);
+        Observation response = service.getMostRecentObservation(TestingConstants.TEST_API_KEY, FredSeriesId.AVERAGE_MORTGAGE_RATE, new LinkedHashMap<>());
         assertEquals(TestingConstants.CURRENT_MORTGAGE_RATE, response);
     }
 }

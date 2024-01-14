@@ -48,7 +48,7 @@ class FredControllerTest {
     void getMostRecentObservation() throws Exception {
         String outputJson = mapper.writeValueAsString(TestingConstants.CURRENT_MORTGAGE_RATE);
 
-        when(service.getMostRecentObservation(TestingConstants.TEST_API_KEY, FredSeriesId.AVERAGE_MORTGAGE_RATE))
+        when(service.getMostRecentObservation(TestingConstants.TEST_API_KEY, FredSeriesId.AVERAGE_MORTGAGE_RATE, new LinkedHashMap<>()))
                 .thenReturn(TestingConstants.CURRENT_MORTGAGE_RATE);
 
         this.mockMvc.perform(get("/fred/observations/current/{operation}","averageMortgageRate")

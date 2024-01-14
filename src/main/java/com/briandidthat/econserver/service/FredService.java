@@ -39,8 +39,8 @@ public class FredService {
         }
     }
 
-    public Observation getMostRecentObservation(String apiKey, String seriesId) {
-        final FredResponse response = getObservations(apiKey, seriesId, new LinkedHashMap<>());
+    public Observation getMostRecentObservation(String apiKey, String seriesId, LinkedHashMap<String, Object> params) {
+        final FredResponse response = getObservations(apiKey, seriesId, params);
         return response.getObservations().get(0);
     }
 }

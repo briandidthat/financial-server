@@ -32,6 +32,6 @@ public class FredController {
                                                 @PathVariable String operation, @RequestParam(required = false) LinkedHashMap<String, Object> params) {
         logger.info("Observation request by {}", caller);
         final String seriesId = FredSeriesId.getSeriesId(operation);
-        return service.getMostRecentObservation(apiKey, seriesId);
+        return service.getMostRecentObservation(apiKey, seriesId, params);
     }
 }
