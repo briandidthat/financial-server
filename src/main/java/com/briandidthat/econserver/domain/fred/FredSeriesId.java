@@ -19,6 +19,7 @@ public final class FredSeriesId {
     public static final String TEN_YEAR_TREASURY_YIELD = "DGS10";
     public static final String UNEMPLOYMENT_RATE = "U2RATE";
     public static final String FEDERAL_FUNDS_RATE = "FEDFUNDS";
+    public static final String DELINQUENCY_RATE = "DRCCLACBS";
     private static final Map<String, String> operations = new HashMap<>();
 
     static {
@@ -35,6 +36,7 @@ public final class FredSeriesId {
         operations.put("tenYearTreasuryYield", TEN_YEAR_TREASURY_YIELD);
         operations.put("unemploymentRate", UNEMPLOYMENT_RATE);
         operations.put("federalFundsRate", FEDERAL_FUNDS_RATE);
+        operations.put("delinquencyRate", DELINQUENCY_RATE);
     }
 
     public static String getSeriesId(String key) throws ResourceNotFoundException {
