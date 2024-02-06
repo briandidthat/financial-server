@@ -15,7 +15,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public final class SpotPrice implements Serializable {
+public final class SpotPrice {
     @NotNull
     @JsonProperty("symbol")
     private String symbol;

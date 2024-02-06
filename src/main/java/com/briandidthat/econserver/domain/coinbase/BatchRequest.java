@@ -14,6 +14,7 @@ public final class BatchRequest implements Serializable {
     @JsonProperty("requests")
     private List<Request> requests;
 
+
     public BatchRequest() {
     }
 

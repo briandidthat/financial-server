@@ -6,11 +6,10 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import jakarta.validation.constraints.NotNull;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Request implements Serializable {
+public final class Request {
     @NotNull
     private final String symbol;
     @JsonSerialize(using = LocalDateSerializer.class)
