@@ -1,7 +1,6 @@
 package com.briandidthat.econserver.service;
 
 import com.briandidthat.econserver.domain.fred.FredResponse;
-import com.briandidthat.econserver.domain.fred.FredSeriesId;
 import com.briandidthat.econserver.domain.fred.Observation;
 import com.briandidthat.econserver.util.RequestUtilities;
 import com.briandidthat.econserver.util.TestingConstants;
@@ -33,7 +32,7 @@ class FredServiceTest {
     void setUp() {
         final String fredBaseUrl = "https://api.stlouisfed.org/fred";
         final LinkedHashMap<String, Object> params = new LinkedHashMap<>();
-        params.put("series_id", FredSeriesId.AVERAGE_MORTGAGE_RATE);
+        params.put("series_id", TestingConstants.AVERAGE_MORTGAGE_RATE);
         params.put("file_type", "json");
         params.put("sort_order", "desc");
         params.put("api_key", TestingConstants.TEST_API_KEY);
@@ -47,13 +46,13 @@ class FredServiceTest {
 
     @Test
     void getObservationsForMortgage() {
-        FredResponse response = service.getObservations(TestingConstants.TEST_API_KEY, FredSeriesId.AVERAGE_MORTGAGE_RATE, new LinkedHashMap<>());
+        FredResponse response = service.getObservations(TestingConstants.TEST_API_KEY, TestingConstants.AVERAGE_MORTGAGE_RATE, new LinkedHashMap<>());
         assertEquals(TestingConstants.MORTGAGE_RATE_RESPONSE, response);
     }
 
     @Test
     void getMostRecentObservation() {
-        Observation response = service.getMostRecentObservation(TestingConstants.TEST_API_KEY, FredSeriesId.AVERAGE_MORTGAGE_RATE, new LinkedHashMap<>());
+        Observation response = service.getMostRecentObservation(TestingConstants.TEST_API_KEY, TestingConstants.AVERAGE_MORTGAGE_RATE, new LinkedHashMap<>());
         assertEquals(TestingConstants.CURRENT_MORTGAGE_RATE, response);
     }
 }

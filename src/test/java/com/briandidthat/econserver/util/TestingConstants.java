@@ -36,6 +36,9 @@ public final class TestingConstants {
     public static final Map<String, Boolean> AVAILABLE_TOKENS = Map.of("BTC", true, "BNB", true, "ETH", true);
 
     // FRED CONSTANTS
+    public static final String AVERAGE_MORTGAGE_RATE = "MORTGAGE30US";
+    public static final String SP_500 = "SP500";
+
     public static final FredResponse MORTGAGE_RATE_RESPONSE = new FredResponse("07/12/2023", "08/12/2023", 2,
             List.of(new Observation("07/12/2023", "07/13/2023", "07/12/2023", "6.76"),
                     new Observation("07/12/2023", "07/14/2023", "07/13/2023", "6.78")));
