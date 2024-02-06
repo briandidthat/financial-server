@@ -1,7 +1,6 @@
 package com.briandidthat.econserver.controller;
 
 import com.briandidthat.econserver.domain.exception.ResourceNotFoundException;
-import com.briandidthat.econserver.domain.fred.FredSeriesId;
 import com.briandidthat.econserver.service.FredService;
 import com.briandidthat.econserver.util.TestingConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,10 +32,10 @@ class FredControllerTest {
     void getObservations() throws Exception {
         String outputJson = mapper.writeValueAsString(TestingConstants.MORTGAGE_RATE_RESPONSE);
 
-        when(service.getObservations(TestingConstants.TEST_API_KEY, FredSeriesId.AVERAGE_MORTGAGE_RATE, new LinkedHashMap<>()))
+        when(service.getObservations(TestingConstants.TEST_API_KEY, TestingConstants.AVERAGE_MORTGAGE_RATE, new LinkedHashMap<>()))
                 .thenReturn(TestingConstants.MORTGAGE_RATE_RESPONSE);
 
-        this.mockMvc.perform(get("/fred/observations/{operation}","averageMortgageRate")
+        this.mockMvc.perform(get("/fred/observations/{seriesId}",TestingConstants.AVERAGE_MORTGAGE_RATE)
                 .header("caller", "test")
                 .header("apiKey", TestingConstants.TEST_API_KEY))
                 .andExpect(status().isOk())
@@ -48,10 +47,10 @@ class FredControllerTest {
     void getMostRecentObservation() throws Exception {
         String outputJson = mapper.writeValueAsString(TestingConstants.CURRENT_MORTGAGE_RATE);
 
-        when(service.getMostRecentObservation(TestingConstants.TEST_API_KEY, FredSeriesId.AVERAGE_MORTGAGE_RATE, new LinkedHashMap<>()))
+        when(service.getMostRecentObservation(TestingConstants.TEST_API_KEY, TestingConstants.AVERAGE_MORTGAGE_RATE, new LinkedHashMap<>()))
                 .thenReturn(TestingConstants.CURRENT_MORTGAGE_RATE);
 
-        this.mockMvc.perform(get("/fred/observations/current/{operation}","averageMortgageRate")
+        this.mockMvc.perform(get("/fred/observations/{seriesId}/recent",TestingConstants.AVERAGE_MORTGAGE_RATE)
                 .header("caller", "test")
                 .header("apiKey", TestingConstants.TEST_API_KEY))
                 .andExpect(status().isOk())
@@ -62,12 +61,12 @@ class FredControllerTest {
     // 400 error
     @Test
     void getObservationsShouldHandleOperationNotFound() throws Exception {
-        final String expectedOutput = "Invalid series id. Available operations:";
+        final String expectedOutput = "Bad Request.  The series does not exist.";
 
         when(service.getObservations(TestingConstants.TEST_API_KEY,"randomOperation", new LinkedHashMap<>()))
                 .thenThrow(new ResourceNotFoundException(expectedOutput));
 
-        this.mockMvc.perform(get("/fred/observations/{operation}","randomOperation")
+        this.mockMvc.perform(get("/fred/observations/{seriesId}","randomOperation")
                 .header("caller", "test")
                 .header("apiKey", TestingConstants.TEST_API_KEY))
                 .andExpect(status().isBadRequest())

@@ -1,7 +1,6 @@
 package com.briandidthat.econserver.controller;
 
 import com.briandidthat.econserver.domain.fred.FredResponse;
-import com.briandidthat.econserver.domain.fred.FredSeriesId;
 import com.briandidthat.econserver.domain.fred.Observation;
 import com.briandidthat.econserver.service.FredService;
 import org.slf4j.Logger;
@@ -19,19 +18,17 @@ public class FredController {
     @Autowired
     private FredService service;
 
-    @GetMapping("/observations/{operation}")
+    @GetMapping("/observations/{seriesId}")
     public FredResponse getObservations(@RequestHeader String apiKey, @RequestHeader(required = false) String caller,
-                                        @PathVariable String operation, @RequestParam(required = false) LinkedHashMap<String, Object> params) {
+                                        @PathVariable String seriesId, @RequestParam(required = false) LinkedHashMap<String, Object> params) {
         logger.info("Observation request by {}", caller);
-        final String seriesId = FredSeriesId.getSeriesId(operation);
         return service.getObservations(apiKey, seriesId, params);
     }
 
-    @GetMapping("/observations/current/{operation}")
+    @GetMapping("/observations/{seriesId}/recent")
     public Observation getMostRecentObservation(@RequestHeader String apiKey, @RequestHeader(required = false) String caller,
-                                                @PathVariable String operation, @RequestParam(required = false) LinkedHashMap<String, Object> params) {
+                                                @PathVariable String seriesId, @RequestParam(required = false) LinkedHashMap<String, Object> params) {
         logger.info("Observation request by {}", caller);
-        final String seriesId = FredSeriesId.getSeriesId(operation);
         return service.getMostRecentObservation(apiKey, seriesId, params);
     }
 }
