@@ -1,6 +1,7 @@
 package com.briandidthat.econserver.controller;
 
 import com.briandidthat.econserver.domain.coinbase.BatchRequest;
+import com.briandidthat.econserver.domain.coinbase.BatchResponse;
 import com.briandidthat.econserver.domain.coinbase.SpotPrice;
 import com.briandidthat.econserver.domain.coinbase.Statistic;
 import com.briandidthat.econserver.service.CoinbaseService;
@@ -47,13 +48,13 @@ public class CryptoController {
     }
 
     @GetMapping("/batch")
-    public List<SpotPrice> getMultipleSpotPrices(@RequestHeader String caller, @RequestParam @Size(min = 2, max = 5) List<String> symbols) {
+    public BatchResponse getMultipleSpotPrices(@RequestHeader String caller, @RequestParam @Size(min = 2, max = 5) List<String> symbols) {
         logger.info("Batch spot request by {}", caller);
         return service.getSpotPrices(symbols);
     }
 
     @PostMapping("/batch/historical")
-    public List<SpotPrice> getMultipleHistoricalSpotPrices(@RequestHeader String caller, @RequestBody @Valid BatchRequest request) {
+    public BatchResponse getMultipleHistoricalSpotPrices(@RequestHeader String caller, @RequestBody @Valid BatchRequest request) {
         logger.info("Batch historical spot request by {}", caller);
         return service.getHistoricalSpotPrices(request);
     }
