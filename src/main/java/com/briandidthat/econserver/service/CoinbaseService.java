@@ -1,9 +1,6 @@
 package com.briandidthat.econserver.service;
 
-import com.briandidthat.econserver.domain.coinbase.BatchRequest;
-import com.briandidthat.econserver.domain.coinbase.SpotPrice;
-import com.briandidthat.econserver.domain.coinbase.Statistic;
-import com.briandidthat.econserver.domain.coinbase.Token;
+import com.briandidthat.econserver.domain.coinbase.*;
 import com.briandidthat.econserver.domain.exception.BadRequestException;
 import com.briandidthat.econserver.util.RequestUtilities;
 import com.briandidthat.econserver.util.StartupManager;
@@ -102,7 +99,7 @@ public class CoinbaseService {
         return CompletableFuture.supplyAsync(() -> getHistoricalSpotPrice(symbol, date));
     }
 
-    public List<SpotPrice> getSpotPrices(List<String> symbols) {
+    public BatchResponse getSpotPrices(List<String> symbols) {
         final List<SpotPrice> responses;
         final List<CompletableFuture<SpotPrice>> completableFutures = new ArrayList<>();
 
@@ -132,10 +129,10 @@ public class CoinbaseService {
 
         logger.info(Markers.appendEntries(logEntries), "Completed async spot price request");
 
-        return responses;
+        return new BatchResponse(responses);
     }
 
-    public List<SpotPrice> getHistoricalSpotPrices(BatchRequest batchRequest) {
+    public BatchResponse getHistoricalSpotPrices(BatchRequest batchRequest) {
         final List<SpotPrice> responses;
         final List<CompletableFuture<SpotPrice>> completableFutures = new ArrayList<>();
 
@@ -160,7 +157,7 @@ public class CoinbaseService {
             return response;
         }).collect(Collectors.toList());
 
-        return responses;
+        return new BatchResponse(responses);
     }
 
     private List<Token> getAvailableTokens() {
