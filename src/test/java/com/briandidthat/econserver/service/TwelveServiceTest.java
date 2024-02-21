@@ -1,5 +1,6 @@
 package com.briandidthat.econserver.service;
 
+import com.briandidthat.econserver.domain.BatchResponse;
 import com.briandidthat.econserver.domain.twelve.StockPriceResponse;
 import com.briandidthat.econserver.util.RequestUtilities;
 import com.briandidthat.econserver.util.TestingConstants;
@@ -73,7 +74,7 @@ class TwelveServiceTest {
 
     @Test
     void testGetMultipleStockPrices() {
-        List<StockPriceResponse> response = service.getMultipleStockPrices(TestingConstants.TEST_API_KEY, List.of("AAPL", "GOOG"));
+        BatchResponse response = service.getMultipleStockPrices(TestingConstants.TEST_API_KEY, List.of("AAPL", "GOOG"));
         assertEquals(TestingConstants.BATCH_STOCK_RESPONSE, response);
     }
 }

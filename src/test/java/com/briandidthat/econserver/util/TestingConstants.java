@@ -43,7 +43,7 @@ public final class TestingConstants {
     public static final Map<String, Boolean> AVAILABLE_STOCKS = Map.of("AAPL", true, "BRKB", true, "GOOG", true);
     public static final StockPriceResponse APPLE_PRICE_RESPONSE = new StockPriceResponse("AAPL", "108.50");
     public static final StockPriceResponse GOOGLE_PRICE_RESPONSE = new StockPriceResponse("GOOG", "120.50");
-    public static final List<StockPriceResponse> BATCH_STOCK_RESPONSE = List.of(APPLE_PRICE_RESPONSE, GOOGLE_PRICE_RESPONSE);
+    public static final BatchResponse BATCH_STOCK_RESPONSE = new BatchResponse(List.of(APPLE_PRICE_RESPONSE, GOOGLE_PRICE_RESPONSE));
 
     public static final String TEST_API_KEY = "ABCDEFG";
 }

@@ -1,5 +1,7 @@
 package com.briandidthat.econserver.service;
 
+import com.briandidthat.econserver.domain.AssetPrice;
+import com.briandidthat.econserver.domain.BatchResponse;
 import com.briandidthat.econserver.domain.exception.BadRequestException;
 import com.briandidthat.econserver.domain.twelve.StockDetails;
 import com.briandidthat.econserver.domain.twelve.StockListResponse;
@@ -50,7 +52,7 @@ public class TwelveService {
         }
     }
 
-    public List<StockPriceResponse> getMultipleStockPrices(String apiKey, @Size(min = 2, max = 5) List<String> symbols) {
+    public BatchResponse getMultipleStockPrices(String apiKey, @Size(min = 2, max = 5) List<String> symbols) {
         RequestUtilities.validateSymbols(symbols, availableStocks);
 
         final Map<String, Object> params = new LinkedHashMap<>();
@@ -62,13 +64,13 @@ public class TwelveService {
             final ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
             final Map<String, Map<String, String>> result = mapper.readValue(response.getBody(), new TypeReference<>() {
             });
-            final List<StockPriceResponse> results = new ArrayList<>();
+            final List<AssetPrice> results = new ArrayList<>();
             symbols.forEach(s -> {
                 final Map<String, String> stock = result.get(s);
                 final StockPriceResponse stockPriceResponse = new StockPriceResponse(s, stock.get("price"));
                 results.add(stockPriceResponse);
             });
-            return results;
+            return new BatchResponse(results);
         } catch (Exception e) {
             throw new BadRequestException(e.getMessage());
         }

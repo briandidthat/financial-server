@@ -29,9 +29,7 @@ paths:
           content:
             '*/*':
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SpotPrice'
+                $ref: '#/components/schemas/BatchResponse'
   /stocks:
     get:
       tags:
@@ -93,9 +91,7 @@ paths:
           content:
             '*/*':
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/StockPriceResponse'
+                $ref: '#/components/schemas/BatchResponse'
   /readyz:
     get:
       tags:
@@ -126,7 +122,7 @@ paths:
             '*/*':
               schema:
                 type: string
-  /fred/observations/{operation}:
+  /fred/observations/{seriesId}:
     get:
       tags:
         - fred-controller
@@ -142,7 +138,7 @@ paths:
           required: false
           schema:
             type: string
-        - name: operation
+        - name: seriesId
           in: path
           required: true
           schema:
@@ -154,7 +150,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/FredResponse'
-  /fred/observations/current/{operation}:
+  /fred/observations/{seriesId}/recent:
     get:
       tags:
         - fred-controller
@@ -170,7 +166,7 @@ paths:
           required: false
           schema:
             type: string
-        - name: operation
+        - name: seriesId
           in: path
           required: true
           schema:
@@ -297,9 +293,7 @@ paths:
           content:
             '*/*':
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SpotPrice'
+                $ref: '#/components/schemas/BatchResponse'
 components:
   schemas:
     BatchRequest:
@@ -324,23 +318,20 @@ components:
         endDate:
           type: string
           format: date
-    SpotPrice:
-      required:
-        - base
-        - symbol
+    AssetPrice:
       type: object
       properties:
-        currency:
-          type: string
-        amount:
-          type: string
-        date:
-          type: string
-          format: date
         symbol:
           type: string
-        base:
+        price:
           type: string
+    BatchResponse:
+      type: object
+      properties:
+        assetPrices:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssetPrice'
     StockPriceResponse:
       type: object
       properties:
@@ -373,14 +364,40 @@ components:
           type: string
         value:
           type: string
+    SpotPrice:
+      type: object
+      properties:
+        symbol:
+          type: string
+        price:
+          type: string
+        date:
+          type: string
+          format: date
+        base:
+          type: string
+          writeOnly: true
+        amount:
+          type: string
+          writeOnly: true
     Statistic:
       type: object
       properties:
         symbol:
           type: string
+        startPrice:
+          type: string
+        endPrice:
+          type: string
         priceChange:
           type: string
         percentChange:
           type: string
-        timeDelta:
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        timeFrame:
           type: string
