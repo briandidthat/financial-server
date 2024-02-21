@@ -84,7 +84,7 @@ class CoinbaseServiceTest {
 
     @Test
     void testGetHistoricalSpotPrices() {
-        BatchResponse response = service.getHistoricalSpotPrices(TestingConstants.HISTORICAL_BATCH);
+        BatchResponse response = service.getHistoricalSpotPrices(TestingConstants.HISTORICAL_BATCH_REQUEST);
         assertIterableEquals(List.of(TestingConstants.HISTORICAL_BTC, TestingConstants.HISTORICAL_BNB, TestingConstants.HISTORICAL_ETH), response.spotPrices());
     }
 

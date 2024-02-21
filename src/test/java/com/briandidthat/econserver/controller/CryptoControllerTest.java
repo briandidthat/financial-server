@@ -2,7 +2,6 @@ package com.briandidthat.econserver.controller;
 
 import com.briandidthat.econserver.domain.coinbase.BatchRequest;
 import com.briandidthat.econserver.domain.coinbase.BatchResponse;
-import com.briandidthat.econserver.domain.coinbase.SpotPrice;
 import com.briandidthat.econserver.domain.exception.BackendClientException;
 import com.briandidthat.econserver.domain.exception.BadRequestException;
 import com.briandidthat.econserver.service.CoinbaseService;
@@ -91,7 +90,7 @@ class CryptoControllerTest {
 
     @Test
     void testGetMultipleHistoricalSpotPrices() throws Exception {
-        BatchRequest batchRequest = TestingConstants.HISTORICAL_BATCH;
+        BatchRequest batchRequest = TestingConstants.HISTORICAL_BATCH_REQUEST;
         BatchResponse expectedResponse = TestingConstants.BATCH_HISTORICAL_SPOT_RESPONSE;
 
         when(service.getHistoricalSpotPrices(batchRequest)).thenReturn(expectedResponse);
