@@ -1,5 +1,7 @@
 package com.briandidthat.econserver.service;
 
+import com.briandidthat.econserver.domain.AssetPrice;
+import com.briandidthat.econserver.domain.BatchResponse;
 import com.briandidthat.econserver.domain.coinbase.*;
 import com.briandidthat.econserver.domain.exception.BadRequestException;
 import com.briandidthat.econserver.util.RequestUtilities;
@@ -66,7 +68,8 @@ public class CoinbaseService {
             logger.debug(Markers.appendEntries(Map.of("symbol", symbol, "date", date)), "Fetching historical spot price");
             final String queryString = RequestUtilities.formatQueryString(String.format("%s/prices/%s-USD/spot", coinbaseUrl, symbol), Map.of("date", date));
             final ResponseEntity<String> response = restTemplate.getForEntity(queryString, String.class);
-            final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
+            final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {
+            });
             final SpotPrice spotPrice = result.get(DATA);
             spotPrice.setDate(date);
 
@@ -100,7 +103,7 @@ public class CoinbaseService {
     }
 
     public BatchResponse getSpotPrices(List<String> symbols) {
-        final List<SpotPrice> responses;
+        final List<AssetPrice> responses;
         final List<CompletableFuture<SpotPrice>> completableFutures = new ArrayList<>();
 
         logger.info(Markers.append("symbols", symbols), "Fetching prices asynchronously");
@@ -133,7 +136,7 @@ public class CoinbaseService {
     }
 
     public BatchResponse getHistoricalSpotPrices(BatchRequest batchRequest) {
-        final List<SpotPrice> responses;
+        final List<AssetPrice> responses;
         final List<CompletableFuture<SpotPrice>> completableFutures = new ArrayList<>();
 
         logger.info("Fetching historical prices asynchronously {}", batchRequest.getRequests());
@@ -163,7 +166,8 @@ public class CoinbaseService {
     private List<Token> getAvailableTokens() {
         try {
             final ResponseEntity<String> response = restTemplate.getForEntity(coinbaseUrl + "/currencies/crypto", String.class);
-            final Map<String, List<Token>> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
+            final Map<String, List<Token>> result = mapper.readValue(response.getBody(), new TypeReference<>() {
+            });
             return result.get(DATA);
         } catch (Exception e) {
             logger.error("Unable to retrieve token list. Reason: {}", e.getMessage());
