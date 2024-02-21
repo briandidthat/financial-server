@@ -33,7 +33,7 @@ class StockControllerTest {
     void getStockPrice() throws Exception {
         final String outputJson = mapper.writeValueAsString(TestingConstants.APPLE_PRICE_RESPONSE);
 
-        when(service.getStockPrice(TestingConstants.TEST_API_KEY,"AAPL")).thenReturn(TestingConstants.APPLE_PRICE_RESPONSE);
+        when(service.getStockPrice(TestingConstants.TEST_API_KEY,"AAPL")).thenReturn(TestingConstants.APPLE_PRICE);
 
         this.mockMvc.perform(get("/stocks")
                 .param("symbol", "AAPL")

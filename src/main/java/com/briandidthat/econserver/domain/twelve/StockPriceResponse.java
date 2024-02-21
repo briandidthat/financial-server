@@ -6,12 +6,21 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public final class StockPriceResponse extends AssetPrice {
+public final class StockPriceResponse {
+    private String price;
+
     public StockPriceResponse() {
     }
 
-    public StockPriceResponse(String symbol, String price) {
-        super(symbol, price);
+    public StockPriceResponse(String price) {
+        this.price = price;
     }
 
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
 }

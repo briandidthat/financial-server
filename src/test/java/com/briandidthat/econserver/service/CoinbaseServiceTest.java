@@ -1,7 +1,8 @@
 package com.briandidthat.econserver.service;
 
+import com.briandidthat.econserver.domain.AssetPrice;
 import com.briandidthat.econserver.domain.BatchResponse;
-import com.briandidthat.econserver.domain.coinbase.SpotPrice;
+import com.briandidthat.econserver.domain.coinbase.SpotPriceResponse;
 import com.briandidthat.econserver.domain.coinbase.Statistic;
 import com.briandidthat.econserver.util.TestingConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,12 +38,12 @@ class CoinbaseServiceTest {
     void setUp() throws Exception {
         final String coinbaseEndpoint = "https://api.coinbase.com/v2";
 
-        final Map<String, SpotPrice> BTC_RESPONSE = Map.of("data", TestingConstants.BTC_SPOT);
-        final Map<String, SpotPrice> BNB_RESPONSE = Map.of("data", TestingConstants.BNB_SPOT);
-        final Map<String, SpotPrice> ETH_RESPONSE = Map.of("data", TestingConstants.ETH_SPOT);
-        final Map<String, SpotPrice> HISTORICAL_BTC_RESPONSE = Map.of("data", TestingConstants.HISTORICAL_BTC);
-        final Map<String, SpotPrice> HISTORICAL_BNB_RESPONSE = Map.of("data", TestingConstants.HISTORICAL_BNB);
-        final Map<String, SpotPrice> HISTORICAL_ETH_RESPONSE = Map.of("data", TestingConstants.HISTORICAL_ETH);
+        final Map<String, SpotPriceResponse> BTC_RESPONSE = Map.of("data", TestingConstants.BTC_SPOT);
+        final Map<String, SpotPriceResponse> BNB_RESPONSE = Map.of("data", TestingConstants.BNB_SPOT);
+        final Map<String, SpotPriceResponse> ETH_RESPONSE = Map.of("data", TestingConstants.ETH_SPOT);
+        final Map<String, SpotPriceResponse> HISTORICAL_BTC_RESPONSE = Map.of("data", TestingConstants.HISTORICAL_BTC);
+        final Map<String, SpotPriceResponse> HISTORICAL_BNB_RESPONSE = Map.of("data", TestingConstants.HISTORICAL_BNB);
+        final Map<String, SpotPriceResponse> HISTORICAL_ETH_RESPONSE = Map.of("data", TestingConstants.HISTORICAL_ETH);
 
         final String btcJson = mapper.writeValueAsString(BTC_RESPONSE);
         final String bnbJson = mapper.writeValueAsString(BNB_RESPONSE);
@@ -66,26 +67,26 @@ class CoinbaseServiceTest {
 
     @Test
     void testGetSpotPrice() {
-        SpotPrice tickerResponse = service.getSpotPrice(TestingConstants.BTC);
-        assertEquals(TestingConstants.BTC_SPOT, tickerResponse);
+        AssetPrice tickerResponse = service.getSpotPrice(TestingConstants.BTC);
+        assertEquals(TestingConstants.BTC_PRICE, tickerResponse);
     }
 
     @Test
     void testGetMultipleSpotPrices() {
         BatchResponse response = service.getSpotPrices(TestingConstants.TOKENS);
-        assertIterableEquals(List.of(TestingConstants.BTC_SPOT, TestingConstants.BNB_SPOT, TestingConstants.ETH_SPOT), response.assetPrices());
+        assertIterableEquals(List.of(TestingConstants.BTC_PRICE, TestingConstants.BNB_PRICE, TestingConstants.ETH_PRICE), response.assetPrices());
     }
 
     @Test
     void testGetHistoricalSpotPrice() {
-        SpotPrice response = service.getHistoricalSpotPrice(TestingConstants.ETH, TestingConstants.START_DATE);
-        assertEquals(TestingConstants.HISTORICAL_ETH, response);
+        AssetPrice response = service.getHistoricalSpotPrice(TestingConstants.ETH, TestingConstants.START_DATE);
+        assertEquals(TestingConstants.HISTORICAL_ETH_PRICE, response);
     }
 
     @Test
     void testGetHistoricalSpotPrices() {
         BatchResponse response = service.getHistoricalSpotPrices(TestingConstants.HISTORICAL_BATCH_REQUEST);
-        assertIterableEquals(List.of(TestingConstants.HISTORICAL_BTC, TestingConstants.HISTORICAL_BNB, TestingConstants.HISTORICAL_ETH), response.assetPrices());
+        assertIterableEquals(List.of(TestingConstants.HISTORICAL_BTC_PRICE, TestingConstants.HISTORICAL_BNB_PRICE, TestingConstants.HISTORICAL_ETH_PRICE), response.assetPrices());
     }
 
     @Test

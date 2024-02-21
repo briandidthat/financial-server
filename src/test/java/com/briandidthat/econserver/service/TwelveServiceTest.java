@@ -1,5 +1,6 @@
 package com.briandidthat.econserver.service;
 
+import com.briandidthat.econserver.domain.AssetPrice;
 import com.briandidthat.econserver.domain.BatchResponse;
 import com.briandidthat.econserver.domain.twelve.StockPriceResponse;
 import com.briandidthat.econserver.util.RequestUtilities;
@@ -56,7 +57,7 @@ class TwelveServiceTest {
 
         final Map<String, Map<String, String>> response = new HashMap<>();
         response.put("AAPL", Map.of("price", "108.50"));
-        response.put("GOOG", Map.of("price", "120.50"));
+        response.put("GOOG", Map.of("price", "128.50"));
         final String batchResponse = mapper.writeValueAsString(response);
 
         when(restTemplate.getForObject(URL, StockPriceResponse.class)).thenReturn(TestingConstants.APPLE_PRICE_RESPONSE);
@@ -68,8 +69,8 @@ class TwelveServiceTest {
 
     @Test
     void getStockPrice() {
-        StockPriceResponse response = service.getStockPrice(TestingConstants.TEST_API_KEY, "AAPL");
-        assertEquals(TestingConstants.APPLE_PRICE_RESPONSE, response);
+        AssetPrice response = service.getStockPrice(TestingConstants.TEST_API_KEY, "AAPL");
+        assertEquals(TestingConstants.APPLE_PRICE, response);
     }
 
     @Test

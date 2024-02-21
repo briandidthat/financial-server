@@ -1,7 +1,7 @@
 package com.briandidthat.econserver.controller;
 
+import com.briandidthat.econserver.domain.AssetPrice;
 import com.briandidthat.econserver.domain.BatchResponse;
-import com.briandidthat.econserver.domain.twelve.StockPriceResponse;
 import com.briandidthat.econserver.service.TwelveService;
 import jakarta.validation.constraints.Size;
 import org.slf4j.Logger;
@@ -22,8 +22,8 @@ public class StockController {
     private TwelveService service;
 
     @GetMapping
-    public StockPriceResponse getStockPrice(@RequestHeader String apiKey, @RequestHeader(required = false) String caller,
-                                            @RequestParam String symbol) {
+    public AssetPrice getStockPrice(@RequestHeader String apiKey, @RequestHeader(required = false) String caller,
+                                    @RequestParam String symbol) {
         logger.info("Stock price request by {}", caller);
         return service.getStockPrice(apiKey, symbol);
     }

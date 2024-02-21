@@ -37,12 +37,12 @@ class CryptoControllerTest {
 
     @Test
     void testGetSpotPrice() throws Exception {
-        String outputJson = mapper.writeValueAsString(TestingConstants.BTC_SPOT);
+        String outputJson = mapper.writeValueAsString(TestingConstants.BTC_PRICE);
 
         final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("symbol", "BTC");
 
-        when(service.getSpotPrice(TestingConstants.BTC)).thenReturn(TestingConstants.BTC_SPOT);
+        when(service.getSpotPrice(TestingConstants.BTC)).thenReturn(TestingConstants.BTC_PRICE);
 
         this.mockMvc.perform(get("/crypto/spot")
                 .params(params)
@@ -73,8 +73,8 @@ class CryptoControllerTest {
 
     @Test
     void testGetHistoricalSpotPrice() throws Exception {
-        String outputJson = mapper.writeValueAsString(TestingConstants.HISTORICAL_ETH);
-        when(service.getHistoricalSpotPrice(TestingConstants.ETH, TestingConstants.START_DATE)).thenReturn(TestingConstants.HISTORICAL_ETH);
+        String outputJson = mapper.writeValueAsString(TestingConstants.HISTORICAL_ETH_PRICE);
+        when(service.getHistoricalSpotPrice(TestingConstants.ETH, TestingConstants.START_DATE)).thenReturn(TestingConstants.HISTORICAL_ETH_PRICE);
 
         final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("symbol", TestingConstants.ETH);
