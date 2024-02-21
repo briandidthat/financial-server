@@ -1,6 +1,6 @@
 package com.briandidthat.econserver.service;
 
-import com.briandidthat.econserver.domain.coinbase.BatchResponse;
+import com.briandidthat.econserver.domain.BatchResponse;
 import com.briandidthat.econserver.domain.coinbase.SpotPrice;
 import com.briandidthat.econserver.domain.coinbase.Statistic;
 import com.briandidthat.econserver.util.TestingConstants;
@@ -73,7 +73,7 @@ class CoinbaseServiceTest {
     @Test
     void testGetMultipleSpotPrices() {
         BatchResponse response = service.getSpotPrices(TestingConstants.TOKENS);
-        assertIterableEquals(List.of(TestingConstants.BTC_SPOT, TestingConstants.BNB_SPOT, TestingConstants.ETH_SPOT), response.spotPrices());
+        assertIterableEquals(List.of(TestingConstants.BTC_SPOT, TestingConstants.BNB_SPOT, TestingConstants.ETH_SPOT), response.assetPrices());
     }
 
     @Test
@@ -84,8 +84,8 @@ class CoinbaseServiceTest {
 
     @Test
     void testGetHistoricalSpotPrices() {
-        BatchResponse response = service.getHistoricalSpotPrices(TestingConstants.HISTORICAL_BATCH);
-        assertIterableEquals(List.of(TestingConstants.HISTORICAL_BTC, TestingConstants.HISTORICAL_BNB, TestingConstants.HISTORICAL_ETH), response.spotPrices());
+        BatchResponse response = service.getHistoricalSpotPrices(TestingConstants.HISTORICAL_BATCH_REQUEST);
+        assertIterableEquals(List.of(TestingConstants.HISTORICAL_BTC, TestingConstants.HISTORICAL_BNB, TestingConstants.HISTORICAL_ETH), response.assetPrices());
     }
 
     @Test

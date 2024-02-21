@@ -1,7 +1,7 @@
 package com.briandidthat.econserver.controller;
 
 import com.briandidthat.econserver.domain.coinbase.BatchRequest;
-import com.briandidthat.econserver.domain.coinbase.BatchResponse;
+import com.briandidthat.econserver.domain.BatchResponse;
 import com.briandidthat.econserver.domain.coinbase.SpotPrice;
 import com.briandidthat.econserver.domain.coinbase.Statistic;
 import com.briandidthat.econserver.service.CoinbaseService;

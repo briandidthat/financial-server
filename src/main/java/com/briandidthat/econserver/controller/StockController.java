@@ -1,5 +1,6 @@
 package com.briandidthat.econserver.controller;
 
+import com.briandidthat.econserver.domain.BatchResponse;
 import com.briandidthat.econserver.domain.twelve.StockPriceResponse;
 import com.briandidthat.econserver.service.TwelveService;
 import jakarta.validation.constraints.Size;
@@ -28,8 +29,8 @@ public class StockController {
     }
 
     @GetMapping("/batch")
-    public List<StockPriceResponse> getBatchStockPrice(@RequestHeader String apiKey, @RequestHeader(required = false) String caller,
-                                                       @RequestParam @Size(min= 1, max = 5) List<String> symbols) {
+    public BatchResponse getBatchStockPrice(@RequestHeader String apiKey, @RequestHeader(required = false) String caller,
+                                            @RequestParam @Size(min= 1, max = 5) List<String> symbols) {
         logger.info("Batch stock price request by {}", caller);
         return service.getMultipleStockPrices(apiKey, symbols);
     }

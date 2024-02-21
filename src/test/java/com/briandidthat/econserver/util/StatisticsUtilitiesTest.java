@@ -11,10 +11,10 @@ class StatisticsUtilitiesTest {
 
     @Test
     void testBuildStatistic() {
-        SpotPrice historicalEth = new SpotPrice(TestingConstants.ETH, "USD", "4000", TestingConstants.START_DATE);
-        SpotPrice currentEth = new SpotPrice(TestingConstants.ETH, "USD", "3000", TestingConstants.END_DATE);
+        SpotPrice historicalEth = new SpotPrice(TestingConstants.ETH,  "4000", TestingConstants.START_DATE);
+        SpotPrice currentEth = new SpotPrice(TestingConstants.ETH,  "3000", TestingConstants.END_DATE);
 
-        final Statistic expected = new Statistic(TestingConstants.ETH, historicalEth.getAmount(), currentEth.getAmount(),
+        final Statistic expected = new Statistic(TestingConstants.ETH, historicalEth.getPrice(), currentEth.getPrice(),
                 "-1000.00", "-25.00", historicalEth.getDate(), currentEth.getDate(), "24 months");
 
         Statistic statistic = StatisticsUtilities.buildStatistic(historicalEth, currentEth);
