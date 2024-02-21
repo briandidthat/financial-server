@@ -21,6 +21,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -33,7 +34,7 @@ public class TwelveService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public StockPriceResponse getStockPrice(String apiKey, String symbol) {
+    public AssetPrice getStockPrice(String apiKey, String symbol) {
         RequestUtilities.validateSymbol(symbol, availableStocks);
 
         final Map<String, Object> params = new LinkedHashMap<>();
@@ -43,9 +44,9 @@ public class TwelveService {
             logger.info("Fetching current price for {}", symbol);
             final String url = RequestUtilities.formatQueryString(twelveBaseUrl + "/price", params);
             final StockPriceResponse response = restTemplate.getForObject(url, StockPriceResponse.class);
-            response.setSymbol(symbol);
+            final AssetPrice assetPrice = new AssetPrice(symbol, response.getPrice(), LocalDate.now());
             logger.info("Fetched current price for {}. Price: {}", symbol, response.getPrice());
-            return response;
+            return assetPrice;
         } catch (Exception e) {
             logger.error(e.getMessage());
             throw new BadRequestException(e.getMessage());
@@ -67,8 +68,8 @@ public class TwelveService {
             final List<AssetPrice> results = new ArrayList<>();
             symbols.forEach(s -> {
                 final Map<String, String> stock = result.get(s);
-                final StockPriceResponse stockPriceResponse = new StockPriceResponse(s, stock.get("price"));
-                results.add(stockPriceResponse);
+                final AssetPrice assetPrice = new AssetPrice(s, stock.get("price"), LocalDate.now());
+                results.add(assetPrice);
             });
             return new BatchResponse(results);
         } catch (Exception e) {

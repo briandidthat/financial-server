@@ -1,6 +1,5 @@
 package com.briandidthat.econserver.domain.coinbase;
 
-import com.briandidthat.econserver.domain.AssetPrice;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -10,16 +9,35 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import java.time.LocalDate;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public final class SpotPrice extends AssetPrice {
+public final class SpotPriceResponse {
+    private String base;
+    private String amount;
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate date;
 
-    public SpotPrice() {}
+    public SpotPriceResponse() {}
 
-    public SpotPrice(String symbol, String price, LocalDate date) {
-        super(symbol, price);
+    public SpotPriceResponse(String base, String amount, LocalDate date) {
+        this.base = base;
+        this.amount = amount;
         this.date = date;
+    }
+
+    public String getBase() {
+        return base;
+    }
+
+    public void setBase(String base) {
+        this.base = base;
+    }
+
+    public String getAmount() {
+        return amount;
+    }
+
+    public void setAmount(String amount) {
+        this.amount = amount;
     }
 
     public LocalDate getDate() {
@@ -30,13 +48,5 @@ public final class SpotPrice extends AssetPrice {
         this.date = date;
     }
 
-    @JsonSetter("base")
-    public void setBase(String base) {
-        this.setSymbol(base);
-    }
 
-    @JsonSetter("amount")
-    public void setAmount(String amount) {
-        this.setPrice(amount);
-    }
 }

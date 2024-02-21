@@ -41,40 +41,40 @@ public class CoinbaseService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public SpotPrice getSpotPrice(String symbol) {
+    public AssetPrice getSpotPrice(String symbol) {
         RequestUtilities.validateSymbol(symbol, availableTokens);
 
         try {
             logger.info(Markers.append("symbol", symbol), "Fetching current price");
             final String queryString = RequestUtilities.formatQueryString(String.format("%s/prices/%s-USD/spot", coinbaseUrl, symbol), new HashMap<>());
             final ResponseEntity<String> response = restTemplate.getForEntity(queryString, String.class);
-            final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {
+            final Map<String, SpotPriceResponse> result = mapper.readValue(response.getBody(), new TypeReference<>() {
             });
-            final SpotPrice spotPrice = result.get(DATA);
-            spotPrice.setDate(LocalDate.now());
+            final SpotPriceResponse spotPriceResponse = result.get(DATA);
+            final AssetPrice assetPrice = new AssetPrice(spotPriceResponse.getBase(), spotPriceResponse.getAmount(), LocalDate.now());
 
-            logger.info(Markers.append("spotPrice", spotPrice), "Fetched spot price");
-            return spotPrice;
+            logger.info(Markers.append("spotPrice", spotPriceResponse), "Fetched spot price");
+            return assetPrice;
         } catch (Exception e) {
             logger.error("Unable to fetch {} spot price. Reason: {}", symbol, e.getMessage());
             throw new BadRequestException(e.getMessage());
         }
     }
 
-    public SpotPrice getHistoricalSpotPrice(String symbol, LocalDate date) {
+    public AssetPrice getHistoricalSpotPrice(String symbol, LocalDate date) {
         RequestUtilities.validateSymbol(symbol, availableTokens);
 
         try {
             logger.debug(Markers.appendEntries(Map.of("symbol", symbol, "date", date)), "Fetching historical spot price");
             final String queryString = RequestUtilities.formatQueryString(String.format("%s/prices/%s-USD/spot", coinbaseUrl, symbol), Map.of("date", date));
             final ResponseEntity<String> response = restTemplate.getForEntity(queryString, String.class);
-            final Map<String, SpotPrice> result = mapper.readValue(response.getBody(), new TypeReference<>() {
+            final Map<String, SpotPriceResponse> result = mapper.readValue(response.getBody(), new TypeReference<>() {
             });
-            final SpotPrice spotPrice = result.get(DATA);
-            spotPrice.setDate(date);
+            final SpotPriceResponse spotPriceResponse = result.get(DATA);
+            final AssetPrice assetPrice = new AssetPrice(spotPriceResponse.getBase(), spotPriceResponse.getAmount(), date);
 
-            logger.info(Markers.append("spotPrice", spotPrice), "Fetched historical spot price");
-            return spotPrice;
+            logger.info(Markers.append("spotPrice", spotPriceResponse), "Fetched historical spot price");
+            return assetPrice;
         } catch (Exception e) {
             logger.error("Unable to fetch historical price for {}. Reason: {}", symbol, e.getMessage());
             throw new BadRequestException(e.getMessage());
@@ -85,26 +85,26 @@ public class CoinbaseService {
         RequestUtilities.validateSymbol(symbol, availableTokens);
 
         final boolean isToday = endDate.isEqual(LocalDate.now());
-        final SpotPrice startPrice = getHistoricalSpotPrice(symbol, startDate);
+        final AssetPrice startPrice = getHistoricalSpotPrice(symbol, startDate);
         // if the end date is today, get current spot price. Else get historical price
-        final SpotPrice endPrice = isToday ? getSpotPrice(symbol) : getHistoricalSpotPrice(symbol, endDate);
+        final AssetPrice endPrice = isToday ? getSpotPrice(symbol) : getHistoricalSpotPrice(symbol, endDate);
 
         return StatisticsUtilities.buildStatistic(startPrice, endPrice);
     }
 
     @Async
-    private CompletableFuture<SpotPrice> getSpotPriceAsync(String symbol) {
+    private CompletableFuture<AssetPrice> getSpotPriceAsync(String symbol) {
         return CompletableFuture.supplyAsync(() -> getSpotPrice(symbol));
     }
 
     @Async
-    private CompletableFuture<SpotPrice> getHistoricalSpotPriceAsync(String symbol, LocalDate date) {
+    private CompletableFuture<AssetPrice> getHistoricalSpotPriceAsync(String symbol, LocalDate date) {
         return CompletableFuture.supplyAsync(() -> getHistoricalSpotPrice(symbol, date));
     }
 
     public BatchResponse getSpotPrices(List<String> symbols) {
         final List<AssetPrice> responses;
-        final List<CompletableFuture<SpotPrice>> completableFutures = new ArrayList<>();
+        final List<CompletableFuture<AssetPrice>> completableFutures = new ArrayList<>();
 
         logger.info(Markers.append("symbols", symbols), "Fetching prices asynchronously");
 
@@ -117,7 +117,7 @@ public class CoinbaseService {
         final Instant end = Instant.now();
 
         responses = completableFutures.stream().map(c -> {
-            SpotPrice response = null;
+            AssetPrice response = null;
             try {
                 response = c.get();
             } catch (Exception e) {
@@ -137,7 +137,7 @@ public class CoinbaseService {
 
     public BatchResponse getHistoricalSpotPrices(BatchRequest batchRequest) {
         final List<AssetPrice> responses;
-        final List<CompletableFuture<SpotPrice>> completableFutures = new ArrayList<>();
+        final List<CompletableFuture<AssetPrice>> completableFutures = new ArrayList<>();
 
         logger.info("Fetching historical prices asynchronously {}", batchRequest.getRequests());
 
@@ -151,7 +151,7 @@ public class CoinbaseService {
         logger.info("Completed async historical spot price request in {}ms", end.minusMillis(start.toEpochMilli()).toEpochMilli());
 
         responses = completableFutures.stream().map(c -> {
-            SpotPrice response = null;
+            AssetPrice response = null;
             try {
                 response = c.get();
             } catch (Exception e) {

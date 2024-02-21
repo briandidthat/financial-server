@@ -1,7 +1,7 @@
 package com.briandidthat.econserver.util;
 
+import com.briandidthat.econserver.domain.AssetPrice;
 import com.briandidthat.econserver.domain.coinbase.Statistic;
-import com.briandidthat.econserver.domain.coinbase.SpotPrice;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -18,7 +18,7 @@ public final class StatisticsUtilities {
         }
     }
 
-    public static Statistic buildStatistic(SpotPrice startPrice, SpotPrice endPrice) {
+    public static Statistic buildStatistic(AssetPrice startPrice, AssetPrice endPrice) {
         final double startPriceDouble = Double.parseDouble(startPrice.getPrice());
         final double endPriceDouble = Double.parseDouble(endPrice.getPrice());
 
