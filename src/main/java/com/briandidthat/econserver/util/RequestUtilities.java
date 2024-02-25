@@ -1,7 +1,11 @@
 package com.briandidthat.econserver.util;
 
+import com.briandidthat.econserver.domain.AssetPrice;
+import com.briandidthat.econserver.domain.coinbase.SpotPriceResponse;
 import com.briandidthat.econserver.domain.exception.ResourceNotFoundException;
+import com.briandidthat.econserver.domain.twelve.StockPriceResponse;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -41,4 +45,13 @@ public final class RequestUtilities {
         }
         return builder.toString();
     }
+
+    public static AssetPrice buildAssetPrice(SpotPriceResponse response) {
+        return new AssetPrice(response.getBase(), response.getAmount(), response.getDate());
+    }
+
+    public static AssetPrice buildAssetPrice(String symbol, StockPriceResponse response) {
+        return new AssetPrice(symbol, response.getPrice(), LocalDate.now());
+    }
+
 }

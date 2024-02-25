@@ -51,9 +51,9 @@ public class CoinbaseService {
             final Map<String, SpotPriceResponse> result = mapper.readValue(response.getBody(), new TypeReference<>() {
             });
             final SpotPriceResponse spotPriceResponse = result.get(DATA);
-            final AssetPrice assetPrice = new AssetPrice(spotPriceResponse.getBase(), spotPriceResponse.getAmount(), LocalDate.now());
+            final AssetPrice assetPrice = RequestUtilities.buildAssetPrice(spotPriceResponse);
 
-            logger.info(Markers.append("spotPrice", spotPriceResponse), "Fetched spot price");
+            logger.info(Markers.append("response", assetPrice), "Fetched spot price");
             return assetPrice;
         } catch (Exception e) {
             logger.error("Unable to fetch {} spot price. Reason: {}", symbol, e.getMessage());
@@ -71,9 +71,9 @@ public class CoinbaseService {
             final Map<String, SpotPriceResponse> result = mapper.readValue(response.getBody(), new TypeReference<>() {
             });
             final SpotPriceResponse spotPriceResponse = result.get(DATA);
-            final AssetPrice assetPrice = new AssetPrice(spotPriceResponse.getBase(), spotPriceResponse.getAmount(), date);
+            final AssetPrice assetPrice = RequestUtilities.buildAssetPrice(spotPriceResponse);
 
-            logger.info(Markers.append("spotPrice", spotPriceResponse), "Fetched historical spot price");
+            logger.info(Markers.append("response", assetPrice), "Fetched historical spot price");
             return assetPrice;
         } catch (Exception e) {
             logger.error("Unable to fetch historical price for {}. Reason: {}", symbol, e.getMessage());
@@ -128,7 +128,7 @@ public class CoinbaseService {
 
         final Map<String, Object> logEntries = new HashMap<>();
         logEntries.put("runtime", end.minusMillis(start.toEpochMilli()).toEpochMilli());
-        logEntries.put("spotPrices", responses);
+        logEntries.put("responses", responses);
 
         logger.info(Markers.appendEntries(logEntries), "Completed async spot price request");
 

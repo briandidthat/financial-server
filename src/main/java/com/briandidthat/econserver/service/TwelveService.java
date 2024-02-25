@@ -44,7 +44,7 @@ public class TwelveService {
             logger.info("Fetching current price for {}", symbol);
             final String url = RequestUtilities.formatQueryString(twelveBaseUrl + "/price", params);
             final StockPriceResponse response = restTemplate.getForObject(url, StockPriceResponse.class);
-            final AssetPrice assetPrice = new AssetPrice(symbol, response.getPrice(), LocalDate.now());
+            final AssetPrice assetPrice = RequestUtilities.buildAssetPrice(symbol, response);
             logger.info("Fetched current price for {}. Price: {}", symbol, response.getPrice());
             return assetPrice;
         } catch (Exception e) {

@@ -19,9 +19,9 @@ public final class TestingConstants {
     public static final LocalDate START_DATE = LocalDate.of(2021, 8, 1);
     public static final LocalDate END_DATE = LocalDate.of(2023, 8, 1); // 2 yrs in between (24 months)
 
-    public static final SpotPriceResponse BTC_SPOT = new SpotPriceResponse(BTC, "40102.44", LocalDate.now());
-    public static final SpotPriceResponse BNB_SPOT = new SpotPriceResponse(BNB, "389.22", LocalDate.now());
-    public static final SpotPriceResponse ETH_SPOT = new SpotPriceResponse(ETH, "2900.00", LocalDate.now());
+    public static final SpotPriceResponse BTC_SPOT = new SpotPriceResponse(BTC, "40102.44", END_DATE);
+    public static final SpotPriceResponse BNB_SPOT = new SpotPriceResponse(BNB, "389.22", END_DATE);
+    public static final SpotPriceResponse ETH_SPOT = new SpotPriceResponse(ETH, "2900.00", END_DATE);
     public static final SpotPriceResponse HISTORICAL_BTC = new SpotPriceResponse(BTC, "41000.00", START_DATE);
     public static final SpotPriceResponse HISTORICAL_BNB = new SpotPriceResponse(BNB, "520.00", START_DATE);
     public static final SpotPriceResponse HISTORICAL_ETH = new SpotPriceResponse(ETH, "4000.00", START_DATE);
