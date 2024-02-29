@@ -11,7 +11,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public final class RequestUtilities {
-    private RequestUtilities() {}
+    private RequestUtilities() {
+    }
 
     public static boolean validateSymbol(String symbol, Map<String, Boolean> assets) throws ResourceNotFoundException {
         boolean isValid = assets.getOrDefault(symbol.toUpperCase(), false);
@@ -39,15 +40,15 @@ public final class RequestUtilities {
                 String currentParam = key + "=" + value;
                 builder.append(currentParam);
                 count.getAndIncrement();
-                if (count.get() < length)
-                    builder.append("&");
+                if (count.get() < length) builder.append("&");
             });
         }
         return builder.toString();
     }
 
     public static AssetPrice buildAssetPrice(SpotPriceResponse response) {
-        return new AssetPrice(response.getBase(), response.getAmount(), response.getDate());
+        LocalDate date = response.getDate() == null ? LocalDate.now() : response.getDate();
+        return new AssetPrice(response.getBase(), response.getAmount(), date);
     }
 
     public static AssetPrice buildAssetPrice(String symbol, StockPriceResponse response) {
