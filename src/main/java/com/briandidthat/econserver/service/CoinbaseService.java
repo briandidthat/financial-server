@@ -71,6 +71,7 @@ public class CoinbaseService {
             final Map<String, SpotPriceResponse> result = mapper.readValue(response.getBody(), new TypeReference<>() {
             });
             final SpotPriceResponse spotPriceResponse = result.get(DATA);
+            spotPriceResponse.setDate(date);
             final AssetPrice assetPrice = RequestUtilities.buildAssetPrice(spotPriceResponse);
 
             logger.info(Markers.append("response", assetPrice), "Fetched historical spot price");
