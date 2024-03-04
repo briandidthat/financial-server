@@ -2,7 +2,10 @@ package com.briandidthat.econserver.service;
 
 import com.briandidthat.econserver.domain.AssetPrice;
 import com.briandidthat.econserver.domain.BatchResponse;
-import com.briandidthat.econserver.domain.coinbase.*;
+import com.briandidthat.econserver.domain.coinbase.BatchRequest;
+import com.briandidthat.econserver.domain.coinbase.SpotPriceResponse;
+import com.briandidthat.econserver.domain.coinbase.Statistic;
+import com.briandidthat.econserver.domain.coinbase.Token;
 import com.briandidthat.econserver.domain.exception.BadRequestException;
 import com.briandidthat.econserver.util.RequestUtilities;
 import com.briandidthat.econserver.util.StartupManager;

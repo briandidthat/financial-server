@@ -6,12 +6,14 @@ import com.briandidthat.econserver.domain.exception.BadRequestException;
 import com.briandidthat.econserver.domain.twelve.StockDetails;
 import com.briandidthat.econserver.domain.twelve.StockListResponse;
 import com.briandidthat.econserver.domain.twelve.StockPriceResponse;
+import com.briandidthat.econserver.domain.twelve.TimeSeriesResponse;
 import com.briandidthat.econserver.util.RequestUtilities;
 import com.briandidthat.econserver.util.StartupManager;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.constraints.Size;
+import net.logstash.logback.marker.Markers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +47,31 @@ public class TwelveService {
             final String url = RequestUtilities.formatQueryString(twelveBaseUrl + "/price", params);
             final StockPriceResponse response = restTemplate.getForObject(url, StockPriceResponse.class);
             final AssetPrice assetPrice = RequestUtilities.buildAssetPrice(symbol, response);
-            logger.info("Fetched current price for {}. Price: {}", symbol, response.getPrice());
+            logger.info(Markers.append("assetPrice", assetPrice), "Completed stock price request.");
+            return assetPrice;
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            throw new BadRequestException(e.getMessage());
+        }
+    }
+
+    public AssetPrice getHistoricalStockPrice(String apiKey, String symbol, LocalDate date) {
+        RequestUtilities.validateSymbol(symbol, availableStocks);
+
+        final Map<String, Object> params = new LinkedHashMap<>();
+        params.put("symbol", symbol);
+        params.put("apikey", apiKey);
+        params.put("date", date);
+        params.put("interval", "1day");
+
+        try {
+            logger.info("Fetching price of {} on {}", symbol, date);
+            final String url = RequestUtilities.formatQueryString(twelveBaseUrl + "/time_series", params);
+            final TimeSeriesResponse response = restTemplate.getForObject(url, TimeSeriesResponse.class);
+            final TimeSeriesResponse.Value value = response.getValues().get(0);
+            final AssetPrice assetPrice = new AssetPrice(symbol, value.getClose(), date);
+
+            logger.info(Markers.append("assetPrice", assetPrice), "Completed stock price request.");
             return assetPrice;
         } catch (Exception e) {
             logger.error(e.getMessage());

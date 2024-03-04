@@ -94,7 +94,7 @@ class CoinbaseServiceTest {
         Statistic statistic = service.getPriceStatistics(TestingConstants.ETH, TestingConstants.START_DATE, TestingConstants.END_DATE);
         assertEquals("-1100.00", statistic.priceChange());
         assertEquals("-27.50", statistic.percentChange());
-        assertEquals("24 months", statistic.timeFrame());
+        assertEquals("2 Years", statistic.timeFrame());
     }
 
 }

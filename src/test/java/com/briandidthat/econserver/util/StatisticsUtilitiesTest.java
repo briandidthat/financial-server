@@ -15,7 +15,7 @@ class StatisticsUtilitiesTest {
         AssetPrice currentEth = new AssetPrice(TestingConstants.ETH,  "3000", TestingConstants.END_DATE);
 
         final Statistic expected = new Statistic(TestingConstants.ETH, historicalEth.getPrice(), currentEth.getPrice(),
-                "-1000.00", "-25.00", historicalEth.getDate(), currentEth.getDate(), "24 months");
+                "-1000.00", "-25.00", historicalEth.getDate(), currentEth.getDate(), "2 Years");
 
         Statistic statistic = StatisticsUtilities.buildStatistic(historicalEth, currentEth);
         assertEquals(expected, statistic);
