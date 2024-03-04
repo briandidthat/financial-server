@@ -2,6 +2,7 @@ package com.briandidthat.econserver.controller;
 
 import com.briandidthat.econserver.domain.AssetPrice;
 import com.briandidthat.econserver.domain.BatchResponse;
+import com.briandidthat.econserver.domain.coinbase.Statistic;
 import com.briandidthat.econserver.service.TwelveService;
 import jakarta.validation.constraints.Size;
 import org.slf4j.Logger;
@@ -41,6 +42,13 @@ public class StockController {
                                               @RequestParam String symbol, @RequestParam LocalDate date) {
         logger.info("Historical stock price request by {}", caller);
         return service.getHistoricalStockPrice(apiKey, symbol, date);
+    }
+
+    @GetMapping("/statistics")
+    public Statistic getPriceStatistics(@RequestHeader String apiKey, @RequestHeader String caller, @RequestParam String symbol,
+                                        @RequestParam LocalDate startDate) {
+        logger.info("Spot statistics request by {}", caller);
+        return service.getStockPriceStatistic(apiKey, symbol, startDate);
     }
 
 }

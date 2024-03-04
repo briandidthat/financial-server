@@ -2,6 +2,7 @@ package com.briandidthat.econserver.service;
 
 import com.briandidthat.econserver.domain.AssetPrice;
 import com.briandidthat.econserver.domain.BatchResponse;
+import com.briandidthat.econserver.domain.coinbase.Statistic;
 import com.briandidthat.econserver.domain.exception.BadRequestException;
 import com.briandidthat.econserver.domain.twelve.StockDetails;
 import com.briandidthat.econserver.domain.twelve.StockListResponse;
@@ -9,6 +10,7 @@ import com.briandidthat.econserver.domain.twelve.StockPriceResponse;
 import com.briandidthat.econserver.domain.twelve.TimeSeriesResponse;
 import com.briandidthat.econserver.util.RequestUtilities;
 import com.briandidthat.econserver.util.StartupManager;
+import com.briandidthat.econserver.util.StatisticsUtilities;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
@@ -101,6 +103,15 @@ public class TwelveService {
         } catch (Exception e) {
             throw new BadRequestException(e.getMessage());
         }
+    }
+
+    public Statistic getStockPriceStatistic(String apiKey, String symbol, LocalDate startDate) {
+        RequestUtilities.validateSymbol(symbol, availableStocks);
+
+        final AssetPrice endPrice = getHistoricalStockPrice(apiKey, symbol, startDate);
+        final AssetPrice startPrice = getStockPrice(apiKey, symbol);
+
+        return StatisticsUtilities.buildStatistic(startPrice, endPrice);
     }
 
     private List<StockDetails> getAvailableStocks() {
