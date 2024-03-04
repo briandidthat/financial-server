@@ -8,6 +8,7 @@ import com.briandidthat.econserver.domain.fred.Observation;
 import com.briandidthat.econserver.domain.twelve.StockPriceResponse;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public final class TestingConstants {
     public static final AssetPrice HISTORICAL_BNB_PRICE = new AssetPrice(HISTORICAL_BNB.getBase(), HISTORICAL_BNB.getAmount(), HISTORICAL_BNB.getDate());
     public static final BatchResponse BATCH_SPOT_RESPONSE = new BatchResponse(List.of(BTC_PRICE, ETH_PRICE, BNB_PRICE));
     public static final BatchResponse BATCH_HISTORICAL_SPOT_RESPONSE = new BatchResponse(List.of(HISTORICAL_BTC_PRICE, HISTORICAL_BNB_PRICE, HISTORICAL_ETH_PRICE));
-    public static final Statistic ETH_STATISTICS = new Statistic("ETH", HISTORICAL_ETH_PRICE.getPrice(), ETH_PRICE.getPrice(), "-1100.00", "-27.50", START_DATE, END_DATE, "730");
+    public static final Statistic ETH_STATISTICS = new Statistic("ETH", HISTORICAL_ETH_PRICE.getPrice(), ETH_PRICE.getPrice(), "-1100.00", "-27.50", START_DATE, END_DATE, "2 Years");
     public static final BatchRequest HISTORICAL_BATCH_REQUEST = new BatchRequest(List.of(new Request(BTC, START_DATE), new Request(BNB, START_DATE), new Request(ETH, START_DATE)));
     public static final List<String> TOKENS = List.of(TestingConstants.BTC, TestingConstants.BNB, TestingConstants.ETH);
     public static final Map<String, Boolean> AVAILABLE_TOKENS = Map.of("BTC", true, "BNB", true, "ETH", true);
