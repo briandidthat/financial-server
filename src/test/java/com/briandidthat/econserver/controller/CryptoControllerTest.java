@@ -42,7 +42,7 @@ class CryptoControllerTest {
         final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("symbol", "BTC");
 
-        when(service.getSpotPrice(TestingConstants.BTC)).thenReturn(TestingConstants.BTC_PRICE);
+        when(service.getAssetPrice(TestingConstants.BTC)).thenReturn(TestingConstants.BTC_PRICE);
 
         this.mockMvc.perform(get("/crypto/spot")
                 .params(params)
@@ -58,7 +58,7 @@ class CryptoControllerTest {
         BatchResponse expectedResponse = TestingConstants.BATCH_SPOT_RESPONSE;
 
         String outputJson = mapper.writeValueAsString(expectedResponse);
-        when(service.getSpotPrices(TestingConstants.TOKENS)).thenReturn(expectedResponse);
+        when(service.getAssetPrices(TestingConstants.TOKENS)).thenReturn(expectedResponse);
 
         final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("symbols", symbolsString);
@@ -74,7 +74,7 @@ class CryptoControllerTest {
     @Test
     void testGetHistoricalSpotPrice() throws Exception {
         String outputJson = mapper.writeValueAsString(TestingConstants.HISTORICAL_ETH_PRICE);
-        when(service.getHistoricalSpotPrice(TestingConstants.ETH, TestingConstants.START_DATE)).thenReturn(TestingConstants.HISTORICAL_ETH_PRICE);
+        when(service.getHistoricalAssetPrice(TestingConstants.ETH, TestingConstants.START_DATE)).thenReturn(TestingConstants.HISTORICAL_ETH_PRICE);
 
         final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("symbol", TestingConstants.ETH);
@@ -93,7 +93,7 @@ class CryptoControllerTest {
         BatchRequest batchRequest = TestingConstants.HISTORICAL_BATCH_REQUEST;
         BatchResponse expectedResponse = TestingConstants.BATCH_HISTORICAL_SPOT_RESPONSE;
 
-        when(service.getHistoricalSpotPrices(batchRequest)).thenReturn(expectedResponse);
+        when(service.getHistoricalAssetPrices(batchRequest)).thenReturn(expectedResponse);
 
         String inputJson = mapper.writeValueAsString(batchRequest);
         String outputJson = mapper.writeValueAsString(expectedResponse);
@@ -111,7 +111,7 @@ class CryptoControllerTest {
     void testGetPriceStatistics() throws Exception {
         String outputJson = mapper.writeValueAsString(TestingConstants.ETH_STATISTICS);
 
-        when(service.getPriceStatistics(TestingConstants.ETH, TestingConstants.START_DATE, TestingConstants.END_DATE)).thenReturn(TestingConstants.ETH_STATISTICS);
+        when(service.getAssetPriceStatistics(TestingConstants.ETH, TestingConstants.START_DATE, TestingConstants.END_DATE)).thenReturn(TestingConstants.ETH_STATISTICS);
 
         final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("symbol", TestingConstants.ETH);
@@ -146,7 +146,7 @@ class CryptoControllerTest {
     void testGetSpotPriceShouldHandleResourceNotFoundException() throws Exception {
         String expectedOutput = "Invalid symbol: ALABAMA";
 
-        when(service.getSpotPrice("ALABAMA")).thenThrow(new BadRequestException(expectedOutput));
+        when(service.getAssetPrice("ALABAMA")).thenThrow(new BadRequestException(expectedOutput));
         // should throw 400 exception due to invalid symbol
         this.mockMvc.perform(get("/crypto/spot")
                 .param("symbol", "ALABAMA")
@@ -176,7 +176,7 @@ class CryptoControllerTest {
     void testGetSpotPriceShouldHandleBackendClientException() throws Exception {
         String expectedOutput = "SocketTimeoutException: Cannot connect";
 
-        when(service.getSpotPrice(TestingConstants.ETH)).thenThrow(new BackendClientException(expectedOutput));
+        when(service.getAssetPrice(TestingConstants.ETH)).thenThrow(new BackendClientException(expectedOutput));
         // should throw 500 exception due to backend issue
         this.mockMvc.perform(get("/crypto/spot")
                 .param("symbol", TestingConstants.ETH)

@@ -10,7 +10,7 @@ paths:
     post:
       tags:
         - crypto-controller
-      operationId: getMultipleHistoricalSpotPrices
+      operationId: getMultipleHistoricalCryptoPrices
       parameters:
         - name: caller
           in: header
@@ -51,6 +51,74 @@ paths:
           required: true
           schema:
             type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AssetPrice'
+  /stocks/statistics:
+    get:
+      tags:
+        - stock-controller
+      operationId: getStockPriceStatistics
+      parameters:
+        - name: apiKey
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: caller
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: symbol
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Statistic'
+  /stocks/historical:
+    get:
+      tags:
+        - stock-controller
+      operationId: getHistoricalStockPrice
+      parameters:
+        - name: apiKey
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: caller
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: symbol
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
       responses:
         '200':
           description: OK
@@ -182,7 +250,7 @@ paths:
     get:
       tags:
         - crypto-controller
-      operationId: getSpotPrice
+      operationId: getCryptoPrice
       parameters:
         - name: caller
           in: header
@@ -205,7 +273,7 @@ paths:
     get:
       tags:
         - crypto-controller
-      operationId: getPriceStatistics
+      operationId: getCryptoPriceStatistics
       parameters:
         - name: caller
           in: header
@@ -240,7 +308,7 @@ paths:
     get:
       tags:
         - crypto-controller
-      operationId: getHistoricalSpotPrice
+      operationId: getHistoricalCryptoPrice
       parameters:
         - name: caller
           in: header
@@ -269,7 +337,7 @@ paths:
     get:
       tags:
         - crypto-controller
-      operationId: getMultipleSpotPrices
+      operationId: getCryptoPrices
       parameters:
         - name: caller
           in: header
@@ -335,6 +403,27 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AssetPrice'
+    Statistic:
+      type: object
+      properties:
+        symbol:
+          type: string
+        startPrice:
+          type: string
+        endPrice:
+          type: string
+        priceChange:
+          type: string
+        percentChange:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        timeFrame:
+          type: string
     FredResponse:
       type: object
       properties:
@@ -359,25 +448,4 @@ components:
         date:
           type: string
         value:
-          type: string
-    Statistic:
-      type: object
-      properties:
-        symbol:
-          type: string
-        startPrice:
-          type: string
-        endPrice:
-          type: string
-        priceChange:
-          type: string
-        percentChange:
-          type: string
-        startDate:
-          type: string
-          format: date
-        endDate:
-          type: string
-          format: date
-        timeFrame:
           type: string
