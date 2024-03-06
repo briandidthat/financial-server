@@ -27,28 +27,28 @@ public class StockController {
     public AssetPrice getStockPrice(@RequestHeader String apiKey, @RequestHeader(required = false) String caller,
                                     @RequestParam String symbol) {
         logger.info("Stock price request by {}", caller);
-        return service.getStockPrice(apiKey, symbol);
-    }
-
-    @GetMapping("/batch")
-    public BatchResponse getBatchStockPrice(@RequestHeader String apiKey, @RequestHeader(required = false) String caller,
-                                            @RequestParam @Size(min = 1, max = 5) List<String> symbols) {
-        logger.info("Batch stock price request by {}", caller);
-        return service.getMultipleStockPrices(apiKey, symbols);
+        return service.getAssetPrice(apiKey, symbol);
     }
 
     @GetMapping("/historical")
     public AssetPrice getHistoricalStockPrice(@RequestHeader String apiKey, @RequestHeader(required = false) String caller,
                                               @RequestParam String symbol, @RequestParam LocalDate date) {
         logger.info("Historical stock price request by {}", caller);
-        return service.getHistoricalStockPrice(apiKey, symbol, date);
+        return service.getHistoricalAssetPrice(apiKey, symbol, date);
+    }
+
+    @GetMapping("/batch")
+    public BatchResponse getBatchStockPrice(@RequestHeader String apiKey, @RequestHeader(required = false) String caller,
+                                            @RequestParam @Size(min = 1, max = 5) List<String> symbols) {
+        logger.info("Batch stock price request by {}", caller);
+        return service.getMultipleAssetPrices(apiKey, symbols);
     }
 
     @GetMapping("/statistics")
-    public Statistic getPriceStatistics(@RequestHeader String apiKey, @RequestHeader String caller, @RequestParam String symbol,
+    public Statistic getStockPriceStatistics(@RequestHeader String apiKey, @RequestHeader String caller, @RequestParam String symbol,
                                         @RequestParam LocalDate startDate) {
         logger.info("Spot statistics request by {}", caller);
-        return service.getStockPriceStatistic(apiKey, symbol, startDate);
+        return service.getAssetPriceStatistics(apiKey, symbol, startDate);
     }
 
 }

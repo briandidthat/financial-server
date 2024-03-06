@@ -44,7 +44,7 @@ public class CoinbaseService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public AssetPrice getSpotPrice(String symbol) {
+    public AssetPrice getAssetPrice(String symbol) {
         RequestUtilities.validateSymbol(symbol, availableTokens);
 
         try {
@@ -64,7 +64,7 @@ public class CoinbaseService {
         }
     }
 
-    public AssetPrice getHistoricalSpotPrice(String symbol, LocalDate date) {
+    public AssetPrice getHistoricalAssetPrice(String symbol, LocalDate date) {
         RequestUtilities.validateSymbol(symbol, availableTokens);
 
         try {
@@ -85,28 +85,17 @@ public class CoinbaseService {
         }
     }
 
-    public Statistic getPriceStatistics(String symbol, LocalDate startDate, LocalDate endDate) {
-        RequestUtilities.validateSymbol(symbol, availableTokens);
-
-        final boolean isToday = endDate.isEqual(LocalDate.now());
-        final AssetPrice startPrice = getHistoricalSpotPrice(symbol, startDate);
-        // if the end date is today, get current spot price. Else get historical price
-        final AssetPrice endPrice = isToday ? getSpotPrice(symbol) : getHistoricalSpotPrice(symbol, endDate);
-
-        return StatisticsUtilities.buildStatistic(startPrice, endPrice);
+    @Async
+    private CompletableFuture<AssetPrice> getAssetPriceAsync(String symbol) {
+        return CompletableFuture.supplyAsync(() -> getAssetPrice(symbol));
     }
 
     @Async
-    private CompletableFuture<AssetPrice> getSpotPriceAsync(String symbol) {
-        return CompletableFuture.supplyAsync(() -> getSpotPrice(symbol));
+    private CompletableFuture<AssetPrice> getHistoricalAssetPriceAsync(String symbol, LocalDate date) {
+        return CompletableFuture.supplyAsync(() -> getHistoricalAssetPrice(symbol, date));
     }
 
-    @Async
-    private CompletableFuture<AssetPrice> getHistoricalSpotPriceAsync(String symbol, LocalDate date) {
-        return CompletableFuture.supplyAsync(() -> getHistoricalSpotPrice(symbol, date));
-    }
-
-    public BatchResponse getSpotPrices(List<String> symbols) {
+    public BatchResponse getAssetPrices(List<String> symbols) {
         final List<AssetPrice> responses;
         final List<CompletableFuture<AssetPrice>> completableFutures = new ArrayList<>();
 
@@ -114,7 +103,7 @@ public class CoinbaseService {
 
         final Instant start = Instant.now();
         // store list of symbols requests to be run in parallel
-        symbols.forEach(symbol -> completableFutures.add(getSpotPriceAsync(symbol)));
+        symbols.forEach(symbol -> completableFutures.add(getAssetPriceAsync(symbol)));
         // wait for all requests to be completed
         CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
         // calculate the time it took for our request to be completed
@@ -128,31 +117,40 @@ public class CoinbaseService {
                 logger.error(e.getMessage());
             }
             return response;
-        }).collect(Collectors.toList());
+        }).toList();
 
         final Map<String, Object> logEntries = new HashMap<>();
         logEntries.put("runtime", end.minusMillis(start.toEpochMilli()).toEpochMilli());
         logEntries.put("responses", responses);
-
-        logger.info(Markers.appendEntries(logEntries), "Completed async spot price request");
+        logger.info(Markers.appendEntries(logEntries), "Completed batch spot price request");
 
         return new BatchResponse(responses);
     }
 
-    public BatchResponse getHistoricalSpotPrices(BatchRequest batchRequest) {
+    public Statistic getAssetPriceStatistics(String symbol, LocalDate startDate, LocalDate endDate) {
+        RequestUtilities.validateSymbol(symbol, availableTokens);
+
+        final boolean isToday = endDate.isEqual(LocalDate.now());
+        final AssetPrice startPrice = getHistoricalAssetPrice(symbol, startDate);
+        // if the end date is today, get current spot price. Else get historical price
+        final AssetPrice endPrice = isToday ? getAssetPrice(symbol) : getHistoricalAssetPrice(symbol, endDate);
+
+        return StatisticsUtilities.buildStatistic(startPrice, endPrice);
+    }
+
+    public BatchResponse getHistoricalAssetPrices(BatchRequest batchRequest) {
         final List<AssetPrice> responses;
         final List<CompletableFuture<AssetPrice>> completableFutures = new ArrayList<>();
 
-        logger.info("Fetching historical prices asynchronously {}", batchRequest.getRequests());
+        logger.info(Markers.append("request", batchRequest), "Fetching historical prices asynchronously");
 
         final Instant start = Instant.now();
         // store list of completableFutures to be run in parallel
-        batchRequest.getRequests().forEach((request) -> completableFutures.add(getHistoricalSpotPriceAsync(request.getSymbol(), request.getStartDate())));
+        batchRequest.getRequests().forEach((request) -> completableFutures.add(getHistoricalAssetPriceAsync(request.getSymbol(), request.getStartDate())));
         // wait for all completableFutures to be completed
         CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
         // calculate the time it took for our request to be completed
         final Instant end = Instant.now();
-        logger.info("Completed async historical spot price request in {}ms", end.minusMillis(start.toEpochMilli()).toEpochMilli());
 
         responses = completableFutures.stream().map(c -> {
             AssetPrice response = null;
@@ -162,7 +160,12 @@ public class CoinbaseService {
                 logger.error(e.getMessage());
             }
             return response;
-        }).collect(Collectors.toList());
+        }).toList();
+
+        final Map<String, Object> logEntries = new HashMap<>();
+        logEntries.put("runtime", end.minusMillis(start.toEpochMilli()).toEpochMilli());
+        logEntries.put("responses", responses);
+        logger.info(Markers.appendEntries(logEntries), "Completed batch historical crypto price request");
 
         return new BatchResponse(responses);
     }

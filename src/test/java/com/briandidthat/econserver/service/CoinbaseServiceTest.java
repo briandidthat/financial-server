@@ -67,31 +67,31 @@ class CoinbaseServiceTest {
 
     @Test
     void testGetSpotPrice() {
-        AssetPrice tickerResponse = service.getSpotPrice(TestingConstants.BTC);
+        AssetPrice tickerResponse = service.getAssetPrice(TestingConstants.BTC);
         assertEquals(TestingConstants.BTC_PRICE, tickerResponse);
     }
 
     @Test
     void testGetMultipleSpotPrices() {
-        BatchResponse response = service.getSpotPrices(TestingConstants.TOKENS);
+        BatchResponse response = service.getAssetPrices(TestingConstants.TOKENS);
         assertIterableEquals(List.of(TestingConstants.BTC_PRICE, TestingConstants.BNB_PRICE, TestingConstants.ETH_PRICE), response.assetPrices());
     }
 
     @Test
     void testGetHistoricalSpotPrice() {
-        AssetPrice response = service.getHistoricalSpotPrice(TestingConstants.ETH, TestingConstants.START_DATE);
+        AssetPrice response = service.getHistoricalAssetPrice(TestingConstants.ETH, TestingConstants.START_DATE);
         assertEquals(TestingConstants.HISTORICAL_ETH_PRICE, response);
     }
 
     @Test
     void testGetHistoricalSpotPrices() {
-        BatchResponse response = service.getHistoricalSpotPrices(TestingConstants.HISTORICAL_BATCH_REQUEST);
+        BatchResponse response = service.getHistoricalAssetPrices(TestingConstants.HISTORICAL_BATCH_REQUEST);
         assertIterableEquals(List.of(TestingConstants.HISTORICAL_BTC_PRICE, TestingConstants.HISTORICAL_BNB_PRICE, TestingConstants.HISTORICAL_ETH_PRICE), response.assetPrices());
     }
 
     @Test
     void testGetPriceStatistics() {
-        Statistic statistic = service.getPriceStatistics(TestingConstants.ETH, TestingConstants.START_DATE, TestingConstants.END_DATE);
+        Statistic statistic = service.getAssetPriceStatistics(TestingConstants.ETH, TestingConstants.START_DATE, TestingConstants.END_DATE);
         assertEquals("-1100.00", statistic.priceChange());
         assertEquals("-27.50", statistic.percentChange());
         assertEquals("2 Years", statistic.timeFrame());

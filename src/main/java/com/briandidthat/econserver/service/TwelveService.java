@@ -2,6 +2,7 @@ package com.briandidthat.econserver.service;
 
 import com.briandidthat.econserver.domain.AssetPrice;
 import com.briandidthat.econserver.domain.BatchResponse;
+import com.briandidthat.econserver.domain.coinbase.BatchRequest;
 import com.briandidthat.econserver.domain.coinbase.Statistic;
 import com.briandidthat.econserver.domain.exception.BadRequestException;
 import com.briandidthat.econserver.domain.twelve.StockDetails;
@@ -18,15 +19,19 @@ import jakarta.validation.constraints.Size;
 import net.logstash.logback.marker.Markers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class TwelveService {
@@ -38,7 +43,7 @@ public class TwelveService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public AssetPrice getStockPrice(String apiKey, String symbol) {
+    public AssetPrice getAssetPrice(String apiKey, String symbol) {
         RequestUtilities.validateSymbol(symbol, availableStocks);
 
         final Map<String, Object> params = new LinkedHashMap<>();
@@ -57,7 +62,7 @@ public class TwelveService {
         }
     }
 
-    public AssetPrice getHistoricalStockPrice(String apiKey, String symbol, LocalDate date) {
+    public AssetPrice getHistoricalAssetPrice(String apiKey, String symbol, LocalDate date) {
         RequestUtilities.validateSymbol(symbol, availableStocks);
 
         final Map<String, Object> params = new LinkedHashMap<>();
@@ -81,7 +86,7 @@ public class TwelveService {
         }
     }
 
-    public BatchResponse getMultipleStockPrices(String apiKey, @Size(min = 2, max = 5) List<String> symbols) {
+    public BatchResponse getMultipleAssetPrices(String apiKey, @Size(min = 2, max = 5) List<String> symbols) {
         RequestUtilities.validateSymbols(symbols, availableStocks);
 
         final Map<String, Object> params = new LinkedHashMap<>();
@@ -105,11 +110,48 @@ public class TwelveService {
         }
     }
 
-    public Statistic getStockPriceStatistic(String apiKey, String symbol, LocalDate startDate) {
+    @Async
+    private CompletableFuture<AssetPrice> getHistoricalAssetPriceAsync(String apiKey, String symbol, LocalDate date) {
+        return CompletableFuture.supplyAsync(() -> getHistoricalAssetPrice(apiKey, symbol, date));
+    }
+
+    public BatchResponse getMultipleHistoricalAssetPrices(String apiKey, BatchRequest batchRequest) {
+        final List<CompletableFuture<AssetPrice>> completableFutures = new ArrayList<>();
+
+        logger.info(Markers.append("request", batchRequest), "Fetching historical prices asynchronously");
+
+        final Instant start = Instant.now();
+        // store list of completableFutures to be run in parallel
+        batchRequest.getRequests().forEach((request -> completableFutures.add(getHistoricalAssetPriceAsync(apiKey, request.getSymbol(), request.getStartDate()))));
+        // wait for all requests to be completed
+        CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
+        // calculate the time it took for our request to be completed
+        final Instant end = Instant.now();
+        logger.info("Completed async historical spot price request in {}ms", end.minusMillis(start.toEpochMilli()).toEpochMilli());
+
+        final List<AssetPrice> responses = completableFutures.stream().map(c -> {
+            AssetPrice response = null;
+            try {
+                response = c.get();
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+            }
+            return response;
+        }).toList();
+
+        final Map<String, Object> logEntries = new HashMap<>();
+        logEntries.put("runtime", end.minusMillis(start.toEpochMilli()).toEpochMilli());
+        logEntries.put("responses", responses);
+        logger.info(Markers.appendEntries(logEntries), "Completed batch historical stock price request");
+
+        return new BatchResponse(responses);
+    }
+
+    public Statistic getAssetPriceStatistics(String apiKey, String symbol, LocalDate startDate) {
         RequestUtilities.validateSymbol(symbol, availableStocks);
 
-        final AssetPrice endPrice = getHistoricalStockPrice(apiKey, symbol, startDate);
-        final AssetPrice startPrice = getStockPrice(apiKey, symbol);
+        final AssetPrice endPrice = getHistoricalAssetPrice(apiKey, symbol, startDate);
+        final AssetPrice startPrice = getAssetPrice(apiKey, symbol);
 
         return StatisticsUtilities.buildStatistic(startPrice, endPrice);
     }

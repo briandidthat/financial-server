@@ -5,7 +5,6 @@ import com.briandidthat.econserver.domain.BatchResponse;
 import com.briandidthat.econserver.domain.twelve.StockPriceResponse;
 import com.briandidthat.econserver.util.RequestUtilities;
 import com.briandidthat.econserver.util.TestingConstants;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
@@ -68,14 +66,14 @@ class TwelveServiceTest {
     }
 
     @Test
-    void getStockPrice() {
-        AssetPrice response = service.getStockPrice(TestingConstants.TEST_API_KEY, "AAPL");
+    void getAssetPrice() {
+        AssetPrice response = service.getAssetPrice(TestingConstants.TEST_API_KEY, "AAPL");
         assertEquals(TestingConstants.APPLE_PRICE, response);
     }
 
     @Test
     void testGetMultipleStockPrices() {
-        BatchResponse response = service.getMultipleStockPrices(TestingConstants.TEST_API_KEY, List.of("AAPL", "GOOG"));
+        BatchResponse response = service.getMultipleAssetPrices(TestingConstants.TEST_API_KEY, List.of("AAPL", "GOOG"));
         assertEquals(TestingConstants.BATCH_STOCK_RESPONSE, response);
     }
 }
