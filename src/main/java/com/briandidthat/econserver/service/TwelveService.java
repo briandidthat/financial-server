@@ -48,6 +48,8 @@ public class TwelveService {
         final Map<String, Object> params = new LinkedHashMap<>();
         params.put("symbol", symbol);
         params.put("apikey", apiKey);
+        params.put("dp", 2);
+
         try {
             logger.info("Fetching current price for {}", symbol);
             final String url = RequestUtilities.formatQueryString(twelveBaseUrl + "/price", params);
@@ -69,6 +71,7 @@ public class TwelveService {
         params.put("apikey", apiKey);
         params.put("date", date);
         params.put("interval", "1day");
+        params.put("dp", 2);
 
         try {
             logger.info("Fetching price of {} on {}", symbol, date);
@@ -91,6 +94,8 @@ public class TwelveService {
         final Map<String, Object> params = new LinkedHashMap<>();
         params.put("symbol", String.join(",", symbols));
         params.put("apikey", apiKey);
+        params.put("dp", 2);
+
         try {
             logger.info("Fetching current price for {}", symbols);
             final String url = RequestUtilities.formatQueryString(twelveBaseUrl + "/price", params);

@@ -43,15 +43,18 @@ class TwelveServiceTest {
         final Map<String, Object> params = new LinkedHashMap<>();
         params.put("symbol", "AAPL");
         params.put("apikey", TestingConstants.TEST_API_KEY);
+        params.put("dp", 2);
 
         // params for multiple stock price request
         final Map<String, Object> batchParams = new LinkedHashMap<>();
         batchParams.put("symbol", "AAPL,GOOG");
         batchParams.put("apikey", TestingConstants.TEST_API_KEY);
+        batchParams.put("dp", 2);
 
         // params for multiple historical stock price requests
         final Map<String, Object> batchHistoricalParams = new LinkedHashMap<>();
         batchHistoricalParams.put("apikey", TestingConstants.TEST_API_KEY);
+        batchHistoricalParams.put("dp", 2);
 
         // URLs for test requests
         final String URL = RequestUtilities.formatQueryString(twelveBaseUrl + "/price", params);
