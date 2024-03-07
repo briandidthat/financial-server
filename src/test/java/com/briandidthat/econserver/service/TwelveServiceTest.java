@@ -49,9 +49,14 @@ class TwelveServiceTest {
         batchParams.put("symbol", "AAPL,GOOG");
         batchParams.put("apikey", TestingConstants.TEST_API_KEY);
 
+        // params for multiple historical stock price requests
+        final Map<String, Object> batchHistoricalParams = new LinkedHashMap<>();
+        batchHistoricalParams.put("apikey", TestingConstants.TEST_API_KEY);
+
         // URLs for test requests
         final String URL = RequestUtilities.formatQueryString(twelveBaseUrl + "/price", params);
         final String batchUrl = RequestUtilities.formatQueryString(twelveBaseUrl + "/price", batchParams);
+        final String batchHistoricalUrl = RequestUtilities.formatQueryString(twelveBaseUrl + "/time_series", batchHistoricalParams);
 
         final Map<String, Map<String, String>> response = new HashMap<>();
         response.put("AAPL", Map.of("price", "108.50"));
@@ -75,5 +80,13 @@ class TwelveServiceTest {
     void testGetMultipleStockPrices() {
         BatchResponse response = service.getMultipleAssetPrices(TestingConstants.TEST_API_KEY, List.of("AAPL", "GOOG"));
         assertEquals(TestingConstants.BATCH_STOCK_RESPONSE, response);
+    }
+
+    @Test
+    void getMultipleHistoricalAssetPrices() {
+    }
+
+    @Test
+    void getAssetPriceStatistics() {
     }
 }

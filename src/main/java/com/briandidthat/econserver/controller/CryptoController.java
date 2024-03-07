@@ -1,8 +1,8 @@
 package com.briandidthat.econserver.controller;
 
 import com.briandidthat.econserver.domain.AssetPrice;
-import com.briandidthat.econserver.domain.coinbase.BatchRequest;
 import com.briandidthat.econserver.domain.BatchResponse;
+import com.briandidthat.econserver.domain.BatchRequest;
 import com.briandidthat.econserver.domain.coinbase.Statistic;
 import com.briandidthat.econserver.service.CoinbaseService;
 import jakarta.validation.Valid;
@@ -39,10 +39,7 @@ public class CryptoController {
     }
 
     @GetMapping("/statistics")
-    public Statistic getCryptoPriceStatistics(@RequestHeader String caller,
-                                        @RequestParam String symbol,
-                                        @RequestParam LocalDate startDate,
-                                        @RequestParam LocalDate endDate) {
+    public Statistic getCryptoPriceStatistics(@RequestHeader String caller, @RequestParam String symbol, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate) {
         logger.info("Spot statistics request by {}", caller);
         return service.getAssetPriceStatistics(symbol, startDate, endDate);
     }
@@ -58,5 +55,4 @@ public class CryptoController {
         logger.info("Batch historical spot request by {}", caller);
         return service.getHistoricalAssetPrices(request);
     }
-
 }

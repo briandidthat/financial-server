@@ -1,4 +1,4 @@
-package com.briandidthat.econserver.domain.coinbase;
+package com.briandidthat.econserver.domain;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
