@@ -1,6 +1,6 @@
 package com.briandidthat.econserver.controller;
 
-import com.briandidthat.econserver.domain.coinbase.BatchRequest;
+import com.briandidthat.econserver.domain.BatchRequest;
 import com.briandidthat.econserver.domain.BatchResponse;
 import com.briandidthat.econserver.domain.exception.BackendClientException;
 import com.briandidthat.econserver.domain.exception.BadRequestException;

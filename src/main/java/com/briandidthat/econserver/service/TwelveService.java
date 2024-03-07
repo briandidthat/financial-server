@@ -2,7 +2,7 @@ package com.briandidthat.econserver.service;
 
 import com.briandidthat.econserver.domain.AssetPrice;
 import com.briandidthat.econserver.domain.BatchResponse;
-import com.briandidthat.econserver.domain.coinbase.BatchRequest;
+import com.briandidthat.econserver.domain.BatchRequest;
 import com.briandidthat.econserver.domain.coinbase.Statistic;
 import com.briandidthat.econserver.domain.exception.BadRequestException;
 import com.briandidthat.econserver.domain.twelve.StockDetails;
@@ -19,7 +19,6 @@ import jakarta.validation.constraints.Size;
 import net.logstash.logback.marker.Markers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;

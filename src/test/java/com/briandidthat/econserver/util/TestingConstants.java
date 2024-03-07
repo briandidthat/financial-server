@@ -1,14 +1,15 @@
 package com.briandidthat.econserver.util;
 
 import com.briandidthat.econserver.domain.AssetPrice;
+import com.briandidthat.econserver.domain.BatchRequest;
 import com.briandidthat.econserver.domain.BatchResponse;
+import com.briandidthat.econserver.domain.Request;
 import com.briandidthat.econserver.domain.coinbase.*;
 import com.briandidthat.econserver.domain.fred.FredResponse;
 import com.briandidthat.econserver.domain.fred.Observation;
 import com.briandidthat.econserver.domain.twelve.StockPriceResponse;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 
@@ -42,8 +43,6 @@ public final class TestingConstants {
 
     // FRED CONSTANTS
     public static final String AVERAGE_MORTGAGE_RATE = "MORTGAGE30US";
-    public static final String SP_500 = "SP500";
-
     public static final FredResponse MORTGAGE_RATE_RESPONSE = new FredResponse("07/12/2023", "08/12/2023", 2, List.of(new Observation("07/12/2023", "07/13/2023", "07/12/2023", "6.76"), new Observation("07/12/2023", "07/14/2023", "07/13/2023", "6.78")));
     public static final Observation CURRENT_MORTGAGE_RATE = new Observation("07/12/2023", "07/13/2023", "07/12/2023", "6.76");
 

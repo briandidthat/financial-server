@@ -2,7 +2,7 @@ package com.briandidthat.econserver.service;
 
 import com.briandidthat.econserver.domain.AssetPrice;
 import com.briandidthat.econserver.domain.BatchResponse;
-import com.briandidthat.econserver.domain.coinbase.BatchRequest;
+import com.briandidthat.econserver.domain.BatchRequest;
 import com.briandidthat.econserver.domain.coinbase.SpotPriceResponse;
 import com.briandidthat.econserver.domain.coinbase.Statistic;
 import com.briandidthat.econserver.domain.coinbase.Token;
@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 @Service
 public class CoinbaseService {
