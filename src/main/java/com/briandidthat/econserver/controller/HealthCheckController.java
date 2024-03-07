@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -22,8 +21,8 @@ public class HealthCheckController {
     }
 
     @GetMapping("/healthz")
-    public ResponseEntity<String> isAvailable(@RequestHeader(required = false) String caller) {
-        logger.info("Health check caller: {}. Application Health: {}", caller, available.get() ? AVAILABLE : UNAVAILABLE);
+    public ResponseEntity<String> isAvailable() {
+        logger.info("Application Health: {}", available.get() ? AVAILABLE : UNAVAILABLE);
         if (!available.get()) return ResponseEntity.internalServerError().body(UNAVAILABLE);
         return ResponseEntity.ok(AVAILABLE);
     }
@@ -31,6 +30,7 @@ public class HealthCheckController {
     @GetMapping("/readyz")
     public ResponseEntity<String> isReady() {
         if (!available.get()) return ResponseEntity.internalServerError().body(UNAVAILABLE);
+        logger.info("Application Health: {}", available.get() ? AVAILABLE : UNAVAILABLE);
         return ResponseEntity.ok(AVAILABLE);
     }
 }

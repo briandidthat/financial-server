@@ -37,7 +37,6 @@ class StockControllerTest {
 
         this.mockMvc.perform(get("/stocks")
                 .param("symbol", "AAPL")
-                .header("caller", "test")
                 .header("apiKey", TestingConstants.TEST_API_KEY))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
@@ -52,7 +51,6 @@ class StockControllerTest {
 
         this.mockMvc.perform(get("/stocks/batch")
                 .param("symbols", "AAPL", "GOOG")
-                .header("caller", "test")
                 .header("apiKey", TestingConstants.TEST_API_KEY))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
@@ -67,7 +65,6 @@ class StockControllerTest {
 
         this.mockMvc.perform(get("/stocks")
                 .param("symbol", "ALABAMA")
-                .header("caller", "test")
                 .header("apiKey", TestingConstants.TEST_API_KEY))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(containsString(expectedOutput)))
@@ -81,7 +78,6 @@ class StockControllerTest {
 
         this.mockMvc.perform(get("/stocks/batch")
                 .param("symbols", "AAPL,GOOG,VOO,TSLA,NVDA,VIX")
-                .header("caller", "test")
                 .header("apiKey", TestingConstants.TEST_API_KEY))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().string(containsString(expectedOutput)))

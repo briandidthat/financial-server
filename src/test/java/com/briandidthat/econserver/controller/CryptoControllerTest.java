@@ -45,8 +45,7 @@ class CryptoControllerTest {
         when(service.getAssetPrice(TestingConstants.BTC)).thenReturn(TestingConstants.BTC_PRICE);
 
         this.mockMvc.perform(get("/crypto/spot")
-                .params(params)
-                .header("caller", "test"))
+                .params(params))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
@@ -64,8 +63,7 @@ class CryptoControllerTest {
         params.add("symbols", symbolsString);
 
         this.mockMvc.perform(get("/crypto/spot/batch")
-                .params(params)
-                .header("caller", "test"))
+                .params(params))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
@@ -81,8 +79,7 @@ class CryptoControllerTest {
         params.add("date", TestingConstants.START_DATE.toString());
 
         this.mockMvc.perform(get("/crypto/spot/historical")
-                .params(params)
-                .header("caller", "test"))
+                .params(params))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
@@ -99,7 +96,6 @@ class CryptoControllerTest {
         String outputJson = mapper.writeValueAsString(expectedResponse);
 
         this.mockMvc.perform(post("/crypto/spot/batch/historical")
-                .header("caller", "test")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(inputJson))
                 .andExpect(status().isOk())
@@ -119,8 +115,7 @@ class CryptoControllerTest {
         params.add("endDate", TestingConstants.END_DATE.toString());
 
         this.mockMvc.perform(get("/crypto/spot/statistics")
-                .params(params)
-                .header("caller", "test"))
+                .params(params))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
                 .andDo(print());
@@ -130,27 +125,13 @@ class CryptoControllerTest {
 
     // 400
     @Test
-    void testGetSpotPriceShouldHandleBadRequestException() throws Exception {
-        String expectedOutput = "Required request header 'caller' for method parameter type String is not present";
-
-        // should throw 400 exception due to missing caller header
-        this.mockMvc.perform(get("/crypto/spot")
-                .param("symbol", TestingConstants.BTC))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString(expectedOutput)))
-                .andDo(print());
-    }
-
-    // 400
-    @Test
     void testGetSpotPriceShouldHandleResourceNotFoundException() throws Exception {
         String expectedOutput = "Invalid symbol: ALABAMA";
 
         when(service.getAssetPrice("ALABAMA")).thenThrow(new BadRequestException(expectedOutput));
         // should throw 400 exception due to invalid symbol
         this.mockMvc.perform(get("/crypto/spot")
-                .param("symbol", "ALABAMA")
-                .header("caller", "test"))
+                .param("symbol", "ALABAMA"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(containsString(expectedOutput)))
                 .andDo(print());
@@ -164,8 +145,7 @@ class CryptoControllerTest {
         params.add("symbols", String.join(",", List.of(TestingConstants.BTC, TestingConstants.BNB, TestingConstants.ETH, "USDC", "CAKE", "APE")));
 
         this.mockMvc.perform(get("/crypto/spot/batch")
-                .params(params)
-                .header("caller", "test"))
+                .params(params))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().string(containsString("symbols: size must be between 2 and 5")))
                 .andDo(print());
@@ -179,8 +159,7 @@ class CryptoControllerTest {
         when(service.getAssetPrice(TestingConstants.ETH)).thenThrow(new BackendClientException(expectedOutput));
         // should throw 500 exception due to backend issue
         this.mockMvc.perform(get("/crypto/spot")
-                .param("symbol", TestingConstants.ETH)
-                .header("caller", "test"))
+                .param("symbol", TestingConstants.ETH))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string(containsString(expectedOutput)))
                 .andDo(print());
