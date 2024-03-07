@@ -19,16 +19,14 @@ public class FredController {
     private FredService service;
 
     @GetMapping("/observations/{seriesId}")
-    public FredResponse getObservations(@RequestHeader String apiKey, @RequestHeader String caller, @PathVariable String seriesId,
+    public FredResponse getObservations(@RequestHeader String apiKey, @PathVariable String seriesId,
                                         @RequestParam(required = false) LinkedHashMap<String, Object> params) {
-        logger.info("Observation request by {}", caller);
         return service.getObservations(apiKey, seriesId, params);
     }
 
     @GetMapping("/observations/{seriesId}/recent")
-    public Observation getMostRecentObservation(@RequestHeader String apiKey, @RequestHeader String caller, @PathVariable String seriesId,
+    public Observation getMostRecentObservation(@RequestHeader String apiKey, @PathVariable String seriesId,
                                                 @RequestParam(required = false) LinkedHashMap<String, Object> params) {
-        logger.info("Observation request by {}", caller);
         return service.getMostRecentObservation(apiKey, seriesId, params);
     }
 }

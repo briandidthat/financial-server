@@ -36,7 +36,6 @@ class FredControllerTest {
                 .thenReturn(TestingConstants.MORTGAGE_RATE_RESPONSE);
 
         this.mockMvc.perform(get("/fred/observations/{seriesId}",TestingConstants.AVERAGE_MORTGAGE_RATE)
-                .header("caller", "test")
                 .header("apiKey", TestingConstants.TEST_API_KEY))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
@@ -51,7 +50,6 @@ class FredControllerTest {
                 .thenReturn(TestingConstants.CURRENT_MORTGAGE_RATE);
 
         this.mockMvc.perform(get("/fred/observations/{seriesId}/recent",TestingConstants.AVERAGE_MORTGAGE_RATE)
-                .header("caller", "test")
                 .header("apiKey", TestingConstants.TEST_API_KEY))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
@@ -67,7 +65,6 @@ class FredControllerTest {
                 .thenThrow(new ResourceNotFoundException(expectedOutput));
 
         this.mockMvc.perform(get("/fred/observations/{seriesId}","randomOperation")
-                .header("caller", "test")
                 .header("apiKey", TestingConstants.TEST_API_KEY))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(containsString(expectedOutput)))
