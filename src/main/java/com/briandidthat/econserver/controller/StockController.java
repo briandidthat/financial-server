@@ -40,7 +40,7 @@ public class StockController {
         return service.getMultipleAssetPrices(apiKey, symbols);
     }
 
-    @GetMapping("/batch/historical")
+    @PostMapping("/batch/historical")
     public BatchResponse getMultipleHistoricalSpotPrices(@RequestHeader String apiKey, @RequestBody @Valid BatchRequest request) {
         return service.getMultipleHistoricalAssetPrices(apiKey, request);
     }

@@ -154,8 +154,8 @@ public class TwelveService {
     public Statistic getAssetPriceStatistics(String apiKey, String symbol, LocalDate startDate) {
         RequestUtilities.validateSymbol(symbol, availableStocks);
 
-        final AssetPrice endPrice = getHistoricalAssetPrice(apiKey, symbol, startDate);
-        final AssetPrice startPrice = getAssetPrice(apiKey, symbol);
+        final AssetPrice startPrice = getHistoricalAssetPrice(apiKey, symbol, startDate);
+        final AssetPrice endPrice = getAssetPrice(apiKey, symbol);
 
         return StatisticsUtilities.buildStatistic(startPrice, endPrice);
     }
