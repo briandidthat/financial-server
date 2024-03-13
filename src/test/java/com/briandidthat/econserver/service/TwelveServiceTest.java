@@ -2,6 +2,7 @@ package com.briandidthat.econserver.service;
 
 import com.briandidthat.econserver.domain.AssetPrice;
 import com.briandidthat.econserver.domain.BatchResponse;
+import com.briandidthat.econserver.domain.coinbase.Statistic;
 import com.briandidthat.econserver.domain.twelve.StockPriceResponse;
 import com.briandidthat.econserver.domain.twelve.TimeSeriesResponse;
 import com.briandidthat.econserver.util.RequestUtilities;
@@ -82,9 +83,10 @@ class TwelveServiceTest {
         final Map<String, Object> params = new LinkedHashMap<>();
         params.put("symbol", TestingConstants.APPLE);
         params.put("apikey", TestingConstants.TEST_API_KEY);
+        params.put("dp", 2);
         params.put("date", TestingConstants.START_DATE);
         params.put("interval", "1day");
-        params.put("dp", 2);
+
         final String historicalAppleUrl = RequestUtilities.formatQueryString(twelveBaseUrl + "/time_series", params);
 
         when(restTemplate.getForObject(historicalAppleUrl, TimeSeriesResponse.class)).thenReturn(TestingConstants.HISTORICAL_APPLE_PRICE_RESPONSE);
@@ -95,9 +97,45 @@ class TwelveServiceTest {
 
     @Test
     void getMultipleHistoricalAssetPrices() {
+        final Map<String, Object> appleParams = new LinkedHashMap<>();
+        appleParams.put("symbol", TestingConstants.APPLE);
+        appleParams.put("apikey", TestingConstants.TEST_API_KEY);
+        appleParams.put("dp", 2);
+        appleParams.put("date", TestingConstants.START_DATE);
+        appleParams.put("interval", "1day");
+
+
+        final Map<String, Object> googleParams = new LinkedHashMap<>(appleParams);
+        googleParams.put("symbol", TestingConstants.GOOGLE);
+
+        final String historicalAppleUrl = RequestUtilities.formatQueryString(twelveBaseUrl + "/time_series", appleParams);
+        final String historicalGoogleUrl = RequestUtilities.formatQueryString(twelveBaseUrl + "/time_series", googleParams);
+
+        when(restTemplate.getForObject(historicalAppleUrl, TimeSeriesResponse.class)).thenReturn(TestingConstants.HISTORICAL_APPLE_PRICE_RESPONSE);
+        when(restTemplate.getForObject(historicalGoogleUrl, TimeSeriesResponse.class)).thenReturn(TestingConstants.HISTORICAL_GOOGLE_PRICE_RESPONSE);
+
+        BatchResponse response = service.getMultipleHistoricalAssetPrices(TestingConstants.TEST_API_KEY, TestingConstants.BATCH_STOCK_REQUEST);
+        assertEquals(TestingConstants.HISTORICAL_BATCH_STOCK_RESPONSE, response);
     }
 
     @Test
     void getAssetPriceStatistics() {
+        final Map<String, Object> params = new LinkedHashMap<>();
+        params.put("symbol", TestingConstants.APPLE);
+        params.put("apikey", TestingConstants.TEST_API_KEY);
+        params.put("dp", 2);
+
+        final Map<String, Object> historicalParams = new LinkedHashMap<>(params);
+        historicalParams.put("date", TestingConstants.START_DATE);
+        historicalParams.put("interval", "1day");
+
+        final String url = RequestUtilities.formatQueryString(twelveBaseUrl + "/price", params);
+        final String historicalUrl = RequestUtilities.formatQueryString(twelveBaseUrl + "/time_series", historicalParams);
+
+        when(restTemplate.getForObject(url, StockPriceResponse.class)).thenReturn(TestingConstants.APPLE_PRICE_RESPONSE);
+        when(restTemplate.getForObject(historicalUrl, TimeSeriesResponse.class)).thenReturn(TestingConstants.HISTORICAL_APPLE_PRICE_RESPONSE);
+
+        Statistic statistic = service.getAssetPriceStatistics(TestingConstants.TEST_API_KEY, TestingConstants.APPLE, TestingConstants.START_DATE);
+        assertEquals(TestingConstants.APPLE_STATISTICS, statistic);
     }
 }

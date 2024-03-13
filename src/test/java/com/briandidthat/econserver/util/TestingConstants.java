@@ -26,8 +26,9 @@ public final class TestingConstants {
 
     public static final String TEST_API_KEY = "ABCDEFG";
 
-    public static final LocalDate START_DATE = LocalDate.of(2021, 8, 1);
-    public static final LocalDate END_DATE = LocalDate.of(2023, 8, 1); // 2 yrs in between (24 months)
+    public static final LocalDate END_DATE = LocalDate.now(); // 2 yrs in between (24 months)
+    public static final LocalDate START_DATE = END_DATE.minusYears(2);
+
 
     public static final List<String> TOKENS = List.of(BTC, BNB, ETH);
     public static final Map<String, Boolean> AVAILABLE_TOKENS = Map.of(BTC, true, BNB, true, ETH, true);
@@ -79,8 +80,9 @@ public final class TestingConstants {
     public static final AssetPrice HISTORICAL_APPLE_PRICE = new AssetPrice(APPLE, "200.00", START_DATE);
     public static final AssetPrice HISTORICAL_GOOGLE_PRICE = new AssetPrice(GOOGLE, "250.00", START_DATE);
 
-    public static final Statistic APPLE_STATISTICS = new Statistic(APPLE, HISTORICAL_APPLE_PRICE.getPrice(), APPLE_PRICE.getPrice(), "50.00", "25%", START_DATE, END_DATE, "2 Years");
+    public static final Statistic APPLE_STATISTICS = new Statistic(APPLE, HISTORICAL_APPLE_PRICE.getPrice(), APPLE_PRICE.getPrice(), "-50.00", "-25.00", START_DATE, END_DATE, "2 Years");
 
+    public static final BatchRequest BATCH_STOCK_REQUEST = new BatchRequest(List.of(new Request(APPLE, START_DATE), new Request(GOOGLE, START_DATE)));
     public static final BatchResponse BATCH_STOCK_RESPONSE = new BatchResponse(List.of(APPLE_PRICE, GOOGLE_PRICE));
     public static final BatchResponse HISTORICAL_BATCH_STOCK_RESPONSE = new BatchResponse(List.of(HISTORICAL_APPLE_PRICE, HISTORICAL_GOOGLE_PRICE));
 }

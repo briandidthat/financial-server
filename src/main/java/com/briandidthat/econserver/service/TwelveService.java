@@ -69,9 +69,9 @@ public class TwelveService {
         final Map<String, Object> params = new LinkedHashMap<>();
         params.put("symbol", symbol);
         params.put("apikey", apiKey);
+        params.put("dp", 2);
         params.put("date", date);
         params.put("interval", "1day");
-        params.put("dp", 2);
 
         try {
             logger.info("Fetching price of {} on {}", symbol, date);
