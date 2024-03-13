@@ -60,4 +60,13 @@ public class AssetPrice {
     public int hashCode() {
         return Objects.hash(symbol, price, date);
     }
+
+    @Override
+    public String toString() {
+        return "AssetPrice{" +
+                "symbol='" + symbol + '\'' +
+                ", price='" + price + '\'' +
+                ", date=" + date +
+                '}';
+    }
 }
