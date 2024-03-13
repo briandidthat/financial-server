@@ -56,6 +56,23 @@ class StockControllerTest {
                 .andExpect(content().json(outputJson))
                 .andDo(print());
     }
+
+    @Test
+    void getHistoricalStockPrice() {
+    }
+
+    @Test
+    void getMultipleStockPrices() {
+    }
+
+    @Test
+    void getMultipleHistoricalSpotPrices() {
+    }
+
+    @Test
+    void getStockPriceStatistics() {
+    }
+
     // 400
     @Test
     void testGetStockPriceShouldHandleResourceNotFoundException() throws Exception {

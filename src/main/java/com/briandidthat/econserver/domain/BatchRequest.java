@@ -9,11 +9,10 @@ import java.util.List;
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public final class BatchRequest implements Serializable {
+public final class BatchRequest {
     @Size(min = 2, max = 5)
     @JsonProperty("requests")
     private List<Request> requests;
-
 
     public BatchRequest() {
     }
