@@ -3,8 +3,10 @@ package com.briandidthat.econserver.service;
 import com.briandidthat.econserver.domain.AssetPrice;
 import com.briandidthat.econserver.domain.BatchResponse;
 import com.briandidthat.econserver.domain.twelve.StockPriceResponse;
+import com.briandidthat.econserver.domain.twelve.TimeSeriesResponse;
 import com.briandidthat.econserver.util.RequestUtilities;
 import com.briandidthat.econserver.util.TestingConstants;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,66 +25,72 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class TwelveServiceTest {
+    private final ObjectMapper mapper = new ObjectMapper();
+    private final String twelveBaseUrl = "https://api.twelvedata.com";
     @Mock
     private RestTemplate restTemplate;
     @InjectMocks
     private TwelveService service;
-    private final ObjectMapper mapper = new ObjectMapper();
 
     @BeforeEach
-    void setUp() throws Exception {
-        final String twelveBaseUrl = "https://api.twelvedata.com";
-
-        // params for single stock price request
-        final Map<String, Object> params = new LinkedHashMap<>();
-        params.put("symbol", "AAPL");
-        params.put("apikey", TestingConstants.TEST_API_KEY);
-        params.put("dp", 2);
-
-        // params for multiple stock price request
-        final Map<String, Object> batchParams = new LinkedHashMap<>();
-        batchParams.put("symbol", "AAPL,GOOG");
-        batchParams.put("apikey", TestingConstants.TEST_API_KEY);
-        batchParams.put("dp", 2);
-
-        // params for multiple historical stock price requests
-        final Map<String, Object> batchHistoricalParams = new LinkedHashMap<>();
-        batchHistoricalParams.put("apikey", TestingConstants.TEST_API_KEY);
-        batchHistoricalParams.put("dp", 2);
-
-        // URLs for test requests
-        final String URL = RequestUtilities.formatQueryString(twelveBaseUrl + "/price", params);
-        final String batchUrl = RequestUtilities.formatQueryString(twelveBaseUrl + "/price", batchParams);
-        final String batchHistoricalUrl = RequestUtilities.formatQueryString(twelveBaseUrl + "/time_series", batchHistoricalParams);
-
-        final Map<String, Map<String, String>> response = new HashMap<>();
-        response.put("AAPL", Map.of("price", "108.50"));
-        response.put("GOOG", Map.of("price", "128.50"));
-        final String batchResponse = mapper.writeValueAsString(response);
-
-        when(restTemplate.getForObject(URL, StockPriceResponse.class)).thenReturn(TestingConstants.APPLE_PRICE_RESPONSE);
-        when(restTemplate.getForEntity(batchUrl, String.class)).thenReturn(ResponseEntity.ok(batchResponse));
-
+    void setUp() {
         ReflectionTestUtils.setField(service, "twelveBaseUrl", twelveBaseUrl);
         ReflectionTestUtils.setField(service, "availableStocks", TestingConstants.AVAILABLE_STOCKS);
     }
 
     @Test
     void getAssetPrice() {
-        AssetPrice response = service.getAssetPrice(TestingConstants.TEST_API_KEY, "AAPL");
+        final Map<String, Object> params = new LinkedHashMap<>();
+        params.put("symbol", "AAPL");
+        params.put("apikey", TestingConstants.TEST_API_KEY);
+        params.put("dp", 2);
+
+        final String URL = RequestUtilities.formatQueryString(twelveBaseUrl + "/price", params);
+        when(restTemplate.getForObject(URL, StockPriceResponse.class)).thenReturn(TestingConstants.APPLE_PRICE_RESPONSE);
+
+        AssetPrice response = service.getAssetPrice(TestingConstants.TEST_API_KEY, TestingConstants.APPLE);
         assertEquals(TestingConstants.APPLE_PRICE, response);
     }
 
     @Test
-    void testGetMultipleStockPrices() {
+    void testGetMultipleStockPrices() throws JsonProcessingException {
+        final Map<String, Object> params = new LinkedHashMap<>();
+        params.put("symbol", "AAPL,GOOG");
+        params.put("apikey", TestingConstants.TEST_API_KEY);
+        params.put("dp", 2);
+
+        final Map<String, Map<String, String>> responseMap = new HashMap<>();
+        responseMap.put("AAPL", Map.of("price", "150.00"));
+        responseMap.put("GOOG", Map.of("price", "200.00"));
+        final String batchResponse = mapper.writeValueAsString(responseMap);
+
+        final String batchUrl = RequestUtilities.formatQueryString(twelveBaseUrl + "/price", params);
+        when(restTemplate.getForEntity(batchUrl, String.class)).thenReturn(ResponseEntity.ok(batchResponse));
+
         BatchResponse response = service.getMultipleAssetPrices(TestingConstants.TEST_API_KEY, List.of("AAPL", "GOOG"));
         assertEquals(TestingConstants.BATCH_STOCK_RESPONSE, response);
+    }
+
+    @Test
+    void testGetHistoricalStockPrice() {
+        final Map<String, Object> params = new LinkedHashMap<>();
+        params.put("symbol", TestingConstants.APPLE);
+        params.put("apikey", TestingConstants.TEST_API_KEY);
+        params.put("date", TestingConstants.START_DATE);
+        params.put("interval", "1day");
+        params.put("dp", 2);
+        final String historicalAppleUrl = RequestUtilities.formatQueryString(twelveBaseUrl + "/time_series", params);
+
+        when(restTemplate.getForObject(historicalAppleUrl, TimeSeriesResponse.class)).thenReturn(TestingConstants.HISTORICAL_APPLE_PRICE_RESPONSE);
+
+        AssetPrice response = service.getHistoricalAssetPrice(TestingConstants.TEST_API_KEY, TestingConstants.APPLE, TestingConstants.START_DATE);
+        assertEquals(TestingConstants.HISTORICAL_APPLE_PRICE, response);
     }
 
     @Test

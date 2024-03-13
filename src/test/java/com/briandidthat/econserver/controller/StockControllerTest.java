@@ -31,7 +31,7 @@ class StockControllerTest {
 
     @Test
     void getAssetPrice() throws Exception {
-        final String outputJson = mapper.writeValueAsString(TestingConstants.APPLE_PRICE_RESPONSE);
+        final String outputJson = mapper.writeValueAsString(TestingConstants.APPLE_PRICE);
 
         when(service.getAssetPrice(TestingConstants.TEST_API_KEY,"AAPL")).thenReturn(TestingConstants.APPLE_PRICE);
 
