@@ -1,6 +1,7 @@
 package com.briandidthat.econserver.controller;
 
 import com.briandidthat.econserver.domain.exception.ResourceNotFoundException;
+import com.briandidthat.econserver.domain.exception.RetrievalException;
 import com.briandidthat.econserver.service.TwelveService;
 import com.briandidthat.econserver.util.TestingConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -132,6 +133,21 @@ class StockControllerTest {
                 .param("symbols", "AAPL,GOOG,VOO,TSLA,NVDA,VIX")
                 .header("apiKey", TestingConstants.TEST_API_KEY))
                 .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().string(containsString(expectedOutput)))
+                .andDo(print());
+    }
+
+    // 500
+    @Test
+    void testGetStockPriceShouldHandleRetrievalException() throws Exception {
+        final String expectedOutput = "Unable to connect";
+
+        when(service.getAssetPrice(TestingConstants.TEST_API_KEY, TestingConstants.APPLE)).thenThrow(new RetrievalException(expectedOutput));
+
+        this.mockMvc.perform(get("/stocks")
+                .param("symbol", TestingConstants.APPLE)
+                .header("apiKey", TestingConstants.TEST_API_KEY))
+                .andExpect(status().isInternalServerError())
                 .andExpect(content().string(containsString(expectedOutput)))
                 .andDo(print());
     }
