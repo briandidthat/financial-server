@@ -82,7 +82,7 @@ public final class TestingConstants {
 
     public static final Statistic APPLE_STATISTICS = new Statistic(APPLE, HISTORICAL_APPLE_PRICE.getPrice(), APPLE_PRICE.getPrice(), "-50.00", "-25.00", START_DATE, END_DATE, "2 Years");
 
-    public static final BatchRequest BATCH_STOCK_REQUEST = new BatchRequest(List.of(new Request(APPLE, START_DATE), new Request(GOOGLE, START_DATE)));
     public static final BatchResponse BATCH_STOCK_RESPONSE = new BatchResponse(List.of(APPLE_PRICE, GOOGLE_PRICE));
-    public static final BatchResponse HISTORICAL_BATCH_STOCK_RESPONSE = new BatchResponse(List.of(HISTORICAL_APPLE_PRICE, HISTORICAL_GOOGLE_PRICE));
+    public static final BatchRequest BATCH_HISTORICAL_STOCK_REQUEST = new BatchRequest(List.of(new Request(APPLE, START_DATE), new Request(GOOGLE, START_DATE)));
+    public static final BatchResponse BATCH_HISTORICAL_STOCK_RESPONSE = new BatchResponse(List.of(HISTORICAL_APPLE_PRICE, HISTORICAL_GOOGLE_PRICE));
 }

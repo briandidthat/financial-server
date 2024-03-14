@@ -6,7 +6,7 @@ import com.briandidthat.econserver.domain.BatchRequest;
 import com.briandidthat.econserver.domain.coinbase.SpotPriceResponse;
 import com.briandidthat.econserver.domain.coinbase.Statistic;
 import com.briandidthat.econserver.domain.coinbase.Token;
-import com.briandidthat.econserver.domain.exception.BadRequestException;
+import com.briandidthat.econserver.domain.exception.RetrievalException;
 import com.briandidthat.econserver.util.RequestUtilities;
 import com.briandidthat.econserver.util.StartupManager;
 import com.briandidthat.econserver.util.StatisticsUtilities;
@@ -59,7 +59,7 @@ public class CoinbaseService {
             return assetPrice;
         } catch (Exception e) {
             logger.error("Unable to fetch {} spot price. Reason: {}", symbol, e.getMessage());
-            throw new BadRequestException(e.getMessage());
+            throw new RetrievalException(e);
         }
     }
 
@@ -80,7 +80,7 @@ public class CoinbaseService {
             return assetPrice;
         } catch (Exception e) {
             logger.error("Unable to fetch historical price for {}. Reason: {}", symbol, e.getMessage());
-            throw new BadRequestException(e.getMessage());
+            throw new RetrievalException(e);
         }
     }
 
@@ -112,9 +112,7 @@ public class CoinbaseService {
             AssetPrice response = null;
             try {
                 response = c.get();
-            } catch (Exception e) {
-                logger.error(e.getMessage());
-            }
+            } catch (Exception ignored) {}
             return response;
         }).toList();
 
@@ -155,8 +153,7 @@ public class CoinbaseService {
             AssetPrice response = null;
             try {
                 response = c.get();
-            } catch (Exception e) {
-                logger.error(e.getMessage());
+            } catch (Exception ignored) {
             }
             return response;
         }).toList();
@@ -177,7 +174,7 @@ public class CoinbaseService {
             return result.get(DATA);
         } catch (Exception e) {
             logger.error("Unable to retrieve token list. Reason: {}", e.getMessage());
-            throw new RuntimeException(e);
+            throw new RetrievalException(e);
         }
     }
 
@@ -195,7 +192,7 @@ public class CoinbaseService {
             try {
                 tokens = getAvailableTokens();
                 retry = false;
-            } catch (Exception e) {
+            } catch (RetrievalException e) {
                 retryCount++;
                 if (retryCount == 5) {
                     logger.error("Reached max retries. Count: {}.", retryCount);

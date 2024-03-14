@@ -4,7 +4,7 @@ import com.briandidthat.econserver.domain.AssetPrice;
 import com.briandidthat.econserver.domain.BatchResponse;
 import com.briandidthat.econserver.domain.BatchRequest;
 import com.briandidthat.econserver.domain.coinbase.Statistic;
-import com.briandidthat.econserver.domain.exception.BadRequestException;
+import com.briandidthat.econserver.domain.exception.RetrievalException;
 import com.briandidthat.econserver.domain.twelve.StockDetails;
 import com.briandidthat.econserver.domain.twelve.StockListResponse;
 import com.briandidthat.econserver.domain.twelve.StockPriceResponse;
@@ -59,7 +59,7 @@ public class TwelveService {
             return assetPrice;
         } catch (Exception e) {
             logger.error(e.getMessage());
-            throw new BadRequestException(e.getMessage());
+            throw new RetrievalException(e);
         }
     }
 
@@ -84,7 +84,7 @@ public class TwelveService {
             return assetPrice;
         } catch (Exception e) {
             logger.error(e.getMessage());
-            throw new BadRequestException(e.getMessage());
+            throw new RetrievalException(e);
         }
     }
 
@@ -110,7 +110,7 @@ public class TwelveService {
             });
             return new BatchResponse(results);
         } catch (Exception e) {
-            throw new BadRequestException(e.getMessage());
+            throw new RetrievalException(e);
         }
     }
 
@@ -170,7 +170,7 @@ public class TwelveService {
             return response.stocks();
         } catch (Exception e) {
             logger.error("Unable to retrieve stock list. Reason: {}", e.getMessage());
-            throw new RuntimeException(e);
+            throw new RetrievalException(e);
         }
     }
 
@@ -188,12 +188,16 @@ public class TwelveService {
             try {
                 stocks = getAvailableStocks();
                 retry = false;
-            } catch (Exception e) {
-                retryCount++;
+            } catch (RetrievalException e) {
+                logger.error("Failed to retrieve available stocks. Attempt #{}", ++retryCount);
                 if (retryCount == 5) {
-                    logger.info("Reached max retries. Count: {}", retryCount);
+                    logger.info("Reached max attempts. Count: {}", retryCount);
                     StartupManager.registerResult(this.getClass(), false);
                     return;
+                }
+                try {
+                    Thread.sleep(5000L);
+                } catch (InterruptedException ignored) {
                 }
             }
         }

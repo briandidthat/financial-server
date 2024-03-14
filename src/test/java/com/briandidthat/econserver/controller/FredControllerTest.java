@@ -1,6 +1,7 @@
 package com.briandidthat.econserver.controller;
 
 import com.briandidthat.econserver.domain.exception.ResourceNotFoundException;
+import com.briandidthat.econserver.domain.exception.RetrievalException;
 import com.briandidthat.econserver.service.FredService;
 import com.briandidthat.econserver.util.TestingConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -67,6 +68,21 @@ class FredControllerTest {
         this.mockMvc.perform(get("/fred/observations/{seriesId}","randomOperation")
                 .header("apiKey", TestingConstants.TEST_API_KEY))
                 .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString(expectedOutput)))
+                .andDo(print());
+    }
+
+    // 500
+    @Test
+    void getObservationsShouldHandleRetrievalException() throws Exception {
+        final String expectedOutput = "Retrieval error.";
+
+        when(service.getObservations(TestingConstants.TEST_API_KEY, TestingConstants.AVERAGE_MORTGAGE_RATE, new LinkedHashMap<>()))
+                .thenThrow(new RetrievalException(expectedOutput));
+
+        this.mockMvc.perform(get("/fred/observations/{seriesId}", TestingConstants.AVERAGE_MORTGAGE_RATE)
+                .header("apiKey", TestingConstants.TEST_API_KEY))
+                .andExpect(status().isInternalServerError())
                 .andExpect(content().string(containsString(expectedOutput)))
                 .andDo(print());
     }
