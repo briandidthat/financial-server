@@ -1,6 +1,6 @@
 package com.briandidthat.econserver.controller;
 
-import com.briandidthat.econserver.domain.exception.BackendClientException;
+import com.briandidthat.econserver.domain.exception.RetrievalException;
 import com.briandidthat.econserver.domain.exception.BadRequestException;
 import com.briandidthat.econserver.domain.exception.ExceptionDetails;
 import com.briandidthat.econserver.domain.exception.ResourceNotFoundException;
@@ -58,8 +58,8 @@ public class ControllerExceptionHandler {
         return new ResponseEntity(violations, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    @ExceptionHandler(BackendClientException.class)
-    private ResponseEntity<Error> handleInternalServerError(Exception e, WebRequest request) {
+    @ExceptionHandler(RetrievalException.class)
+    private ResponseEntity<Error> handleRetrievalException(Exception e, WebRequest request) {
         ExceptionDetails details = new ExceptionDetails(LocalDateTime.now(), e.getMessage(), request.getDescription(false));
         return new ResponseEntity(details, HttpStatus.INTERNAL_SERVER_ERROR);
     }

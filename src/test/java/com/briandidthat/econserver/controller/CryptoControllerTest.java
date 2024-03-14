@@ -2,7 +2,7 @@ package com.briandidthat.econserver.controller;
 
 import com.briandidthat.econserver.domain.BatchRequest;
 import com.briandidthat.econserver.domain.BatchResponse;
-import com.briandidthat.econserver.domain.exception.BackendClientException;
+import com.briandidthat.econserver.domain.exception.RetrievalException;
 import com.briandidthat.econserver.domain.exception.BadRequestException;
 import com.briandidthat.econserver.service.CoinbaseService;
 import com.briandidthat.econserver.util.TestingConstants;
@@ -87,13 +87,10 @@ class CryptoControllerTest {
 
     @Test
     void testGetMultipleHistoricalSpotPrices() throws Exception {
-        BatchRequest batchRequest = TestingConstants.HISTORICAL_BATCH_REQUEST;
-        BatchResponse expectedResponse = TestingConstants.BATCH_HISTORICAL_SPOT_RESPONSE;
+        String inputJson = mapper.writeValueAsString(TestingConstants.HISTORICAL_BATCH_REQUEST);
+        String outputJson = mapper.writeValueAsString(TestingConstants.BATCH_HISTORICAL_SPOT_RESPONSE);
 
-        when(service.getHistoricalAssetPrices(batchRequest)).thenReturn(expectedResponse);
-
-        String inputJson = mapper.writeValueAsString(batchRequest);
-        String outputJson = mapper.writeValueAsString(expectedResponse);
+        when(service.getHistoricalAssetPrices(TestingConstants.HISTORICAL_BATCH_REQUEST)).thenReturn(TestingConstants.BATCH_HISTORICAL_SPOT_RESPONSE);
 
         this.mockMvc.perform(post("/crypto/spot/batch/historical")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -156,7 +153,7 @@ class CryptoControllerTest {
     void testGetSpotPriceShouldHandleBackendClientException() throws Exception {
         String expectedOutput = "SocketTimeoutException: Cannot connect";
 
-        when(service.getAssetPrice(TestingConstants.ETH)).thenThrow(new BackendClientException(expectedOutput));
+        when(service.getAssetPrice(TestingConstants.ETH)).thenThrow(new RetrievalException(expectedOutput));
         // should throw 500 exception due to backend issue
         this.mockMvc.perform(get("/crypto/spot")
                 .param("symbol", TestingConstants.ETH))

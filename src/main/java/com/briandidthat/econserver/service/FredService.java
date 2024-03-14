@@ -1,6 +1,7 @@
 package com.briandidthat.econserver.service;
 
 import com.briandidthat.econserver.domain.exception.BadRequestException;
+import com.briandidthat.econserver.domain.exception.RetrievalException;
 import com.briandidthat.econserver.domain.fred.FredResponse;
 import com.briandidthat.econserver.domain.fred.Observation;
 import com.briandidthat.econserver.util.RequestUtilities;
@@ -35,7 +36,7 @@ public class FredService {
             return restTemplate.getForObject(url, FredResponse.class);
         } catch (RestClientException e) {
             logger.error(e.getMessage());
-            throw new BadRequestException(e.getMessage());
+            throw new RetrievalException(e);
         }
     }
 

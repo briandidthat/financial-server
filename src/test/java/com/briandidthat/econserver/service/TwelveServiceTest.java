@@ -114,8 +114,8 @@ class TwelveServiceTest {
         when(restTemplate.getForObject(historicalAppleUrl, TimeSeriesResponse.class)).thenReturn(TestingConstants.HISTORICAL_APPLE_PRICE_RESPONSE);
         when(restTemplate.getForObject(historicalGoogleUrl, TimeSeriesResponse.class)).thenReturn(TestingConstants.HISTORICAL_GOOGLE_PRICE_RESPONSE);
 
-        BatchResponse response = service.getMultipleHistoricalAssetPrices(TestingConstants.TEST_API_KEY, TestingConstants.BATCH_STOCK_REQUEST);
-        assertEquals(TestingConstants.HISTORICAL_BATCH_STOCK_RESPONSE, response);
+        BatchResponse response = service.getMultipleHistoricalAssetPrices(TestingConstants.TEST_API_KEY, TestingConstants.BATCH_HISTORICAL_STOCK_REQUEST);
+        assertEquals(TestingConstants.BATCH_HISTORICAL_STOCK_RESPONSE, response);
     }
 
     @Test
