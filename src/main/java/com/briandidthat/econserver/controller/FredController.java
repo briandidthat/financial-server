@@ -13,8 +13,6 @@ import java.util.LinkedHashMap;
 @RestController
 @RequestMapping("/fred")
 public class FredController {
-    private static final Logger logger = LoggerFactory.getLogger("FredController");
-
     @Autowired
     private FredService service;
 
@@ -24,7 +22,7 @@ public class FredController {
         return service.getObservations(apiKey, seriesId, params);
     }
 
-    @GetMapping("/observations/{seriesId}/recent")
+    @GetMapping("/observations/recent/{seriesId}")
     public Observation getMostRecentObservation(@RequestHeader String apiKey, @PathVariable String seriesId,
                                                 @RequestParam(required = false) LinkedHashMap<String, Object> params) {
         return service.getMostRecentObservation(apiKey, seriesId, params);

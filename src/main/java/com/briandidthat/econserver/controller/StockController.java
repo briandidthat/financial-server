@@ -20,8 +20,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/stocks")
 public class StockController {
-    private static final Logger logger = LoggerFactory.getLogger("StockController");
-
     @Autowired
     private TwelveService service;
 

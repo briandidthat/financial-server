@@ -50,7 +50,7 @@ class FredControllerTest {
         when(service.getMostRecentObservation(TestingConstants.TEST_API_KEY, TestingConstants.AVERAGE_MORTGAGE_RATE, new LinkedHashMap<>()))
                 .thenReturn(TestingConstants.CURRENT_MORTGAGE_RATE);
 
-        this.mockMvc.perform(get("/fred/observations/{seriesId}/recent",TestingConstants.AVERAGE_MORTGAGE_RATE)
+        this.mockMvc.perform(get("/fred/observations/recent/{seriesId}",TestingConstants.AVERAGE_MORTGAGE_RATE)
                 .header("apiKey", TestingConstants.TEST_API_KEY))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outputJson))
