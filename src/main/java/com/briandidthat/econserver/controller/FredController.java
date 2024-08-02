@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 @RestController
@@ -18,13 +19,13 @@ public class FredController {
 
     @GetMapping("/observations/{seriesId}")
     public FredResponse getObservations(@RequestHeader String apiKey, @PathVariable String seriesId,
-                                        @RequestParam(required = false) LinkedHashMap<String, Object> params) {
+                                        @RequestParam(required = false) HashMap<String, Object> params) {
         return service.getObservations(apiKey, seriesId, params);
     }
 
     @GetMapping("/observations/recent/{seriesId}")
     public Observation getMostRecentObservation(@RequestHeader String apiKey, @PathVariable String seriesId,
-                                                @RequestParam(required = false) LinkedHashMap<String, Object> params) {
+                                                @RequestParam(required = false) HashMap<String, Object> params) {
         return service.getMostRecentObservation(apiKey, seriesId, params);
     }
 }

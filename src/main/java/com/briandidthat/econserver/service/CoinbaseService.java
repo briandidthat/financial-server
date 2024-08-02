@@ -48,10 +48,10 @@ public class CoinbaseService {
 
         try {
             logger.info(Markers.append("symbol", symbol), "Fetching current price");
-            final String queryString = RequestUtilities.formatQueryString(String.format("%s/prices/%s-USD/spot", coinbaseUrl, symbol), new HashMap<>());
+            final String queryString = RequestUtilities.formatQueryString(
+                    String.format("%s/prices/%s-USD/spot", coinbaseUrl, symbol), new HashMap<>());
             final ResponseEntity<String> response = restTemplate.getForEntity(queryString, String.class);
-            final Map<String, SpotPriceResponse> result = mapper.readValue(response.getBody(), new TypeReference<>() {
-            });
+            final Map<String, SpotPriceResponse> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
             final SpotPriceResponse spotPriceResponse = result.get(DATA);
             final AssetPrice assetPrice = RequestUtilities.buildAssetPrice(spotPriceResponse);
 
@@ -68,10 +68,10 @@ public class CoinbaseService {
 
         try {
             logger.debug(Markers.appendEntries(Map.of("symbol", symbol, "date", date)), "Fetching historical spot price");
-            final String queryString = RequestUtilities.formatQueryString(String.format("%s/prices/%s-USD/spot", coinbaseUrl, symbol), Map.of("date", date));
+            final String queryString = RequestUtilities.formatQueryString(
+                    String.format("%s/prices/%s-USD/spot", coinbaseUrl, symbol), Map.of("date", date));
             final ResponseEntity<String> response = restTemplate.getForEntity(queryString, String.class);
-            final Map<String, SpotPriceResponse> result = mapper.readValue(response.getBody(), new TypeReference<>() {
-            });
+            final Map<String, SpotPriceResponse> result = mapper.readValue(response.getBody(), new TypeReference<>() {});
             final SpotPriceResponse spotPriceResponse = result.get(DATA);
             spotPriceResponse.setDate(date);
             final AssetPrice assetPrice = RequestUtilities.buildAssetPrice(spotPriceResponse);
@@ -112,7 +112,8 @@ public class CoinbaseService {
             AssetPrice response = null;
             try {
                 response = c.get();
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
             return response;
         }).toList();
 

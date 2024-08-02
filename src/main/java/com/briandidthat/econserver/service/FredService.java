@@ -1,6 +1,5 @@
 package com.briandidthat.econserver.service;
 
-import com.briandidthat.econserver.domain.exception.BadRequestException;
 import com.briandidthat.econserver.domain.exception.RetrievalException;
 import com.briandidthat.econserver.domain.fred.FredResponse;
 import com.briandidthat.econserver.domain.fred.Observation;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 @Service
@@ -24,12 +24,13 @@ public class FredService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public FredResponse getObservations(String apiKey, String seriesId, LinkedHashMap<String, Object> params) {
-        params.put("series_id", seriesId);
-        params.put("file_type", "json");
-        params.put("sort_order", "desc");
-        params.put("api_key", apiKey);
-        final String url = RequestUtilities.formatQueryString(fredBaseUrl + "/series/observations", params);
+    public FredResponse getObservations(String apiKey, String seriesId, HashMap<String, Object> params) {
+        LinkedHashMap<String, Object> linkedParams = new LinkedHashMap<>(params);
+        linkedParams.put("series_id", seriesId);
+        linkedParams.put("file_type", "json");
+        linkedParams.put("sort_order", "desc");
+        linkedParams.put("api_key", apiKey);
+        final String url = RequestUtilities.formatQueryString(fredBaseUrl + "/series/observations", linkedParams);
 
         try {
             logger.debug("Fetching observations for {}", seriesId);
@@ -40,8 +41,10 @@ public class FredService {
         }
     }
 
-    public Observation getMostRecentObservation(String apiKey, String seriesId, LinkedHashMap<String, Object> params) {
+    public Observation getMostRecentObservation(String apiKey, String seriesId, HashMap<String, Object> params) {
         final FredResponse response = getObservations(apiKey, seriesId, params);
-        return response.getObservations().get(0);
+        if (response.getObservations() == null || response.getObservations().isEmpty())
+            throw new RetrievalException("No observations returned");
+        return response.getObservations().getFirst();
     }
 }
